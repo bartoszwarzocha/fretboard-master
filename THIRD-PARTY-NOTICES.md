@@ -13,7 +13,9 @@ Fretboard Master is closed-source freeware covered by `LICENSE.md`. It uses the 
 | PortMidi | urządzenia MIDI / MIDI devices | MIT-style | https://github.com/PortMidi/portmidi |
 | libsndfile | zapis i odczyt plików dźwiękowych / audio file I/O | LGPL 2.1 lub nowsza / or later | https://libsndfile.github.io/libsndfile/ |
 | TinySoundFont | wbudowany syntezator MIDI / built-in MIDI synthesizer | MIT | https://github.com/schellingb/TinySoundFont |
-| PFFFT | analiza widma / spectrum analysis | BSD-like (FFTPACK) | https://bitbucket.org/jpommier/pffft |
+| PFFFT lub/or KissFFT | analiza widma, rozpoznawanie pojedynczych dźwięków (MPM/YIN) / spectrum analysis, single-note pitch detection | BSD-like (FFTPACK) / BSD-3-Clause | https://bitbucket.org/jpommier/pffft · https://github.com/mborgerding/kissfft |
+| Spotify Basic Pitch (model) | rozpoznawanie akordów – planowane / chord (polyphonic) recognition – planned | Apache 2.0 | https://github.com/spotify/basic-pitch |
+| ONNX Runtime | uruchamianie modelu Basic Pitch – planowane / runs the Basic Pitch model – planned | MIT | https://onnxruntime.ai |
 | SQLite | profil i postępy / profile and progress | domena publiczna / public domain | https://sqlite.org |
 | Inter, Space Grotesk, Noto Music, Noto Sans Symbols 2 | kroje pisma / fonts | SIL Open Font License 1.1 | https://fonts.google.com |
 
@@ -26,6 +28,10 @@ Fretboard Master is closed-source freeware covered by `LICENSE.md`. It uses the 
 **libsndfile (LGPL 2.1+).** Biblioteka jest dołączana wyłącznie jako osobna biblioteka dynamiczna (`sndfile.dll`), niezmieniona, łączona dynamicznie. Użytkownik może ją zastąpić własną, zgodną wersją. Kod źródłowy użytej wersji jest dostępny pod adresem projektu lub na żądanie. Licencja programu nie zakazuje modyfikowania tej biblioteki ani odtwarzania kodu w zakresie potrzebnym do debugowania takich modyfikacji – tak jak wymaga tego LGPL.
 
 *libsndfile (LGPL 2.1+): shipped only as a separate, unmodified, dynamically linked library (`sndfile.dll`) that the user may replace with a compatible version. The source of the version used is available from the project site or on request. The program licence does not prohibit modifying this library or reverse engineering to the extent needed to debug such modifications, as required by the LGPL.*
+
+**Apache 2.0 (Basic Pitch).** Do programu dołączany jest tekst licencji Apache 2.0 oraz plik NOTICE projektu, jeśli istnieje; zmiany w modelu, jeśli zostaną wprowadzone, będą oznaczone.
+
+*Apache 2.0 (Basic Pitch): the Apache 2.0 licence text and the project's NOTICE file (if any) are shipped with the program; any modifications to the model will be marked.*
 
 **Kroje OFL.** Kroje pisma mogą być osadzone w programie; nie są sprzedawane osobno, a ich licencja (OFL 1.1) jest dołączona.
 
