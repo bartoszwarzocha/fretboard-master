@@ -17,7 +17,7 @@ Bez monitora (Linux, CI): `xvfb-run -a -s "-screen 0 1920x1080x24" godot …`.
 ## Zasady
 - Nowy ekran = nowa sekcja w `budgets.cfg` (pomiar + ok. 25% zapasu).
 - Ekrany statyczne: `processing_nodes = 0`. Animacje włączają przetwarzanie tylko na czas trwania.
-- Audyt sprawdzać w najgorszym języku (RU – cyrylica zwiększa liczbę wywołań rysowania).
+- Audyt sprawdzać po rosyjsku (najwięcej różnych glifów).
 - Pełna lista zasad: `optymalizacja-godot.md`.
 
 ## Później

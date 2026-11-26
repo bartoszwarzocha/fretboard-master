@@ -14,4 +14,6 @@ Metryki pionowe czcionek z symbolami ustawiono na ascent 0,968 em i descent 0,24
 żeby czcionki zastępcze nie powiększały wysokości wiersza. Są to wersje zmodyfikowane w rozumieniu
 OFL; rodzina Noto nie ma zastrzeżonych nazw czcionek, więc zachowanie nazw jest dozwolone.
 
-Import: MSDF (jedna tekstura na wszystkie rozmiary), bez systemowych czcionek zastępczych.
+Import: czcionki rastrowe z lekkim hintingiem i nadpróbkowaniem zależnym od skali okna, bez systemowych
+czcionek zastępczych. MSDF jest wyłączone – przy zmiennej czcionce Inter (nakładające się kontury) dawało
+ubytki w literach (e, i, j) w małych rozmiarach.
