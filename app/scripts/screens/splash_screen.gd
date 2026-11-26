@@ -16,7 +16,7 @@ func _ready() -> void:
 	col.add_theme_constant_override("separation", 28)
 	center.add_child(col)
 
-	var company := Placeholder.create("Company logo", "assets/branding/bw-logo.png", "", Vector2(260, 84))
+	var company := CompanyLogo.create(Vector2(260, 70), false)
 	company.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(company)
 	var presents := Label.new()

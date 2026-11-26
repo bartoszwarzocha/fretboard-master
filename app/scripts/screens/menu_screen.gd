@@ -65,7 +65,7 @@ func _ready() -> void:
 	foot.custom_minimum_size.y = 72
 	foot.add_theme_constant_override("separation", 24)
 	page.add_child(foot)
-	var company := Placeholder.create("Company logo", "assets/branding/bw-logo.png", "", Vector2(150, 48), true)
+	var company := CompanyLogo.create(Vector2(150, 40))
 	company.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	foot.add_child(company)
 	var copyright := Label.new()
