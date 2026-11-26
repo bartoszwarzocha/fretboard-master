@@ -1,0 +1,21 @@
+# Godot – pamięć podręczna importu i edytora
+app/.godot/
+*.tmp
+*.translation
+
+# Rdzeń C++ – katalog budowania i zbudowane biblioteki
+native/build/
+native/out/
+app/bin/*
+!app/bin/.gitkeep
+
+# Eksport
+export/
+build-export/
+
+# IDE i system
+.vs/
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

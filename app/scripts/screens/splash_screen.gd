@@ -1,0 +1,33 @@
+# Fretboard Master – ekran startowy: całkowicie czarny, logo firmy, „przedstawia”, logo programu.
+# Bez klikania i bez efektów – po 3 s przechodzi do menu głównego.
+# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+extends Control
+
+const DURATION := 3.0
+
+
+func _ready() -> void:
+	set_process(false)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(center)
+	var col := VBoxContainer.new()
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.add_theme_constant_override("separation", 28)
+	center.add_child(col)
+
+	var company := Placeholder.create("Company logo", "assets/branding/bw-logo.png", "", Vector2(260, 84))
+	company.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	col.add_child(company)
+	var presents := Label.new()
+	presents.text = "presents"
+	presents.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	presents.add_theme_color_override("font_color", Color("8C96B3"))
+	presents.add_theme_font_size_override("font_size", 20)
+	col.add_child(presents)
+	var logo := Placeholder.create("Program logo", "assets/branding/logo.svg", "", Vector2(720, 260))
+	logo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	col.add_child(logo)
+
+	if not "--perf-audit" in OS.get_cmdline_user_args():
+		get_tree().create_timer(DURATION).timeout.connect(App.go.bind(&"menu"))
