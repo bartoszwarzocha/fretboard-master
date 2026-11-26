@@ -25,7 +25,7 @@ func _ready() -> void:
 	presents.add_theme_color_override("font_color", Color("8C96B3"))
 	presents.add_theme_font_size_override("font_size", 20)
 	col.add_child(presents)
-	var logo := Placeholder.create("Program logo", "assets/branding/logo.svg", "", Vector2(720, 260))
+	var logo := Logo3D.create(Vector2(640, 320), true, DURATION - 0.4)
 	logo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(logo)
 

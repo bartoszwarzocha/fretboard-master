@@ -31,7 +31,7 @@ func _build_content() -> void:
 	logos.add_theme_constant_override("separation", 32)
 	col.add_child(logos)
 	logos.add_child(CompanyLogo.create(Vector2(250, 84)))
-	logos.add_child(Placeholder.create("Program logo", "assets/branding/logo.svg", "", Vector2(420, 84)))
+	logos.add_child(Logo3D.create(Vector2(180, 90), false))
 
 	_version = Label.new()
 	_version.theme_type_variation = &"Muted"

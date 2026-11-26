@@ -20,7 +20,7 @@ func _ready() -> void:
 	var head := HBoxContainer.new()
 	head.add_theme_constant_override("separation", 32)
 	page.add_child(head)
-	head.add_child(Placeholder.create("Program logo", "assets/branding/logo.svg", "", Vector2(620, 150)))
+	head.add_child(Logo3D.create(Vector2(340, 170)))
 	var tagline := Label.new()
 	tagline.text = "fretboard · theory · training"
 	tagline.theme_type_variation = &"Caption"

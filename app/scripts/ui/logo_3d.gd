@@ -1,0 +1,223 @@
+# Fretboard Master – logo programu jako tafla 3D (model assets/branding/logo.glb od autora).
+#  • animated = true (ekran startowy, menu): tafla lekko się kołysze i pochyla w stronę kursora.
+#    Po IDLE_STOP s bez ruchu myszy wraca do spoczynku i zatrzymuje się – przetwarzanie jest wtedy
+#    wyłączone, a obraz nie jest odświeżany (tryb oszczędny działa dalej).
+#  • intro > 0 (ekran startowy): logo nadlatuje z oddali, obracając się; w ostatniej sekundzie
+#    już tylko się zbliża, płynnie wyhamowując.
+#  • animated = false (nagłówek modułów, „O programie”): obraz rysowany raz.
+# Optymalizacja: 22 siatki modelu są przy pierwszym użyciu scalane w JEDNĄ siatkę z czterema
+# powierzchniami (po jednej na kolor) – 4 wywołania rysowania zamiast 22; siatka i materiały są
+# współdzielone przez wszystkie wystąpienia logo. Bez cieni, jedno światło kierunkowe.
+# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+class_name Logo3D
+extends SubViewportContainer
+
+const MODEL_PATH := "res://assets/branding/logo.glb"
+
+# Kolory części modelu (nazwy węzłów z pliku .glb – kontury wektorowe z Inkscape).
+const COLORS := {
+	&"panel": Color("101114"),      # tafla: obrys zewnętrzny i pole wewnętrzne
+	&"frame": Color("F5A311"),      # pomarańczowa obwódka
+	&"orange": Color("FFB21A"),     # litera F z kluczami i napis „Master”
+	&"white": Color("F4F4F2"),      # „retboard”
+}
+const PARTS := {
+	&"use28": &"panel", &"path2": &"panel", &"path1": &"frame",
+	&"path11": &"orange", &"path25": &"orange", &"path26": &"orange", &"path27": &"orange", &"path28": &"orange",
+	&"path3": &"orange", &"path5": &"orange", &"path6": &"orange", &"path8": &"orange", &"path9": &"orange", &"path10": &"orange",
+}
+
+const SWAY_DEG := Vector2(2.2, 3.5)      # amplituda kołysania (pochylenie, obrót)
+const SWAY_PERIOD := Vector2(5.3, 7.1)   # okresy kołysania w sekundach
+const CURSOR_DEG := Vector2(7.0, 11.0)   # maksymalne pochylenie w stronę kursora
+const FOLLOW := 5.0                      # szybkość dochodzenia do pozycji docelowej
+const IDLE_STOP := 8.0                   # po tylu sekundach bez ruchu myszy animacja wygasa
+const FOV := 22.0
+const INTRO_FAR := 14.0                  # odległość startowa nadlotu (w szerokościach logo)
+const INTRO_TURNS := 1.5                 # liczba obrotów w czasie nadlotu
+const INTRO_GLIDE := 1.0                 # ostatnia sekunda: tylko zbliżanie, bez obrotu
+
+static var _mesh: ArrayMesh
+static var _size: Vector3
+
+var animated := true
+var intro := 0.0
+var _vp: SubViewport
+var _pivot: MeshInstance3D
+var _time := 0.0
+var _idle := 0.0
+var _amp := 1.0
+var _rot := Vector2.ZERO
+
+
+static func create(p_size: Vector2, p_animated := true, p_intro := 0.0) -> Logo3D:
+	var l := Logo3D.new()
+	l.custom_minimum_size = p_size
+	l.animated = p_animated
+	l.intro = p_intro
+	l.stretch = true
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return l
+
+
+func _ready() -> void:
+	if _mesh == null:
+		_build_mesh()
+	_vp = SubViewport.new()
+	_vp.transparent_bg = true
+	_vp.own_world_3d = true
+	_vp.msaa_3d = Viewport.MSAA_4X
+	_vp.positional_shadow_atlas_size = 0
+	_vp.audio_listener_enable_3d = false
+	_vp.gui_disable_input = true
+	add_child(_vp)
+
+	var env := Environment.new()
+	env.background_mode = Environment.BG_CLEAR_COLOR
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color.WHITE
+	env.ambient_light_energy = 0.6
+	var we := WorldEnvironment.new()
+	we.environment = env
+	_vp.add_child(we)
+	var light := DirectionalLight3D.new()
+	light.shadow_enabled = false
+	light.light_energy = 1.0
+	light.rotation_degrees = Vector3(-30, -20, 0)
+	_vp.add_child(light)
+
+	_pivot = MeshInstance3D.new()
+	_pivot.mesh = _mesh
+	_pivot.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_vp.add_child(_pivot)
+
+	var cam := Camera3D.new()
+	cam.fov = FOV
+	_vp.add_child(cam)
+	_fit_camera(cam)
+	resized.connect(_fit_camera.bind(cam))
+
+	var audit := "--perf-audit" in OS.get_cmdline_user_args()
+	if audit:
+		intro = 0.0
+	if intro > 0.0:
+		_amp = 0.0
+		_apply_intro()
+	var live := animated and not audit
+	# W audycie logo animowane jest rysowane w każdej klatce (najgorszy przypadek), ale bez ruchu.
+	_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if animated else SubViewport.UPDATE_ONCE
+	set_process(live)
+	set_process_input(live)
+
+
+func _process(delta: float) -> void:
+	_time += delta
+	if _time < intro:
+		_apply_intro()
+		return
+	_idle += delta
+	var active := _idle < IDLE_STOP
+	_amp = move_toward(_amp, 1.0 if active else 0.0, delta * 0.5)
+	var target := Vector2(
+			sin((_time - intro) * TAU / SWAY_PERIOD.x) * SWAY_DEG.x,
+			sin((_time - intro) * TAU / SWAY_PERIOD.y) * SWAY_DEG.y) * _amp
+	if active:
+		target += _cursor_tilt() * minf(_amp * 2.0, 1.0)
+	_rot = _rot.lerp(target, 1.0 - exp(-FOLLOW * delta))
+	_pivot.position = Vector3.ZERO
+	_pivot.rotation_degrees = Vector3(_rot.x, _rot.y, 0)
+	if not active and _amp == 0.0 and _rot.length() < 0.02:
+		_pivot.rotation_degrees = Vector3.ZERO
+		_vp.render_target_update_mode = SubViewport.UPDATE_ONCE
+		set_process(false)
+
+
+# Nadlot: odległość maleje z wyhamowaniem (ease-out) przez cały czas; obrót wygasa łagodnie
+# do zera na INTRO_GLIDE s przed końcem, potem logo już tylko się zbliża.
+func _apply_intro() -> void:
+	var p := clampf(_time / intro, 0.0, 1.0)
+	var approach := 1.0 - pow(1.0 - p, 3.0)
+	_pivot.position = Vector3(0, 0, -_size.x * INTRO_FAR * (1.0 - approach))
+	var spin_end := maxf(intro - INTRO_GLIDE, 0.001)
+	var q := clampf(_time / spin_end, 0.0, 1.0)
+	_pivot.rotation_degrees = Vector3(0, 360.0 * INTRO_TURNS * pow(1.0 - q, 2.0), 0)
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		_idle = 0.0
+		if not is_processing():
+			_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+			set_process(true)
+
+
+# Pochylenie w stronę kursora, liczone względem środka logo i rozmiaru okna.
+func _cursor_tilt() -> Vector2:
+	var rel := (get_global_mouse_position() - get_global_rect().get_center()) / (get_viewport_rect().size * 0.5)
+	rel = rel.clamp(-Vector2.ONE, Vector2.ONE)
+	return Vector2(rel.y * CURSOR_DEG.x, rel.x * CURSOR_DEG.y)
+
+
+func _fit_camera(cam: Camera3D) -> void:
+	var aspect := maxf(size.x, 1.0) / maxf(size.y, 1.0)
+	var half_v := deg_to_rad(FOV) * 0.5
+	var half_h := atan(tan(half_v) * aspect)
+	# Zapas 10% na kołysanie, żeby krawędzie tafli nie wychodziły poza kadr.
+	var dist := maxf(_size.x * 0.55 / tan(half_h), _size.y * 0.55 / tan(half_v)) + _size.z
+	cam.position = Vector3(0, 0, dist)
+	cam.near = maxf(dist - _size.x, 0.001)
+	cam.far = dist + _size.x * (INTRO_FAR + 1.0)
+	if _vp and not is_processing():
+		_vp.render_target_update_mode = SubViewport.UPDATE_ONCE  # nowy rozmiar – jedno odświeżenie
+
+
+# Scalenie modelu w jedną siatkę: powierzchnia na kolor, model ustawiony frontem do kamery (+Z)
+# i wyśrodkowany. Wykonywane raz na cały program.
+static func _build_mesh() -> void:
+	var root := (load(MODEL_PATH) as PackedScene).instantiate() as Node3D
+	# Kontury z Inkscape leżą w płaszczyźnie XZ (front w +Y) – obrót o 90° wokół X.
+	var orient := Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO)
+	var tools := {}
+	var stack: Array = [[root, orient]]
+	var box := AABB()
+	var first := true
+	while not stack.is_empty():
+		var item: Array = stack.pop_back()
+		var node: Node = item[0]
+		var xf: Transform3D = item[1]
+		if node is Node3D and node != root:
+			xf = xf * (node as Node3D).transform
+		if node is MeshInstance3D and (node as MeshInstance3D).mesh:
+			var mesh := (node as MeshInstance3D).mesh
+			var part: StringName = PARTS.get(StringName(node.name), &"white")
+			if not tools.has(part):
+				var st := SurfaceTool.new()
+				st.begin(Mesh.PRIMITIVE_TRIANGLES)
+				tools[part] = st
+			for s in mesh.get_surface_count():
+				(tools[part] as SurfaceTool).append_from(mesh, s, xf)
+			var b := xf * mesh.get_aabb()
+			box = b if first else box.merge(b)
+			first = false
+		for c in node.get_children():
+			stack.append([c, xf])
+	root.free()
+
+	_mesh = ArrayMesh.new()
+	var center := box.get_center()
+	for part in [&"panel", &"frame", &"orange", &"white"]:
+		if not tools.has(part):
+			continue
+		var arrays := (tools[part] as SurfaceTool).commit_to_arrays()
+		var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		for i in verts.size():
+			verts[i] -= center
+		arrays[Mesh.ARRAY_VERTEX] = verts
+		_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = COLORS[part]
+		mat.roughness = 0.55 if part == &"panel" else 0.4
+		mat.metallic_specular = 0.6
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_mesh.surface_set_material(_mesh.get_surface_count() - 1, mat)
+	_size = box.size

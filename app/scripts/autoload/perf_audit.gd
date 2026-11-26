@@ -114,7 +114,7 @@ func _run_audit() -> void:
 		get_tree().quit(2)
 		return
 	var failures := 0
-	var lines: PackedStringArray = ["screen                draw  objects  prims  proc.nodes  nodes  vram MB  budget"]
+	var lines: PackedStringArray = ["screen                draw  all vp  objects  prims  proc.nodes  nodes  vram MB  budget"]
 	for screen in budgets.get_sections():
 		App.go(StringName(screen))
 		for i in SETTLE_FRAMES:
@@ -129,12 +129,12 @@ func _run_audit() -> void:
 		if not shots.is_empty():
 			get_viewport().get_texture().get_image().save_png(shots.path_join("%s.png" % screen))
 		var verdict := "OK"
-		for key in ["draw_calls", "objects", "primitives", "processing_nodes", "video_mem_mb"]:
+		for key in ["draw_calls", "total_draw_calls", "objects", "primitives", "processing_nodes", "video_mem_mb"]:
 			var limit = budgets.get_value(screen, key, null)
 			if limit != null and worst[key] > float(limit):
 				verdict = "PRZEKROCZONY: %s %s > %s" % [key, worst[key], limit]
 				failures += 1
-		lines.append("%-20s %5d %8d %6d %11d %6d %8.1f  %s" % [screen, worst.draw_calls, worst.objects,
+		lines.append("%-20s %5d %7d %8d %6d %11d %6d %8.1f  %s" % [screen, worst.draw_calls, worst.total_draw_calls, worst.objects,
 				worst.primitives, worst.processing_nodes, worst.nodes, worst.video_mem_mb, verdict])
 	print("\n".join(lines))
 	print("Audyt wydajności: %s" % ("OK" if failures == 0 else "%d przekroczeń budżetu" % failures))
