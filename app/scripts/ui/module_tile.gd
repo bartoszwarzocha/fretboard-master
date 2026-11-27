@@ -1,5 +1,5 @@
 # Fretboard Master – kafelek modułu w menu głównym (przycisk z ikoną, nazwą i opisem).
-# Ikona: model 3D z pliku ikon autora (ModuleIcon3D), a gdy modułu w nim nie ma – znak czcionki.
+# Ilustracja: duża ikona 3D modułu z pliku autora (ModuleIcon3D) albo, w kaflu Encyklopedii, model gitary.
 # Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name ModuleTile
 extends Button
@@ -35,38 +35,36 @@ func _ready() -> void:
 	var s := 72 if big else 52
 	_icon_box.custom_minimum_size = Vector2(s, s)
 	box.add_child(_icon_box)
-	var order := App.MODULES.find(module)
-	var icon3d := ModuleIcon3D.available(module.id)
-	# Kafel Encyklopedii: model gitary albo duża ikona (ustawienie „menu_encyclopedia_art”).
-	var art_icon := big and icon3d and (str(App.setting(&"menu_encyclopedia_art")) == "icon" or not GuitarModel3D.available())
-	if icon3d:
-		var ic := ModuleIcon3D.create(module.id, Vector2(s, s), order)
-		_icon_box.add_child(ic)
-		_icons.append(ic)
-		_icon_box.visible = not art_icon
-	else:
-		_icon = IconGlyph.new()
-		_icon.glyph = module.icon
-		_icon.font_size = 40 if big else 28
-		_icon.color = module.color
-		_icon_box.add_child(_icon)
+	_icon = IconGlyph.new()
+	_icon.glyph = module.icon
+	_icon.font_size = 40 if big else 28
+	_icon.color = module.color
+	_icon_box.add_child(_icon)
 
-	if art_icon:
-		var big_icon := ModuleIcon3D.create(module.id, Vector2(0, 220), order)
-		big_icon.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		box.add_child(big_icon)
-		_icons.append(big_icon)
-	elif big and GuitarModel3D.available():
+	# Ilustracja kafla: model 3D gitary (Encyklopedia, wg ustawienia) albo duża ikona 3D modułu,
+	# wypełniająca wolne miejsce kafla tak jak gitara.
+	var order := App.MODULES.find(module)
+	# Mała ikona tylko w kaflu bez dużej ilustracji (np. Ustawienia).
+	_icon_box.visible = false
+	var guitar_ok := big and GuitarModel3D.available() and str(App.setting(&"menu_encyclopedia_art")) != "icon"
+	if guitar_ok:
 		# Model 3D gitary (pod ukosem, powoli obracany) w miejscu przewidzianym na grafikę gitary.
 		var guitar := GuitarModel3D.create(Vector2(0, 220))
 		guitar.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		box.add_child(guitar)
+	elif ModuleIcon3D.available(module.id):
+		var art := ModuleIcon3D.create(module.id, Vector2(0, 220 if big else 60), order)
+		art.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		box.add_child(art)
+		_icons.append(art)
 	elif big:
+		_icon_box.visible = true
 		var art := Placeholder.create("Guitar artwork", "assets/graphics/menu-guitar.png",
 				"1800 × 1200 px (3:2), PNG", Vector2(0, 220))
 		art.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		box.add_child(art)
 	else:
+		_icon_box.visible = true
 		var spacer := Control.new()
 		spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -100,9 +98,7 @@ func _apply_styles() -> void:
 	add_theme_stylebox_override("pressed", hover)
 	add_theme_stylebox_override("focus", ThemeManager.box(Color.TRANSPARENT, ThemeManager.color("focus"), ThemeManager.radius_card() + 3, 2))
 	get_theme_stylebox("focus").draw_center = false
-	# Ikona 3D ma własną taflę – bez kolorowego tła pod spodem.
-	var bg := Color.TRANSPARENT if not _icons.is_empty() else Color(c, 0.12)
-	_icon_box.add_theme_stylebox_override("panel", ThemeManager.box(bg, Color.TRANSPARENT, 16, 0, 0, 0))
+	_icon_box.add_theme_stylebox_override("panel", ThemeManager.box(Color(c, 0.12), Color.TRANSPARENT, 16, 0, 0, 0))
 
 
 func _set_spin(on: bool) -> void:
