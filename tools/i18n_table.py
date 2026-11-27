@@ -322,6 +322,10 @@ T = {
  "Name (greeting in the main menu)": ("Imię (powitanie w menu głównym)", "Name (Begrüßung im Hauptmenü)", "Nombre (saludo en el menú principal)", "Имя (приветствие в главном меню)"),
  "Daily practice goal": ("Dzienny cel ćwiczeń", "Tägliches Übungsziel", "Objetivo diario de práctica", "Ежедневная цель занятий"),
  "Hello, %s!": ("Dzień dobry, %s!", "Hallo, %s!", "¡Hola, %s!", "Здравствуйте, %s!"),
+ "Interface font": ("Czcionka interfejsu", "Schriftart der Oberfläche", "Fuente de la interfaz", "Шрифт интерфейса"),
+ "Custom…": ("Własna…", "Eigene…", "Propia…", "Своя…"),
+ "System font": ("Czcionka systemowa", "Systemschrift", "Fuente del sistema", "Системный шрифт"),
+ "Search…": ("Szukaj…", "Suchen…", "Buscar…", "Поиск…"),
 }
 
 def esc(s): return s.replace("\\", "\\\\").replace('"', '\\"')

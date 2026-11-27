@@ -847,3 +847,15 @@ msgstr "Ежедневная цель занятий"
 msgid "Hello, %s!"
 msgstr "Здравствуйте, %s!"
 
+msgid "Interface font"
+msgstr "Шрифт интерфейса"
+
+msgid "Custom…"
+msgstr "Своя…"
+
+msgid "System font"
+msgstr "Системный шрифт"
+
+msgid "Search…"
+msgstr "Поиск…"
+

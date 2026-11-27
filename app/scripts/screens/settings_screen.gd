@@ -14,7 +14,7 @@ const TABS := [
 ]
 # Zmiana tych ustawień pokazuje lub ukrywa inne pola – zakładka jest wtedy budowana od nowa.
 const REBUILD_KEYS := [&"theme", &"accent", &"bg_mode", &"bg_gradient_type", &"bg_animated", &"particles", &"hit_particles", &"window_mode", &"neck_view",
-		&"quality", &"power_saving", &"logo_spin", &"animations", &"panel_radius", &"panel_opacity", &"panel_shadow", &"font_scale"]
+		&"quality", &"power_saving", &"logo_spin", &"animations", &"ui_font", &"panel_radius", &"panel_opacity", &"panel_shadow", &"font_scale"]
 # Widoki gryfu: realistyczne 3D (trzy rodzaje gitar) i schematyczne (jak w pierwotnej makiecie).
 # Rysowanie powstanie razem z modułem gryfu; tu tylko wybór. Kolejne widoki – nowa pozycja listy.
 const NECK_VIEWS := [
@@ -218,6 +218,7 @@ func _build_look() -> void:
 	_select(&"theme", "Colour theme", [["auto", "Automatic (as in the system)"], ["night", "Night"],
 			["graphite", "Graphite"], ["light", "Light"]])
 	_colors(&"accent", "Accent colour", "Theme colour")
+	_font_picker()
 
 	_section("Background")
 	var mode := str(App.setting(&"bg_mode"))
@@ -517,6 +518,52 @@ func _colors(key: StringName, label_text: String, default_text: String,
 			b.pressed.connect(_store.bind(key, hex))
 		line.add_child(b)
 	_row(label_text, line)
+
+
+# Czcionka interfejsu: wbudowane (każda nazwa zapisana swoją czcionką) i „Własna…” – dowolna systemowa.
+func _font_picker() -> void:
+	var line := HBoxContainer.new()
+	line.add_theme_constant_override("separation", 8)
+	line.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	var current := str(App.setting(&"ui_font"))
+	var own := current.begins_with("system:")
+	var ring := ThemeManager.color("text")
+	var options: Array = ThemeManager.UI_FONTS.keys()
+	options.append("")
+	for id in options:
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		b.custom_minimum_size.y = 44
+		var chosen: bool = (id == current) or (id == "" and own)
+		var normal := ThemeManager.box(ThemeManager.color("surface_2"), ring if chosen else ThemeManager.color("border_strong"), 10, 2 if chosen else 1, 16, 8)
+		b.add_theme_stylebox_override("normal", normal)
+		b.add_theme_stylebox_override("hover", ThemeManager.box(ThemeManager.color("border"), ring if chosen else ThemeManager.color("muted"), 10, 2 if chosen else 1, 16, 8))
+		b.add_theme_stylebox_override("pressed", normal)
+		if id == "":
+			b.text = current.trim_prefix("system:") if own else tr("Custom…")
+			if own:
+				b.add_theme_font_override("font", ThemeManager.body_font(current))
+			b.pressed.connect(func() -> void:
+				_font_popup().open(current.trim_prefix("system:") if own else "", b.get_global_rect()))
+		else:
+			b.text = ThemeManager.UI_FONTS[id]
+			b.add_theme_font_override("font", ThemeManager.body_font(id))
+			b.pressed.connect(_store.bind(&"ui_font", id))
+		line.add_child(b)
+	_row("Interface font", line)
+
+
+var _fonts: FontPopup
+
+
+func _font_popup() -> FontPopup:
+	if _fonts == null:
+		_fonts = FontPopup.new()
+		_fonts.picked.connect(func(n: String) -> void: _store(&"ui_font", "system:" + n))
+		add_child(_fonts)
+	return _fonts
 
 
 # Jedno okno wyboru koloru na ekran (dziecko ekranu, nie wiersza – przetrwa przebudowę zakładki).

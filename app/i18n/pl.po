@@ -847,3 +847,15 @@ msgstr "Dzienny cel ćwiczeń"
 msgid "Hello, %s!"
 msgstr "Dzień dobry, %s!"
 
+msgid "Interface font"
+msgstr "Czcionka interfejsu"
+
+msgid "Custom…"
+msgstr "Własna…"
+
+msgid "System font"
+msgstr "Czcionka systemowa"
+
+msgid "Search…"
+msgstr "Szukaj…"
+

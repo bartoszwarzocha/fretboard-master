@@ -847,3 +847,15 @@ msgstr "Tägliches Übungsziel"
 msgid "Hello, %s!"
 msgstr "Hallo, %s!"
 
+msgid "Interface font"
+msgstr "Schriftart der Oberfläche"
+
+msgid "Custom…"
+msgstr "Eigene…"
+
+msgid "System font"
+msgstr "Systemschrift"
+
+msgid "Search…"
+msgstr "Suchen…"
+

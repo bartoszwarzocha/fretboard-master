@@ -847,3 +847,15 @@ msgstr "Objetivo diario de práctica"
 msgid "Hello, %s!"
 msgstr "¡Hola, %s!"
 
+msgid "Interface font"
+msgstr "Fuente de la interfaz"
+
+msgid "Custom…"
+msgstr "Propia…"
+
+msgid "System font"
+msgstr "Fuente del sistema"
+
+msgid "Search…"
+msgstr "Buscar…"
+

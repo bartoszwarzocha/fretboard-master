@@ -5,7 +5,7 @@ extends ModuleScreen
 const COMPONENTS := [
 	["Godot Engine", "MIT"], ["godot-cpp", "MIT"], ["PortAudio", "MIT"], ["PortMidi", "MIT"],
 	["libsndfile", "LGPL 2.1"], ["TinySoundFont", "MIT"], ["PFFFT / KissFFT", "BSD"],
-	["SQLite", "Public domain"], ["Inter, Space Grotesk, Anton, Noto", "OFL 1.1"],
+	["SQLite", "Public domain"], ["Manrope, Montserrat, Rubik, Inter, Space Grotesk, Anton, Noto, Bravura", "OFL 1.1"],
 ]
 
 var _version: Label

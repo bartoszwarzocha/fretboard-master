@@ -37,6 +37,8 @@ const ACCENTS := ["F5B544", "FF8A1F", "FF5C5C", "E85D9C", "B98CFF", "5AA9FF", "3
 # Ustawienia, po których zmianie motyw jest budowany od nowa.
 const THEME_KEYS := [&"theme", &"accent", &"panel_opacity", &"panel_radius", &"panel_shadow", &"font_scale"]
 
+# Wbudowane czcionki interfejsu (OFL, z polskimi znakami i cyrylicą): identyfikator → plik.
+const UI_FONTS := {"manrope": "Manrope", "montserrat": "Montserrat", "rubik": "Rubik", "inter": "Inter"}
 const RADIUS_CARD := 20
 const RADIUS_CONTROL := 10
 
@@ -49,6 +51,8 @@ var font_body_medium: FontVariation
 var font_body_bold: FontVariation
 var font_heading: FontVariation
 var font_symbols: FontFile
+var _symbols: Array[Font] = []
+var _font_files := {}
 var font_music: FontFile   # Bravura (SMuFL) – symbole muzyczne w ikonach, tle i (później) w nutach
 
 
@@ -89,7 +93,11 @@ func apply(id: StringName) -> void:
 
 
 func _on_settings_changed(key: StringName) -> void:
-	if key in THEME_KEYS:
+	if key == &"ui_font":
+		_set_body_font()
+		_update_heading_font()
+		apply(palette_id())
+	elif key in THEME_KEYS:
 		apply(palette_id())
 	elif key == &"language":
 		# Space Grotesk nie ma cyrylicy – dla rosyjskiego nagłówki składa Inter.
@@ -108,13 +116,46 @@ func _load_fonts() -> void:
 	font_symbols = symbols[0]
 	font_symbols.fallbacks = [symbols[1], symbols[2]]
 	font_music = load("res://assets/fonts/Bravura.otf")
-	var inter: FontFile = load("res://assets/fonts/Inter.ttf")
-	inter.fallbacks = symbols
-	font_body = _variation(inter, 400)
-	font_body_medium = _variation(inter, 500)
-	font_body_bold = _variation(inter, 650)
+	_symbols = symbols
+	font_body = _variation(null, 400)
+	font_body_medium = _variation(null, 500)
+	font_body_bold = _variation(null, 650)
+	_set_body_font()
 	font_heading = FontVariation.new()
 	_update_heading_font()
+
+
+# Czcionka interfejsu z ustawień: wbudowana (UI_FONTS) albo dowolna systemowa („system:Nazwa”).
+# Zmienia się czcionka bazowa wspólnych wariantów, więc wszystkie napisy przechodzą na nią od razu.
+# Brakujące znaki czcionki systemowej uzupełnia Manrope, a symbole – czcionki Noto.
+func _set_body_font() -> void:
+	var id := str(App.setting(&"ui_font"))
+	for v in [[font_body, 400], [font_body_medium, 500], [font_body_bold, 650]]:
+		(v[0] as FontVariation).base_font = body_font(id, v[1]) if id.begins_with("system:") else _builtin(id)
+
+
+## Czcionka bazowa dla identyfikatora z ustawień (używana też w podglądzie listy wyboru).
+func body_font(id: String, weight := 400) -> Font:
+	if id.begins_with("system:"):
+		var sys := SystemFont.new()
+		sys.font_names = PackedStringArray([id.trim_prefix("system:")])
+		sys.font_weight = weight
+		sys.allow_system_fallback = false
+		var fallbacks: Array[Font] = [_builtin("manrope")]
+		fallbacks.append_array(_symbols)
+		sys.fallbacks = fallbacks
+		return sys
+	return _variation(_builtin(id), weight)   # czcionki zmienne – grubość z osi wght
+
+
+func _builtin(id: String) -> FontFile:
+	if not UI_FONTS.has(id):
+		id = "manrope"
+	if not _font_files.has(id):
+		var f: FontFile = load("res://assets/fonts/%s.ttf" % UI_FONTS[id])
+		f.fallbacks = _symbols
+		_font_files[id] = f
+	return _font_files[id]
 
 
 func _update_heading_font() -> void:
@@ -129,7 +170,7 @@ func _update_heading_font() -> void:
 		font_heading.variation_opentype = {TextServerManager.get_primary_interface().name_to_tag("wght"): 600}
 
 
-func _variation(base: FontFile, weight: int) -> FontVariation:
+func _variation(base: Font, weight: int) -> FontVariation:
 	var v := FontVariation.new()
 	v.base_font = base
 	v.variation_opentype = {TextServerManager.get_primary_interface().name_to_tag("wght"): weight}

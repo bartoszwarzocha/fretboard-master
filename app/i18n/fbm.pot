@@ -846,3 +846,15 @@ msgstr ""
 msgid "Hello, %s!"
 msgstr ""
 
+msgid "Interface font"
+msgstr ""
+
+msgid "Custom…"
+msgstr ""
+
+msgid "System font"
+msgstr ""
+
+msgid "Search…"
+msgstr ""
+
