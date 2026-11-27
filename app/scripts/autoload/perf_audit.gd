@@ -167,9 +167,9 @@ func _run_audit() -> void:
 				verdict = "PRZEKROCZONY: %s %.2f > %s" % [key, val, lim]
 				failures += 1
 		for key in ["draw_calls", "total_draw_calls", "objects", "primitives", "processing_nodes", "video_mem_mb"]:
-			var limit = budgets.get_value(screen, key, null)
-			if limit != null and worst[key] > float(limit):
-				verdict = "PRZEKROCZONY: %s %s > %s" % [key, worst[key], limit]
+			var cap = budgets.get_value(screen, key, null)
+			if cap != null and worst[key] > float(cap):
+				verdict = "PRZEKROCZONY: %s %s > %s" % [key, worst[key], cap]
 				failures += 1
 		lines.append("%-20s %5.0f %7.1f %7.2f %7.2f %5d %7d %8d %6d %11d %6d %8.1f  %s" % [screen, fps, max_ms, gpu_ms, cpu_ms, worst.draw_calls, worst.total_draw_calls, worst.objects,
 				worst.primitives, worst.processing_nodes, worst.nodes, worst.video_mem_mb, verdict])
