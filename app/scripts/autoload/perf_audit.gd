@@ -147,8 +147,14 @@ func _run_audit() -> void:
 		var verdict := "OK"
 		var min_fps = budgets.get_value(screen, "min_fps") if budgets.has_section_key(screen, "min_fps") else null
 		if min_fps != null and focused and fps < float(min_fps):
-			verdict = "PRZEKROCZONY: fps %.0f < %s" % [fps, min_fps]
-			failures += 1
+			# Decyzja autora (27.11.2026): limit klatek w sterowniku (np. 30 FPS w panelu NVIDIA) zostaje.
+			# Niski FPS przy czasie klatki GPU i CPU mieszczącym się w budżecie min_fps to limit
+			# zewnętrzny, nie koszt programu – audyt go wypisuje, ale nie liczy jako przekroczenia.
+			if maxf(gpu_ms, cpu_ms) > 1000.0 / float(min_fps):
+				verdict = "PRZEKROCZONY: fps %.0f < %s" % [fps, min_fps]
+				failures += 1
+			else:
+				verdict = "OK (fps %.0f – limit zewnętrzny)" % fps
 		for key in ["max_gpu_ms", "max_cpu_ms"]:
 			var lim = budgets.get_value(screen, key) if budgets.has_section_key(screen, key) else null
 			var val := gpu_ms if key == "max_gpu_ms" else cpu_ms
