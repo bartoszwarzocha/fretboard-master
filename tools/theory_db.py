@@ -90,7 +90,7 @@ SCALE_CATS = [
 	("blues", N("Blues", "Blues", "Blues", "Blues", "Блюз"), [
 		("blues", "1 b3 4 b5 5 b7", N("Blues (minor)", "bluesowa (molowa)", "Blues (Moll)", "blues (menor)", "блюзовый (минорный)"), [], {}),
 		("blues_major", "1 2 b3 3 5 6", N("Major blues", "bluesowa durowa", "Blues (Dur)", "blues mayor", "мажорный блюзовый"), [], {"sig": "major"}),
-		("blues_nonatonic", "1 2 b3 3 4 b5 5 6 b7", N("Blues nonatonic", "bluesowa dziewięciodźwiękowa", "Blues (neuntönig)", "blues nonatónica", "девятиступенный блюзовый"), [], {"sig": "major"}),
+		("blues_nonatonic", "1 2 b3 3 4 5 6 b7 7", N("Blues nonatonic", "bluesowa dziewięciodźwiękowa", "Blues (neuntönig)", "blues nonatónica", "девятиступенный блюзовый"), [], {"sig": "major"}),
 	]),
 	("bebop", N("Bebop", "Bebop", "Bebop", "Bebop", "Бибоп"), [
 		("bebop_dom", "1 2 3 4 5 6 b7 7", N("Bebop dominant", "bebopowa dominantowa", "Bebop dominant", "bebop dominante", "бибоп доминантовый"), [], {}),
