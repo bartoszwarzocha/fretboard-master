@@ -154,7 +154,6 @@ T = {
  "Background image": ("Obraz tła", "Hintergrundbild", "Imagen de fondo", "Фоновое изображение"),
  "No image selected": ("Nie wybrano obrazu", "Kein Bild ausgewählt", "No se ha elegido ninguna imagen", "Изображение не выбрано"),
  "Image": ("Obraz", "Bild", "Imagen", "Изображение"),
- "Any colour": ("Dowolny kolor", "Beliebige Farbe", "Cualquier color", "Любой цвет"),
  "Instrument": ("Instrument", "Instrument", "Instrumento", "Инструмент"),
  "Standard (E A D G B E)": ("Standard (E A D G B E)", "Standard (E A D G H E)", "Estándar (E A D G B E)", "Стандартный (E A D G B E)"),
  "Drop D (D A D G B E)": ("Drop D (D A D G B E)", "Drop D (D A D G H E)", "Drop D (D A D G B E)", "Drop D (D A D G B E)"),
@@ -254,6 +253,8 @@ T = {
  "3D fretboard": ("Gryf 3D", "3D-Griffbrett", "Mástil 3D", "3D-гриф"),
  "Camera tilt": ("Pochylenie kamery", "Kameraneigung", "Inclinación de la cámara", "Наклон камеры"),
  "Perspective (field of view)": ("Perspektywa (pole widzenia)", "Perspektive (Sichtfeld)", "Perspectiva (campo de visión)", "Перспектива (угол обзора)"),
+ "Custom colour": ("Własny kolor", "Eigene Farbe", "Color personalizado", "Свой цвет"),
+ "Cancel": ("Anuluj", "Abbrechen", "Cancelar", "Отмена"),
 }
 
 def esc(s): return s.replace("\\", "\\\\").replace('"', '\\"')

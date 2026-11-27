@@ -343,9 +343,6 @@ msgstr "No se ha elegido ninguna imagen"
 msgid "Image"
 msgstr "Imagen"
 
-msgid "Any colour"
-msgstr "Cualquier color"
-
 msgid "Instrument"
 msgstr "Instrumento"
 
@@ -642,4 +639,10 @@ msgstr "Inclinación de la cámara"
 
 msgid "Perspective (field of view)"
 msgstr "Perspectiva (campo de visión)"
+
+msgid "Custom colour"
+msgstr "Color personalizado"
+
+msgid "Cancel"
+msgstr "Cancelar"
 

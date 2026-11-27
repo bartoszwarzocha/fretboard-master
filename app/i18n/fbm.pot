@@ -342,9 +342,6 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
-msgid "Any colour"
-msgstr ""
-
 msgid "Instrument"
 msgstr ""
 
@@ -640,5 +637,11 @@ msgid "Camera tilt"
 msgstr ""
 
 msgid "Perspective (field of view)"
+msgstr ""
+
+msgid "Custom colour"
+msgstr ""
+
+msgid "Cancel"
 msgstr ""
 

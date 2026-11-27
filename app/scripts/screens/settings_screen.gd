@@ -14,6 +14,7 @@ const TABS := [
 # Zmiana tych ustawień pokazuje lub ukrywa inne pola – zakładka jest wtedy budowana od nowa.
 const REBUILD_KEYS := [&"theme", &"accent", &"bg_mode", &"bg_animated", &"particles", &"hit_particles", &"window_mode",
 		&"quality", &"power_saving", &"logo_spin", &"animations", &"midi_output"]
+const BG_PALETTE := ["0B0F1E", "1D2A55", "2B1B3D", "123B3A", "3A2414", "1A1A1A", "4A4F5C"]
 const QUALITY_KEYS := [&"msaa", &"render_scale", &"anisotropy", &"shadows", &"reflections"]
 const TUNINGS := [
 	["standard", "Standard (E A D G B E)"], ["drop_d", "Drop D (D A D G B E)"],
@@ -43,8 +44,6 @@ const GM_INSTRUMENTS := ["Acoustic Grand Piano", "Bright Acoustic Piano", "Elect
 	"Shamisen", "Koto", "Kalimba", "Bagpipe", "Fiddle", "Shanai", "Tinkle Bell", "Agogo", "Steel Drums",
 	"Woodblock", "Taiko Drum", "Melodic Tom", "Synth Drum", "Reverse Cymbal", "Guitar Fret Noise",
 	"Breath Noise", "Seashore", "Bird Tweet", "Telephone Ring", "Helicopter", "Applause", "Gunshot"]
-
-const RADIUS_PICKER := 17
 
 var _tab: StringName = &"general"
 var _tab_buttons := {}
@@ -201,16 +200,16 @@ func _build_look() -> void:
 			["pattern", "Pattern"], ["image", "Own image"]])
 	match mode:
 		"solid":
-			_colors(&"bg_color", "Colour", "Theme colour")
+			_colors(&"bg_color", "Colour", "Theme colour", BG_PALETTE)
 		"gradient":
-			_colors(&"bg_color", "First colour", "Theme colour")
-			_colors(&"bg_color2", "Second colour", "")
+			_colors(&"bg_color", "First colour", "Theme colour", BG_PALETTE)
+			_colors(&"bg_color2", "Second colour", "", BG_PALETTE)
 			_slider(&"bg_gradient_angle", "Direction", 0, 360, 5, "%d°")
 		"pattern":
 			_select(&"bg_pattern", "Pattern", [["wood", "Wood"], ["carbon", "Carbon"], ["leather", "Leather"],
 					["felt", "Felt"], ["notes", "Notes"], ["hex", "Geometric"]])
-			_colors(&"bg_color", "Base colour", "Theme colour")
-			_colors(&"bg_color2", "Pattern colour", "")
+			_colors(&"bg_color", "Base colour", "Theme colour", BG_PALETTE)
+			_colors(&"bg_color2", "Pattern colour", "", BG_PALETTE)
 			_slider(&"bg_intensity", "Pattern intensity", 0, 1, 0.05, "%")
 			_slider(&"bg_scale", "Pattern scale", 0.5, 3, 0.1, "×")
 		"image":
@@ -455,8 +454,11 @@ func _slider(key: StringName, label_text: String, lo: float, hi: float, step: fl
 	return s
 
 
-# Próbki kolorów: domyślny (z motywu), gotowe akcenty i dowolny kolor z próbnika.
-func _colors(key: StringName, label_text: String, default_text: String) -> void:
+# Próbki kolorów: domyślny (z motywu, gdy default_text nie jest pusty), gotowa paleta i „+” –
+# własne okno wyboru dowolnego koloru (ColorPopup). Wartość w ustawieniach: HEX albo "" (domyślny).
+# Ten sam wiersz posłuży kolejnym kolorom (np. znaczniki na gryfie) – wystarczy podać paletę.
+func _colors(key: StringName, label_text: String, default_text: String,
+		palette: Array = ThemeManager.ACCENTS) -> void:
 	var line := HBoxContainer.new()
 	line.add_theme_constant_override("separation", 8)
 	line.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -465,11 +467,9 @@ func _colors(key: StringName, label_text: String, default_text: String) -> void:
 	var options: Array = []
 	if not default_text.is_empty():
 		options.append("")
-	options.append_array(ThemeManager.ACCENTS)
-	if key == &"bg_color" or key == &"bg_color2":
-		options = ([""] if not default_text.is_empty() else []) + ["0B0F1E", "1D2A55", "2B1B3D", "123B3A",
-				"3A2414", "1A1A1A", "4A4F5C"]
-	var picked := current.is_empty() or current in options
+	options.append_array(palette)
+	var own := not current.is_empty() and not current in options
+	options.append("+")
 	for hex in options:
 		var b := Button.new()
 		b.toggle_mode = true
@@ -477,7 +477,9 @@ func _colors(key: StringName, label_text: String, default_text: String) -> void:
 		b.custom_minimum_size = Vector2(34, 34)
 		b.focus_mode = Control.FOCUS_NONE
 		b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		var fill: Color = ThemeManager.color("surface_2") if hex.is_empty() else Color(hex)
+		var fill: Color = ThemeManager.color("surface_2") if hex.is_empty() or hex == "+" else Color(hex)
+		if hex == "+" and own:
+			fill = Color(current)
 		var ring := ThemeManager.color("text")
 		b.add_theme_stylebox_override("normal", ThemeManager.box(fill, ThemeManager.color("border_strong"), 17, 1, 0, 0))
 		b.add_theme_stylebox_override("hover", ThemeManager.box(fill, ThemeManager.color("muted"), 17, 2, 0, 0))
@@ -489,22 +491,36 @@ func _colors(key: StringName, label_text: String, default_text: String) -> void:
 			b.add_theme_font_size_override("font_size", 13)
 			b.add_theme_color_override("font_color", ThemeManager.color("muted"))
 			b.add_theme_color_override("font_pressed_color", ThemeManager.color("text"))
-		b.button_pressed = hex == current
-		b.pressed.connect(_store.bind(key, hex))
+		if hex == "+":
+			b.text = "" if own else "+"
+			b.tooltip_text = "Custom colour"
+			b.add_theme_font_size_override("font_size", 18)
+			b.add_theme_color_override("font_color", ThemeManager.color("muted"))
+			b.toggle_mode = false
+			if own:   # wybrany własny kolor – próbka „+” w tym kolorze, z obwódką wyboru
+				b.add_theme_stylebox_override("normal", ThemeManager.box(fill, ring, 17, 3, 0, 0))
+			b.pressed.connect(func() -> void:
+				var start := Color(current) if not current.is_empty() else ThemeManager.color("accent")
+				_color_popup(key).open(start, b.get_global_rect()))
+		else:
+			b.button_pressed = hex == current
+			b.pressed.connect(_store.bind(key, hex))
 		line.add_child(b)
-	var custom := ColorPickerButton.new()
-	custom.custom_minimum_size = Vector2(64, 34)
-	custom.edit_alpha = false
-	custom.color = Color(current) if not current.is_empty() else ThemeManager.color("accent")
-	custom.tooltip_text = "Any colour"
-	custom.color_changed.connect(func(c: Color) -> void:
-		for b in group.get_buttons():
-			(b as Button).set_pressed_no_signal(false)
-		_store(key, c.to_html(false).to_upper()))
-	if not picked:
-		custom.add_theme_stylebox_override("normal", ThemeManager.box(ThemeManager.color("surface_2"), ThemeManager.color("text"), RADIUS_PICKER, 3, 6, 6))
-	line.add_child(custom)
 	_row(label_text, line)
+
+
+# Jedno okno wyboru koloru na ekran (dziecko ekranu, nie wiersza – przetrwa przebudowę zakładki).
+var _popup: ColorPopup
+var _popup_key: StringName
+
+
+func _color_popup(key: StringName) -> ColorPopup:
+	if _popup == null:
+		_popup = ColorPopup.new()
+		_popup.picked.connect(func(c: Color) -> void: _store(_popup_key, c.to_html(false).to_upper()))
+		add_child(_popup)
+	_popup_key = key
+	return _popup
 
 
 func _image_picker() -> void:
