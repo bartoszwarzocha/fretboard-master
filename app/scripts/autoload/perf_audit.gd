@@ -69,6 +69,14 @@ func count_processing_nodes(root: Node) -> int:
 	return n
 
 
+# Viewport główny i wszystkie SubViewporty (logo, scena ilustracji menu).
+func _viewports() -> Array[RID]:
+	var out: Array[RID] = [get_viewport().get_viewport_rid()]
+	for v in get_tree().root.find_children("*", "SubViewport", true, false):
+		out.append((v as SubViewport).get_viewport_rid())
+	return out
+
+
 # --- Audyt wszystkich ekranów ------------------------------------------------------
 
 # Opcjonalnie: „--shots=<katalog>” zapisuje zrzut każdego ekranu (do przeglądu wyglądu).
@@ -85,13 +93,18 @@ func _run_audit() -> void:
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	Engine.max_fps = 0
 	print(gpu_info())
+	# Okno bez fokusu (np. uruchomione zdalnie) bywa dławione przez system lub sterownik –
+	# wtedy FPS z audytu nie odpowiada kosztowi renderowania.
+	if not get_window().has_focus():
+		print("UWAGA: okno audytu nie ma fokusu – FPS mogą być ograniczone przez system.")
 	var budgets := ConfigFile.new()
 	if budgets.load(BUDGETS_PATH) != OK:
 		push_error("Brak pliku budżetów: %s" % BUDGETS_PATH)
 		get_tree().quit(2)
 		return
 	var failures := 0
-	var lines: PackedStringArray = ["screen                 fps  max ms  draw  all vp  objects  prims  proc.nodes  nodes  vram MB  budget"]
+	var focused := get_window().has_focus()
+	var lines: PackedStringArray = ["screen                 fps  max ms  gpu ms  cpu ms  draw  all vp  objects  prims  proc.nodes  nodes  vram MB  budget"]
 	for screen in budgets.get_sections():
 		App.go(StringName(screen))
 		# Odczekanie, aż poprzedni ekran zniknie z drzewa, a nowy się narysuje (także przy wolnym
@@ -99,6 +112,11 @@ func _run_audit() -> void:
 		await get_tree().create_timer(0.3).timeout
 		for i in SETTLE_FRAMES:
 			await RenderingServer.frame_post_draw
+		var vps := _viewports()
+		for rid in vps:
+			RenderingServer.viewport_set_measure_render_time(rid, true)
+		var gpu_ms := 0.0
+		var cpu_ms := 0.0
 		var worst := {}
 		# Klatki mierzone z animacjami (logo, ilustracje 3D menu) – najgorszy przypadek.
 		var t_start := Time.get_ticks_usec()
@@ -109,6 +127,16 @@ func _run_audit() -> void:
 			var now := Time.get_ticks_usec()
 			max_ms = maxf(max_ms, (now - t_prev) / 1000.0)
 			t_prev = now
+			# Czas renderowania wszystkich viewportów (GPU i CPU) – niezależny od limitów klatek
+			# i od fokusu okna; najgorsza klatka z próbki.
+			var g := 0.0
+			var c := 0.0
+			for rid in vps:
+				g += RenderingServer.viewport_get_measured_render_time_gpu(rid)
+				c += RenderingServer.viewport_get_measured_render_time_cpu(rid)
+			if i >= 3:
+				gpu_ms = maxf(gpu_ms, g)
+				cpu_ms = maxf(cpu_ms, c)
 			var m := measure()
 			for k in m:
 				worst[k] = maxf(worst.get(k, 0.0), m[k])
@@ -118,16 +146,24 @@ func _run_audit() -> void:
 			get_viewport().get_texture().get_image().save_png(shots.path_join("%s.png" % screen))
 		var verdict := "OK"
 		var min_fps = budgets.get_value(screen, "min_fps") if budgets.has_section_key(screen, "min_fps") else null
-		if min_fps != null and fps < float(min_fps):
+		if min_fps != null and focused and fps < float(min_fps):
 			verdict = "PRZEKROCZONY: fps %.0f < %s" % [fps, min_fps]
 			failures += 1
+		for key in ["max_gpu_ms", "max_cpu_ms"]:
+			var lim = budgets.get_value(screen, key) if budgets.has_section_key(screen, key) else null
+			var val := gpu_ms if key == "max_gpu_ms" else cpu_ms
+			if lim != null and val > float(lim):
+				verdict = "PRZEKROCZONY: %s %.2f > %s" % [key, val, lim]
+				failures += 1
 		for key in ["draw_calls", "total_draw_calls", "objects", "primitives", "processing_nodes", "video_mem_mb"]:
 			var limit = budgets.get_value(screen, key, null)
 			if limit != null and worst[key] > float(limit):
 				verdict = "PRZEKROCZONY: %s %s > %s" % [key, worst[key], limit]
 				failures += 1
-		lines.append("%-20s %5.0f %7.1f %5d %7d %8d %6d %11d %6d %8.1f  %s" % [screen, fps, max_ms, worst.draw_calls, worst.total_draw_calls, worst.objects,
+		lines.append("%-20s %5.0f %7.1f %7.2f %7.2f %5d %7d %8d %6d %11d %6d %8.1f  %s" % [screen, fps, max_ms, gpu_ms, cpu_ms, worst.draw_calls, worst.total_draw_calls, worst.objects,
 				worst.primitives, worst.processing_nodes, worst.nodes, worst.video_mem_mb, verdict])
 	print("\n".join(lines))
+	if not focused:
+		print("Okno bez fokusu – FPS nie były porównywane z budżetem (decydują czasy GPU/CPU).")
 	print("Audyt wydajności: %s" % ("OK" if failures == 0 else "%d przekroczeń budżetu" % failures))
 	get_tree().quit(1 if failures > 0 else 0)

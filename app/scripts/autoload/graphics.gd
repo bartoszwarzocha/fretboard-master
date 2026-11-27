@@ -16,6 +16,9 @@ const QUALITY := {
 const RESOLUTIONS := ["1280x720", "1366x768", "1600x900", "1920x1080", "2560x1440", "3840x2160"]
 
 var _audit := false
+# Fokus okna śledzony z powiadomień – Window.has_focus() bywa w chwili powiadomienia FOCUS_IN
+# jeszcze nieaktualne, przez co program z fokusem zostawał przy limicie klatek „w tle” (10 FPS).
+var _focused := true
 var _closing := false
 var _post: CanvasLayer
 var _post_rect: ColorRect
@@ -139,11 +142,13 @@ func resolutions() -> Array:
 # --- Klatki i energia ---------------------------------------------------------
 
 func _apply_fps() -> void:
+	if _audit:
+		return   # audyt mierzy klatki bez limitów (ustawia je sam)
 	var saving := bool(App.setting(&"power_saving"))
 	# Dane wydajności liczą FPS, a tło ruchome i cząsteczki są animowane – wtedy obraz
 	# odświeża się stale.
 	OS.low_processor_usage_mode = saving and not bool(App.setting(&"perf_info")) and not Backdrop.is_live()
-	if get_window().has_focus() or not saving:
+	if _focused or not saving:
 		Engine.max_fps = int(App.setting(&"max_fps"))
 	else:
 		Engine.max_fps = int(App.setting(&"background_fps"))
@@ -153,6 +158,7 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and not _audit:
 		_save_window()
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		_focused = what == NOTIFICATION_APPLICATION_FOCUS_IN
 		_apply_fps()
 
 
