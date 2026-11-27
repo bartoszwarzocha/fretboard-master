@@ -32,7 +32,7 @@ const DEFAULTS := {
 		&"menu_encyclopedia_art": "guitar",
 		&"ui_font": "manrope", &"start_screen": "menu",
 		&"window_mode": "maximized", &"resolution": "1600x900", &"monitor": -1, &"ui_scale": 1.0,
-		&"vsync": "on", &"max_fps": 0, &"quality": "high", &"msaa": 4, &"render_scale": 1.0,
+		&"vsync": "on", &"max_fps": 60, &"quality": "high", &"msaa": 4, &"render_scale": 1.0,
 		&"anisotropy": 4, &"shadows": "medium", &"reflections": false,
 		&"brightness": 1.0, &"contrast": 1.0, &"gamma": 1.0, &"animations": "full", &"anim_speed": 1.0,
 		&"logo_spin": true, &"logo_spin_rate": "normal", &"neck_tilt": 35.0, &"neck_fov": 40.0,
