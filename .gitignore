@@ -19,3 +19,6 @@ build-export/
 .idea/
 Thumbs.db
 .DS_Store
+
+# ASIO SDK Steinberga – licencja zabrania rozpowszechniania kodu SDK (pobierany lokalnie)
+native/third_party/

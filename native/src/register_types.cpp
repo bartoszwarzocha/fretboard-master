@@ -2,24 +2,39 @@
 // Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #include "register_types.h"
 
+#include "audio/fbm_audio.h"
 #include "fbm_core.h"
 
 #include <gdextension_interface.h>
+#include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
 using namespace godot;
+
+namespace {
+FbmAudio *audio_singleton = nullptr;
+}
 
 void initialize_fbm_core(ModuleInitializationLevel p_level) {
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
         return;
     }
     GDREGISTER_CLASS(FbmCore);
+    GDREGISTER_CLASS(FbmAudio);
+    // Rdzeń audio – jeden na program, dostępny z GDScriptu jako Engine.get_singleton("FbmAudio").
+    audio_singleton = memnew(FbmAudio);
+    Engine::get_singleton()->register_singleton("FbmAudio", audio_singleton);
 }
 
 void uninitialize_fbm_core(ModuleInitializationLevel p_level) {
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
         return;
+    }
+    if (audio_singleton) {
+        Engine::get_singleton()->unregister_singleton("FbmAudio");
+        memdelete(audio_singleton);
+        audio_singleton = nullptr;
     }
 }
 

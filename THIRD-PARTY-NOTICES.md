@@ -10,6 +10,8 @@ Fretboard Master is closed-source freeware covered by `LICENSE.md`. It uses the 
 | Składniki Godota (FreeType, HarfBuzz, ICU, mbed TLS i inne) / Godot third-party components | wbudowane w silnik / built into the engine | wg `COPYRIGHT.txt` Godota (MIT, BSD, FreeType License, Apache 2.0 i inne) | https://github.com/godotengine/godot/blob/master/COPYRIGHT.txt |
 | godot-cpp | połączenie z rdzeniem C++ / C++ bindings | MIT | https://github.com/godotengine/godot-cpp |
 | PortAudio | wejście i wyjście dźwięku / audio I/O | MIT (PortAudio License) | https://www.portaudio.com |
+| ASIO SDK (Steinberg Media Technologies GmbH) | sterownik ASIO w PortAudio / ASIO host support in PortAudio | licencja własnościowa Steinberga (Proprietary ASIO SDK Licensing Agreement) / Steinberg proprietary licence | https://www.steinberg.net/asiosdk |
+| GeneralUser GS (S. Christian Collins) | brzmienia wbudowanego syntezatora MIDI (SoundFont) / built-in MIDI synthesizer sounds | GeneralUser GS License v2.0 | https://www.schristiancollins.com/generaluser |
 | PortMidi | urządzenia MIDI / MIDI devices | MIT-style | https://github.com/PortMidi/portmidi |
 | libsndfile | zapis i odczyt plików dźwiękowych / audio file I/O | LGPL 2.1 lub nowsza / or later | https://libsndfile.github.io/libsndfile/ |
 | TinySoundFont | wbudowany syntezator MIDI / built-in MIDI synthesizer | MIT | https://github.com/schellingb/TinySoundFont |
@@ -33,6 +35,10 @@ Fretboard Master is closed-source freeware covered by `LICENSE.md`. It uses the 
 **Apache 2.0 (Basic Pitch).** Do programu dołączany jest tekst licencji Apache 2.0 oraz plik NOTICE projektu, jeśli istnieje; zmiany w modelu, jeśli zostaną wprowadzone, będą oznaczone.
 
 *Apache 2.0 (Basic Pitch): the Apache 2.0 licence text and the project's NOTICE file (if any) are shipped with the program; any modifications to the model will be marked.*
+
+**ASIO.** ASIO is a registered trademark of Steinberg Media Technologies GmbH. / ASIO jest zastrzeżonym znakiem towarowym Steinberg Media Technologies GmbH. Obsługa ASIO korzysta z ASIO SDK na licencji własnościowej Steinberga (nie GPL). Kod SDK nie jest rozpowszechniany ani przechowywany w repozytorium. Przed publikacją wersji z ASIO (także bezpłatnej wersji testowej) umowa licencyjna podpisana przez autora musi zostać wysłana do Steinberga (sdklicenseagreements@steinberg.de) i kontrasygnowana. Do tego czasu wolno rozwijać i testować program wewnętrznie.
+
+**GeneralUser GS.** Bank brzmień SoundFont (`app/assets/sound/GeneralUser-GS.sf2`) dołączony bez zmian, z plikiem licencji (`GeneralUser-GS-LICENSE.txt`); licencja zezwala na użycie w programach, także komercyjnych.
 
 **Kroje OFL.** Kroje pisma mogą być osadzone w programie; nie są sprzedawane osobno, a ich licencja (OFL 1.1) jest dołączona.
 

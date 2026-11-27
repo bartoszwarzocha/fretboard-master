@@ -5,7 +5,8 @@ extends ModuleScreen
 const COMPONENTS := [
 	["Godot Engine", "MIT"], ["godot-cpp", "MIT"], ["PortAudio", "MIT"], ["PortMidi", "MIT"],
 	["libsndfile", "LGPL 2.1"], ["TinySoundFont", "MIT"], ["PFFFT / KissFFT", "BSD"],
-	["SQLite", "Public domain"], ["Manrope, Montserrat, Rubik, Inter, Space Grotesk, Anton, Noto, Bravura", "OFL 1.1"],
+	["SQLite", "Public domain"], ["ASIO SDK (Steinberg)", "Steinberg licence"],
+	["GeneralUser GS (S. Christian Collins)", "GeneralUser GS licence"], ["Manrope, Montserrat, Rubik, Inter, Space Grotesk, Anton, Noto, Bravura", "OFL 1.1"],
 ]
 
 var _version: Label
@@ -70,6 +71,11 @@ func _build_content() -> void:
 		l.text = c[1]
 		l.theme_type_variation = &"Caption"
 		libs.add_child(l)
+	var tm := Label.new()
+	tm.text = "ASIO is a registered trademark of Steinberg Media Technologies GmbH."
+	tm.theme_type_variation = &"Caption"
+	tm.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	col.add_child(tm)
 	_refresh()
 
 
