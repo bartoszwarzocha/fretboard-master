@@ -74,7 +74,9 @@ func _driver_card() -> Control:
 		_refresh_pill()
 		_fill_outputs()
 		_fill_inputs(), 16))
-	_pill = Label.new()
+	_pill = Button.new()   # przycisk tylko dla ikonki kropki – bez reakcji na mysz
+	_pill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_pill.focus_mode = Control.FOCUS_NONE
 	_pill.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_pill.add_theme_font_override("font", ThemeManager.font_body_bold)
 	_pill.add_theme_font_size_override("font_size", ThemeManager.fs(16))
@@ -83,7 +85,7 @@ func _driver_card() -> Control:
 	return card
 
 
-var _pill: Label
+var _pill: Button
 var _outputs: OptionButton
 var _inputs: OptionButton
 
@@ -139,8 +141,11 @@ func _refresh_pill() -> void:
 		ok = driver == "wasapi"
 		text = "Connected" if ok else "Coming with the new audio engine"
 	var c: Color = ThemeManager.color("focus") if ok else ThemeManager.color("accent")
-	_pill.text = "●  " + tr(text)
+	_pill.text = tr(text)
+	_pill.icon = ButtonGlyph.icon("dot", c, 14)
+	_pill.add_theme_constant_override("h_separation", 8)
 	_pill.add_theme_color_override("font_color", c)
+	_pill.add_theme_color_override("font_disabled_color", c)
 	_pill.add_theme_stylebox_override("normal", ThemeManager.box(Color(c, 0.1), Color.TRANSPARENT, 20, 0, 16, 9))
 
 
@@ -243,7 +248,23 @@ func _output_card() -> Control:
 	var buttons := HBoxContainer.new()
 	buttons.add_theme_constant_override("separation", 12)
 	col.add_child(buttons)
-	var test := _big_button("▶  " + tr("Test sound"))
+	var test := _big_button("")
+	# Ikonka i napis razem na środku przycisku (ikonka Buttona stałaby przy lewej krawędzi).
+	var inner := HBoxContainer.new()
+	inner.alignment = BoxContainer.ALIGNMENT_CENTER
+	inner.add_theme_constant_override("separation", 10)
+	inner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	inner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var tri := TextureRect.new()
+	tri.texture = ButtonGlyph.icon("play", ThemeManager.color("text"), 16)
+	tri.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	tri.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	tri.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	inner.add_child(tri)
+	var tl := _label("Test sound", 16, ThemeManager.color("text"), true)
+	tl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	inner.add_child(tl)
+	test.add_child(inner)
 	test.pressed.connect(func() -> void:
 		if not AudioEngine.play_test_note():   # rdzeń C++ – wybrany instrument MIDI; bez rdzenia – Godot
 			_check.play_test_tone())

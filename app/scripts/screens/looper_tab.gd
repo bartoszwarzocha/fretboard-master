@@ -254,7 +254,7 @@ func _update_buttons() -> void:
 	if _play == null:
 		return
 	_play.text = tr("Stop") if _playing else tr("Play")
-	_play.icon = _glyph("stop" if _playing else "play", Color("1A1206"))
+	_play.icon = ButtonGlyph.icon("stop" if _playing else "play", Color("1A1206"))
 	_play.add_theme_constant_override("h_separation", 10)
 	var bg: Color = STOP if _playing else ThemeManager.color("accent")
 	var dark := Color("1A1206")
@@ -267,34 +267,13 @@ func _update_buttons() -> void:
 	_record.text = tr("Finish recording") if rec else tr("Record new")
 	var rbg := RED if rec else Color(RED, 0.10)
 	var fg := Color.WHITE if rec else Color("FF8A8E")
-	_record.icon = _glyph("stop" if rec else "dot", fg if rec else RED)
+	_record.icon = ButtonGlyph.icon("stop" if rec else "dot", fg if rec else RED)
 	_record.add_theme_constant_override("h_separation", 10)
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		_record.add_theme_color_override(c, fg)
 	_record.add_theme_stylebox_override("normal", ThemeManager.box(rbg, RED, 14, 1, 31, 10))
 	_record.add_theme_stylebox_override("hover", ThemeManager.box(rbg.lightened(0.08) if rec else Color(RED, 0.18), RED, 14, 1, 31, 10))
 	_record.add_theme_stylebox_override("pressed", ThemeManager.box(Color(RED, 0.3), RED, 14, 1, 31, 10))
-
-
-## Ikonka przycisku (trójkąt, kwadrat, kropka) – rysowana, bo czcionki interfejsu nie mają tych znaków.
-static func _glyph(kind: String, color: Color) -> ImageTexture:
-	var n := 18 * 4
-	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
-	for y in n:
-		for x in n:
-			var u := (x + 0.5) / n
-			var v := (y + 0.5) / n
-			var inside := false
-			match kind:
-				"play":
-					inside = u > 0.18 and u < 0.86 and absf(v - 0.5) < (0.86 - u) * 0.62
-				"stop":
-					inside = u > 0.2 and u < 0.8 and v > 0.2 and v < 0.8
-				_:
-					inside = Vector2(u - 0.5, v - 0.5).length() < 0.32
-			img.set_pixel(x, y, color if inside else Color(color, 0.0))
-	img.resize(ThemeManager.fs(18), ThemeManager.fs(18), Image.INTERPOLATE_LANCZOS)
-	return ImageTexture.create_from_image(img)
 
 
 func summary() -> String:
