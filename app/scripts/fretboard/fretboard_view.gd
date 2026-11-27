@@ -18,7 +18,6 @@ const TOP := 30.0           # wiersz numerów progów
 const PAD := 10.0
 const SS := 2               # nadpróbkowanie obrazu 3D (2× w każdą stronę) – gładkie struny i krawędzie
 const THICK := [1.0, 1.3, 1.7, 2.2, 2.7, 3.2, 3.7, 4.2]
-const INLAY_SINGLE := [3, 5, 7, 9, 15, 17, 19, 21]
 
 var spec: NeckSpec
 var demo := false           # przykładowa skala (podgląd w ustawieniach) – odtwarzana po każdej zmianie
@@ -270,8 +269,32 @@ func _schema_notes(pos_fn: Callable, r_fn: Callable) -> void:
 
 
 func _inlay_cells() -> Array:
-	return INLAY_SINGLE.filter(func(f: int) -> bool: return f <= spec.frets) + \
-			[12, 24].filter(func(f: int) -> bool: return f <= spec.frets)
+	if spec.inlays == "none":
+		return []
+	return spec.inlay_frets() + spec.double_dot_frets()
+
+
+# Wkładki w schematach wg ustawienia: kropki (podwójne na 12./24.), prostokąty albo trapezy.
+# cx: środek pola progu f; cell: szerokość pola; yc: środek gryfu; hh: połowa wysokości wkładki;
+# dbl: dwa położenia y podwójnej kropki.
+func _schema_inlays(cx: Callable, cell: Callable, yc: float, hh: float, dbl: Array) -> void:
+	match spec.inlays:
+		"none":
+			return
+		"dots":
+			for f in spec.inlay_frets():
+				draw_circle(Vector2(cx.call(f), yc), 5.0, SCH_INLAY)
+			for f in spec.double_dot_frets():
+				for y in dbl:
+					draw_circle(Vector2(cx.call(f), y), 5.0, SCH_INLAY)
+		_:
+			var waist := 0.0 if spec.inlays == "blocks" else 0.22
+			for f in spec.inlay_frets():
+				var c: float = cx.call(f)
+				var w := minf(absf(cell.call(f)) * 0.30, 24.0)
+				var n := w * (1.0 - waist)
+				draw_colored_polygon(PackedVector2Array([Vector2(c - w, yc - hh), Vector2(c + w, yc - hh),
+					Vector2(c + n, yc), Vector2(c + w, yc + hh), Vector2(c - w, yc + hh), Vector2(c - n, yc)]), SCH_INLAY)
 
 
 # 1) Rysowana tabela – równe komórki, wiersze = struny.
@@ -323,13 +346,8 @@ func _draw_grid() -> void:
 	var h := sp * (spec.strings - 1)
 	draw_rect(Rect2(_lx(x0, cw * spec.frets), top - 12, cw * spec.frets, h + 24), SCH_BOARD)
 	var mid := h * 0.5
-	for f in INLAY_SINGLE:
-		if f <= spec.frets:
-			draw_circle(Vector2(_mx(x0 + cw * (f - 0.5)), top + mid), 5.0, SCH_INLAY)
-	for f in [12, 24]:
-		if f <= spec.frets:
-			for z in [mid - sp, mid + sp]:
-				draw_circle(Vector2(_mx(x0 + cw * (f - 0.5)), top + z), 5.0, SCH_INLAY)
+	_schema_inlays(func(f): return _mx(x0 + cw * (f - 0.5)), func(_f): return cw, top + mid, h * 0.33,
+		[top + mid - sp, top + mid + sp])
 	for n in range(1, spec.frets + 1):
 		draw_line(Vector2(_mx(x0 + cw * n), top - 12), Vector2(_mx(x0 + cw * n), top + h + 12), SCH_FRET, 2.0)
 		_fret_label(Vector2(_mx(x0 + cw * (n - 0.5)), top - 24), n)
@@ -354,16 +372,13 @@ func _draw_shape() -> void:
 	draw_colored_polygon(PackedVector2Array([
 		Vector2(X.call(0.0), Z.call(-spec.half_w(0.0))), Vector2(X.call(xend), Z.call(-spec.half_w(xend))),
 		Vector2(X.call(xend), Z.call(spec.half_w(xend))), Vector2(X.call(0.0), Z.call(spec.half_w(0.0)))]), SCH_BOARD)
-	for f in INLAY_SINGLE:
-		if f <= spec.frets:
-			draw_circle(Vector2(X.call((spec.xf(f - 1) + spec.xf(f)) * 0.5), yc), 5.0, SCH_INLAY)
 	var mid := spec.strings / 2
-	for f in [12, 24]:
-		if f <= spec.frets:
-			var c := (spec.xf(f - 1) + spec.xf(f)) * 0.5
-			for s in [mid - 2, mid]:
-				var z := (spec.string_z(s, c) + spec.string_z(s + 1, c)) * 0.5
-				draw_circle(Vector2(X.call(c), Z.call(z)), 5.0, SCH_INLAY)
+	var c12 := (spec.xf(11) + spec.xf(12)) * 0.5
+	var dbl := []
+	for s in [mid - 2, mid]:
+		dbl.append(Z.call((spec.string_z(s, c12) + spec.string_z(s + 1, c12)) * 0.5))
+	_schema_inlays(func(f): return X.call((spec.xf(f - 1) + spec.xf(f)) * 0.5),
+		func(f): return (spec.xf(f) - spec.xf(f - 1)) * k, yc, spec.half_w(c12) * k * 0.66, dbl)
 	for n in range(1, spec.frets + 1):
 		var x := spec.xf(n)
 		draw_line(Vector2(X.call(x), Z.call(-spec.half_w(x))), Vector2(X.call(x), Z.call(spec.half_w(x))), SCH_FRET, 2.0, true)
