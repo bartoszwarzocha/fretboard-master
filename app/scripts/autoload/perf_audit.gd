@@ -89,9 +89,11 @@ func _shots_dir() -> String:
 
 func _run_audit() -> void:
 	OS.low_processor_usage_mode = false
-	# Pomiar klatek bez ograniczeń: bez V-Sync i limitu FPS – widać rzeczywisty koszt klatki.
+	# Pomiar przy limicie klatek programu (60 albo 30) – wyżej program i tak nie rysuje;
+	# bez V-Sync, żeby nie mierzyć odświeżania ekranu.
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
-	Engine.max_fps = 0
+	var limit := 30 if int(App.setting(&"max_fps")) == 30 else 60
+	Engine.max_fps = limit
 	print(gpu_info())
 	# Okno bez fokusu (np. uruchomione zdalnie) bywa dławione przez system lub sterownik –
 	# wtedy FPS z audytu nie odpowiada kosztowi renderowania.
@@ -146,12 +148,15 @@ func _run_audit() -> void:
 			get_viewport().get_texture().get_image().save_png(shots.path_join("%s.png" % screen))
 		var verdict := "OK"
 		var min_fps = budgets.get_value(screen, "min_fps") if budgets.has_section_key(screen, "min_fps") else null
+		# Wymagany FPS nie przekracza limitu programu; 5% tolerancji na takt limitera.
+		if min_fps != null:
+			min_fps = minf(float(min_fps), limit) * 0.95
 		if min_fps != null and focused and fps < float(min_fps):
 			# Decyzja autora (27.11.2026): limit klatek w sterowniku (np. 30 FPS w panelu NVIDIA) zostaje.
 			# Niski FPS przy czasie klatki GPU i CPU mieszczącym się w budżecie min_fps to limit
 			# zewnętrzny, nie koszt programu – audyt go wypisuje, ale nie liczy jako przekroczenia.
 			if maxf(gpu_ms, cpu_ms) > 1000.0 / float(min_fps):
-				verdict = "PRZEKROCZONY: fps %.0f < %s" % [fps, min_fps]
+				verdict = "PRZEKROCZONY: fps %.0f < %.0f" % [fps, min_fps]
 				failures += 1
 			else:
 				verdict = "OK (fps %.0f – limit zewnętrzny)" % fps
