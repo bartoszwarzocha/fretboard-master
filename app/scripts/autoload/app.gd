@@ -18,8 +18,8 @@ const DEFAULTS := {
 	},
 	&"guitar": {
 		&"tuning": "standard", &"strings": 6, &"frets": 22, &"left_handed": false, &"a4": 440.0,
-		&"neck_view": "electric_3d", &"fretboard_wood": "rosewood", &"fret_metal": "nickel",
-		&"inlays": "dots", &"string_color": "nickel",
+		&"neck_view": "electric_3d", &"fretboard_wood": "auto", &"fret_metal": "auto",
+		&"inlays": "auto", &"string_color": "auto",
 	},
 	&"look": {
 		&"theme": "night", &"accent": "", &"bg_mode": "pattern", &"bg_color": "", &"bg_color2": "1D2A55",
@@ -35,7 +35,7 @@ const DEFAULTS := {
 		&"vsync": "on", &"max_fps": 60, &"quality": "high", &"msaa": 4, &"render_scale": 1.0,
 		&"anisotropy": 4, &"shadows": "medium", &"reflections": false,
 		&"brightness": 1.0, &"contrast": 1.0, &"gamma": 1.0, &"animations": "full", &"anim_speed": 1.0,
-		&"logo_spin": true, &"logo_spin_rate": "normal", &"neck_tilt": 35.0, &"neck_fov": 40.0,
+		&"logo_spin": true, &"logo_spin_rate": "normal", &"neck_tilt": 14.0, &"neck_fov": 22.0,
 		&"perf_info": false, &"power_saving": true, &"background_fps": 10,
 	},
 	&"language": {

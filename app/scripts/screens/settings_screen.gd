@@ -15,8 +15,8 @@ const TABS := [
 # Zmiana tych ustawień pokazuje lub ukrywa inne pola – zakładka jest wtedy budowana od nowa.
 const REBUILD_KEYS := [&"theme", &"accent", &"bg_mode", &"bg_gradient_type", &"bg_animated", &"particles", &"hit_particles", &"window_mode", &"neck_view",
 		&"quality", &"power_saving", &"logo_spin", &"animations", &"ui_font", &"panel_radius", &"panel_opacity", &"panel_shadow", &"font_scale"]
-# Widoki gryfu: realistyczne 3D (trzy rodzaje gitar) i schematyczne (jak w pierwotnej makiecie).
-# Rysowanie powstanie razem z modułem gryfu; tu tylko wybór. Kolejne widoki – nowa pozycja listy.
+# Widoki gryfu: realistyczne 3D (trzy rodzaje gitar) i schematyczne (wg makiety gryfu z 27.11.2026).
+# Rysuje je FretboardView (scripts/fretboard). Kolejne widoki – nowa pozycja listy.
 const NECK_VIEWS := [
 	["classical_3d", "Classical guitar (3D)"], ["acoustic_3d", "Acoustic guitar (3D)"],
 	["electric_3d", "Electric guitar (3D)"], ["table", "Diagram – drawn table"],
@@ -293,15 +293,24 @@ func _build_guitar() -> void:
 	_slider(&"a4", "Concert pitch (A4)", 415, 466, 1, "%d Hz")
 
 	_section("Fretboard look")
+	# Podgląd gryfu z przykładową skalą – odświeża się po każdej zmianie ustawień gryfu.
+	var preview := FretboardView.new()
+	preview.demo = true
+	preview.custom_minimum_size.y = 240
+	preview.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_rows.add_child(preview)
 	_select(&"neck_view", "Fretboard view", NECK_VIEWS)
-	# Drewno, progi i struny dotyczą tylko realistycznych widoków 3D; markery – wszystkich widoków.
+	# Drewno, progi i struny dotyczą tylko realistycznych widoków 3D; wkładki – wszystkich widoków.
+	# „Jak w wybranej gitarze” = wygląd z zaakceptowanej makiety dla danego rodzaju gitary.
 	if str(App.setting(&"neck_view")).ends_with("_3d"):
-		_select(&"fretboard_wood", "Fretboard wood", [["rosewood", "Rosewood"], ["maple", "Maple"],
-				["ebony", "Ebony"]])
-		_select(&"fret_metal", "Frets", [["nickel", "Nickel"], ["stainless", "Stainless steel"], ["gold", "Gold"]])
-		_select(&"string_color", "Strings", [["nickel", "Nickel"], ["bronze", "Bronze"], ["black", "Black"]])
-	_select(&"inlays", "Inlays", [["dots", "Dots"], ["blocks", "Blocks"], ["trapezoids", "Trapezoids"],
-			["none", "None"]])
+		_select(&"fretboard_wood", "Fretboard wood", [["auto", "As on the selected guitar"], ["rosewood", "Rosewood"],
+				["maple", "Maple"], ["ebony", "Ebony"]])
+		_select(&"fret_metal", "Frets", [["auto", "As on the selected guitar"], ["nickel", "Nickel"],
+				["stainless", "Stainless steel"], ["gold", "Gold"]])
+		_select(&"string_color", "Strings", [["auto", "As on the selected guitar"], ["nickel", "Nickel"],
+				["bronze", "Bronze"], ["black", "Black"]])
+	_select(&"inlays", "Inlays", [["auto", "As on the selected guitar"], ["dots", "Dots"], ["blocks", "Blocks"],
+			["trapezoids", "Trapezoids"], ["none", "None"]])
 
 
 func _build_graphics() -> void:

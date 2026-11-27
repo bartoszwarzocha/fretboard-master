@@ -400,8 +400,8 @@ msgstr "Попробовать"
 msgid "Panels and tiles"
 msgstr "Панели и плитки"
 
-msgid "Start or plan your practice to see your exercise queue here."
-msgstr "Начни или запланируй занятия, чтобы увидеть здесь очередь своих упражнений."
+msgid "Plan or start an exercise to see your learning queue here."
+msgstr "Запланируй или начни упражнение, чтобы увидеть здесь очередь занятий."
 
 msgid "Encyclopedia tile"
 msgstr "Плитка «Энциклопедия»"
@@ -483,6 +483,9 @@ msgstr "Внешний вид грифа"
 
 msgid "Fretboard wood"
 msgstr "Накладка грифа"
+
+msgid "As on the selected guitar"
+msgstr "Как у выбранной гитары"
 
 msgid "Rosewood"
 msgstr "Палисандр"

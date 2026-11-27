@@ -400,8 +400,8 @@ msgstr "Wypróbuj"
 msgid "Panels and tiles"
 msgstr "Panele i kafelki"
 
-msgid "Start or plan your practice to see your exercise queue here."
-msgstr "Rozpocznij lub zaplanuj ćwiczenia, aby zobaczyć tutaj kolejkę swoich ćwiczeń."
+msgid "Plan or start an exercise to see your learning queue here."
+msgstr "Zaplanuj lub rozpocznij ćwiczenie, aby zobaczyć tu kolejkę nauki."
 
 msgid "Encyclopedia tile"
 msgstr "Kafel Encyklopedii"
@@ -483,6 +483,9 @@ msgstr "Wygląd gryfu"
 
 msgid "Fretboard wood"
 msgstr "Podstrunnica"
+
+msgid "As on the selected guitar"
+msgstr "Jak w wybranej gitarze"
 
 msgid "Rosewood"
 msgstr "Palisander"

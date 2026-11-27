@@ -59,14 +59,8 @@ func _ready() -> void:
 	_logo.size = SPLASH_LOGO
 	_logo.scale = Vector2.ONE * (MENU_LOGO.y / SPLASH_LOGO.y)
 	_logo_slot.add_child(_logo)
-	# Kliknięcie logo otwiera stronę programu w przeglądarce.
 	_logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_logo_slot.mouse_filter = Control.MOUSE_FILTER_STOP
-	_logo_slot.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	_logo_slot.gui_input.connect(func(e: InputEvent) -> void:
-		var b := e as InputEventMouseButton
-		if b and b.button_index == MOUSE_BUTTON_LEFT and not b.pressed:
-			OS.shell_open(App.website()))
+	_logo_slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	var tagline := Label.new()
 	tagline.text = "fretboard · theory · training"
@@ -93,7 +87,7 @@ func _ready() -> void:
 	_fade.append(question)
 	# Zachęta; docelowo w tym miejscu dzisiejszy plan ćwiczeń / ostatnie ćwiczenie (gdy powstaną moduły).
 	var cheer := Label.new()
-	cheer.text = "Start or plan your practice to see your exercise queue here."
+	cheer.text = "Plan or start an exercise to see your learning queue here."
 	cheer.theme_type_variation = &"Muted"
 	cheer.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	left.add_child(cheer)
@@ -131,6 +125,14 @@ func _ready() -> void:
 	_company.size = SPLASH_COMPANY
 	_company.scale = Vector2.ONE * (MENU_COMPANY.y / SPLASH_COMPANY.y)
 	_company_slot.add_child(_company)
+	# Kliknięcie logo firmy otwiera stronę firmy w przeglądarce (logo programu – bez akcji).
+	_company_slot.mouse_filter = Control.MOUSE_FILTER_STOP
+	_company_slot.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_company_slot.tooltip_text = "BW Digital Systems & Publishing"
+	_company_slot.gui_input.connect(func(e: InputEvent) -> void:
+		var b := e as InputEventMouseButton
+		if b and b.button_index == MOUSE_BUTTON_LEFT and not b.pressed:
+			OS.shell_open(App.website()))
 	var copyright := Label.new()
 	copyright.text = "© 2026 BW Digital Systems and Publishing – Bartosz Warzocha"
 	copyright.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
