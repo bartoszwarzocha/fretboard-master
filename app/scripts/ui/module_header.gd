@@ -24,12 +24,12 @@ func _ready() -> void:
 	logo.flat = true
 	logo.tooltip_text = "Main menu"
 	logo.focus_mode = Control.FOCUS_NONE
-	logo.custom_minimum_size = Vector2(150, 54)
+	logo.custom_minimum_size = Vector2(117, 55)
 	logo.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 	logo.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
 	logo.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
 	logo.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	var ph := Logo3D.create(Vector2(150, 54), false)
+	var ph := Logo3D.create(Vector2(117, 55), false)
 	ph.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	logo.add_child(ph)
 	logo.pressed.connect(App.go.bind(&"menu"))

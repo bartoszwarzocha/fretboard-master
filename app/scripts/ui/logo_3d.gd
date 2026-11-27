@@ -5,7 +5,7 @@
 #  • intro > 0 (ekran startowy): logo nadlatuje z oddali, obracając się; w ostatniej sekundzie
 #    już tylko się zbliża, płynnie wyhamowując.
 #  • animated = false (nagłówek modułów, „O programie”): obraz rysowany raz.
-# Obok logo stoi numer wersji „2.0” jako tekst 3D (czcionka Anton, TextMesh) – zgrupowany z logo,
+# Przy logo stoi numer wersji „2.0” jako tekst 3D (czcionka Anton, TextMesh) – zgrupowany z logo,
 # porusza się razem z nim. Numer pochodzi z ustawień projektu (application/config/version),
 # więc przy kolejnej wersji wystarczy go podbić.
 # Optymalizacja: 22 siatki modelu są przy pierwszym użyciu scalane w JEDNĄ siatkę z czterema
@@ -17,8 +17,11 @@ extends SubViewportContainer
 
 const MODEL_PATH := "res://assets/branding/logo.glb"
 const VERSION_FONT := "res://assets/fonts/Anton.ttf"
-const VERSION_HEIGHT := 0.62   # wysokość „2.0” względem wysokości logo
-const VERSION_GAP := 0.035     # odstęp od logo względem jego szerokości
+const VERSION_HEIGHT := 0.72   # wysokość „2.0” względem wysokości napisu „Master”
+const VERSION_DROP := 0.2      # obniżenie „2.0” poniżej linii bazowej „Master” (jak we wzorze autora)
+const VERSION_GAP := 0.012     # odstęp od krawędzi tafli względem szerokości logo
+const VERSION_COLOR := Color("D9DADF")   # jasnoszare, srebrzyste
+const MASTER_PARTS := [&"path3", &"path5", &"path6", &"path8", &"path9", &"path10"]
 
 # Kolory części modelu (nazwy węzłów z pliku .glb – kontury wektorowe z Inkscape).
 const COLORS := {
@@ -234,6 +237,8 @@ static func _build_mesh() -> void:
 	var stack: Array = [[root, orient]]
 	var box := AABB()
 	var first := true
+	var master := AABB()
+	var outline := PackedVector3Array()   # obrys zewnętrzny tafli (do położenia „2.0”)
 	while not stack.is_empty():
 		var item: Array = stack.pop_back()
 		var node: Node = item[0]
@@ -252,6 +257,11 @@ static func _build_mesh() -> void:
 			var b := xf * mesh.get_aabb()
 			box = b if first else box.merge(b)
 			first = false
+			if StringName(node.name) in MASTER_PARTS:
+				master = b if master.size == Vector3.ZERO else master.merge(b)
+			elif StringName(node.name) == &"use28":
+				for v in (mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX] as PackedVector3Array):
+					outline.append(xf * v)
 		for c in node.get_children():
 			stack.append([c, xf])
 	root.free()
@@ -280,22 +290,33 @@ static func _build_mesh() -> void:
 		mat.clearcoat_roughness = 0.12
 		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		_mesh.surface_set_material(_mesh.get_surface_count() - 1, mat)
-	# Numer wersji „2.0” – tekst 3D z czcionki Anton, ten sam materiał co pomarańczowe elementy logo.
+	# Numer wersji „2.0” – tekst 3D z czcionki Anton, jasnoszary, poza taflą: tuż przy jej prawej
+	# krawędzi na wysokości „Master”, nieco poniżej jego linii bazowej, wyraźnie mniejszy (wzór autora).
 	_text = TextMesh.new()
 	_text.text = _version_label()
 	_text.font = load(VERSION_FONT)
 	_text.font_size = 64
 	_text.pixel_size = 0.001
-	_text.depth = box.size.z * 0.4
+	_text.depth = box.size.z * 0.2
 	_text.curve_step = 1.0
 	var h0 := _text.get_aabb().size.y
-	_text.pixel_size = 0.001 * box.size.y * VERSION_HEIGHT / maxf(h0, 0.000001)
-	_text.material = _mesh.surface_get_material(2)
+	_text.pixel_size = 0.001 * master.size.y * VERSION_HEIGHT / maxf(h0, 0.000001)
+	var tmat := StandardMaterial3D.new()
+	tmat.albedo_color = VERSION_COLOR
+	tmat.metallic = 0.25
+	tmat.roughness = 0.3
+	tmat.metallic_specular = 0.8
+	_text.material = tmat
 	var tb := _text.get_aabb()
-	# Logo wyśrodkowane w (0,0,0); „2.0” po prawej, wyrównane do dolnej krawędzi tafli.
+	# Prawa krawędź obrysu tafli na wysokości „Master” (dolna, węższa część tafli).
+	var edge := master.end.x
+	for v in outline:
+		if v.y >= master.position.y and v.y <= master.get_center().y:   # dolna połowa – bez narożnika części górnej
+			edge = maxf(edge, v.x)
 	var lb := AABB(-box.size * 0.5, box.size)
-	var tpos := Vector3(lb.end.x + box.size.x * VERSION_GAP - tb.position.x,
-			lb.position.y - tb.position.y, lb.end.z - tb.end.z)   # przód „2.0” równo z przodem liter
+	var tpos := Vector3(edge - center.x + box.size.x * VERSION_GAP - tb.position.x,
+			master.position.y - center.y - tb.position.y - master.size.y * VERSION_DROP,
+			lb.end.z - tb.end.z)   # przód „2.0” równo z przodem liter
 	var group := lb.merge(AABB(tb.position + tpos, tb.size))
 	var shift := -group.get_center()
 	_logo_pos = shift

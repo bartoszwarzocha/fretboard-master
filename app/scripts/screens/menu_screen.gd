@@ -9,9 +9,9 @@ extends Control
 const MOVE_TIME := 1.0                    # przejazd logo
 const TILE_DELAY := Vector2(0.2, 0.65)    # losowe opóźnienie kafelka (od–do)
 const TILE_TIME := 0.5                    # pojawienie się kafelka
-const SPLASH_LOGO := Vector2(800, 290)    # rozmiar logo programu na ekranie startowym
+const SPLASH_LOGO := Vector2(680, 320)    # rozmiar logo programu na ekranie startowym
 const SPLASH_COMPANY := Vector2(260, 70)  # rozmiar logo firmy na ekranie startowym
-const MENU_LOGO := Vector2(400, 145)
+const MENU_LOGO := Vector2(361, 170)
 const MENU_COMPANY := Vector2(150, 40)
 
 ## Prostokąty logo na ekranie startowym: {"logo": Rect2, "company": Rect2}; puste = bez animacji.
@@ -45,7 +45,7 @@ func _ready() -> void:
 	body.add_theme_constant_override("separation", 48)
 	page.add_child(body)
 	var left := VBoxContainer.new()
-	left.custom_minimum_size.x = 400
+	left.custom_minimum_size.x = 360
 	left.add_theme_constant_override("separation", 8)
 	body.add_child(left)
 
