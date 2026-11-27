@@ -16,9 +16,9 @@ const MODEL_PATH := "res://assets/branding/logo.glb"
 
 # Kolory części modelu (nazwy węzłów z pliku .glb – kontury wektorowe z Inkscape).
 const COLORS := {
-	&"panel": Color("101114"),      # tafla: obrys zewnętrzny i pole wewnętrzne
-	&"frame": Color("F5A311"),      # pomarańczowa obwódka
-	&"orange": Color("FFB21A"),     # litera F z kluczami i napis „Master”
+	&"panel": Color("060607"),      # tafla: obrys zewnętrzny i pole wewnętrzne
+	&"frame": Color("F09206"),      # pomarańczowa obwódka
+	&"orange": Color("F49C08"),     # litera F z kluczami i napis „Master”
 	&"white": Color("F4F4F2"),      # „retboard”
 }
 const PARTS := {
@@ -36,6 +36,8 @@ const FOV := 22.0
 const INTRO_FAR := 14.0                  # odległość startowa nadlotu (w szerokościach logo)
 const INTRO_TURNS := 1.5                 # liczba obrotów w czasie nadlotu
 const INTRO_GLIDE := 1.0                 # ostatnia sekunda: tylko zbliżanie, bez obrotu
+const SPIN_EVERY := Vector2(3.0, 10.0)   # losowy obrót o 360° co tyle sekund (od–do)
+const SPIN_TIME := Vector2(0.5, 0.7)     # czas trwania obrotu (od–do)
 
 static var _mesh: ArrayMesh
 static var _size: Vector3
@@ -48,6 +50,9 @@ var _time := 0.0
 var _idle := 0.0
 var _amp := 1.0
 var _rot := Vector2.ZERO
+var _spin := -1.0          # postęp obrotu 0–1; -1 = brak obrotu
+var _spin_len := 0.6
+var _spin_timer: Timer
 
 
 static func create(p_size: Vector2, p_animated := true, p_intro := 0.0) -> Logo3D:
@@ -76,14 +81,14 @@ func _ready() -> void:
 	env.background_mode = Environment.BG_CLEAR_COLOR
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color.WHITE
-	env.ambient_light_energy = 0.6
+	env.ambient_light_energy = 0.38
 	var we := WorldEnvironment.new()
 	we.environment = env
 	_vp.add_child(we)
 	var light := DirectionalLight3D.new()
 	light.shadow_enabled = false
-	light.light_energy = 1.0
-	light.rotation_degrees = Vector3(-30, -20, 0)
+	light.light_energy = 0.95
+	light.rotation_degrees = Vector3(-28, -32, 0)
 	_vp.add_child(light)
 
 	_pivot = MeshInstance3D.new()
@@ -108,6 +113,13 @@ func _ready() -> void:
 	_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if animated else SubViewport.UPDATE_ONCE
 	set_process(live)
 	set_process_input(live)
+	if live:
+		# Losowe obroty odlicza Timer – między obrotami logo nie wymaga przetwarzania klatek.
+		_spin_timer = Timer.new()
+		_spin_timer.one_shot = true
+		_spin_timer.timeout.connect(_start_spin)
+		add_child(_spin_timer)
+		_spin_timer.start(intro + randf_range(SPIN_EVERY.x, SPIN_EVERY.y))
 
 
 func _process(delta: float) -> void:
@@ -124,12 +136,36 @@ func _process(delta: float) -> void:
 	if active:
 		target += _cursor_tilt() * minf(_amp * 2.0, 1.0)
 	_rot = _rot.lerp(target, 1.0 - exp(-FOLLOW * delta))
+	var spin_deg := 0.0
+	if _spin >= 0.0:
+		_spin = minf(_spin + delta / _spin_len, 1.0)
+		spin_deg = 360.0 * _smooth(_spin)
+		if _spin >= 1.0:
+			_spin = -1.0
+			spin_deg = 0.0
+			_spin_timer.start(randf_range(SPIN_EVERY.x, SPIN_EVERY.y))
 	_pivot.position = Vector3.ZERO
-	_pivot.rotation_degrees = Vector3(_rot.x, _rot.y, 0)
-	if not active and _amp == 0.0 and _rot.length() < 0.02:
+	_pivot.rotation_degrees = Vector3(_rot.x, _rot.y + spin_deg, 0)
+	if not active and _spin < 0.0 and _amp == 0.0 and _rot.length() < 0.02:
 		_pivot.rotation_degrees = Vector3.ZERO
 		_vp.render_target_update_mode = SubViewport.UPDATE_ONCE
 		set_process(false)
+
+
+# Obrót o 360° wokół osi pionowej – płynny start i zatrzymanie. Pomijany, gdy okno nie ma fokusu.
+func _start_spin() -> void:
+	if not get_window().has_focus():
+		_spin_timer.start(randf_range(SPIN_EVERY.x, SPIN_EVERY.y))
+		return
+	_spin = 0.0
+	_spin_len = randf_range(SPIN_TIME.x, SPIN_TIME.y)
+	if not is_processing():
+		_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		set_process(true)
+
+
+static func _smooth(t: float) -> float:
+	return t * t * t * (t * (t * 6.0 - 15.0) + 10.0)
 
 
 # Nadlot: odległość maleje z wyhamowaniem (ease-out) przez cały czas; obrót wygasa łagodnie
@@ -216,8 +252,12 @@ static func _build_mesh() -> void:
 		_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		var mat := StandardMaterial3D.new()
 		mat.albedo_color = COLORS[part]
-		mat.roughness = 0.55 if part == &"panel" else 0.4
-		mat.metallic_specular = 0.6
+		# Połysk: gładka powierzchnia z lakierem (clearcoat) – wyraźne odblaski przy kołysaniu.
+		mat.roughness = 0.45 if part == &"panel" else 0.28
+		mat.metallic_specular = 0.7
+		mat.clearcoat_enabled = true
+		mat.clearcoat = 0.6
+		mat.clearcoat_roughness = 0.12
 		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		_mesh.surface_set_material(_mesh.get_surface_count() - 1, mat)
 	_size = box.size

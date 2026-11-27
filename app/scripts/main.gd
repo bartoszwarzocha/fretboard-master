@@ -29,6 +29,11 @@ func _update_background() -> void:
 
 
 func _show(screen_id: StringName) -> void:
+	# Przejście ze startu do menu: menu dostaje położenie logo, a tło płynnie zmienia kolor.
+	var intro := {}
+	if _screen and App.current_screen == &"splash" and screen_id == &"menu" \
+			and not "--perf-audit" in OS.get_cmdline_user_args():
+		intro = _screen.logo_rects()
 	if _screen:
 		_screen.queue_free()
 		remove_child(_screen)
@@ -38,6 +43,7 @@ func _show(screen_id: StringName) -> void:
 			_screen = SplashScreen.new()
 		&"menu":
 			_screen = MenuScreen.new()
+			_screen.intro_from = intro
 		&"settings":
 			_screen = SettingsScreen.new()
 		&"about":
@@ -48,3 +54,7 @@ func _show(screen_id: StringName) -> void:
 	_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(_screen)
 	_update_background()
+	if not intro.is_empty():
+		var target := _background.color
+		_background.color = Color.BLACK
+		_background.create_tween().tween_property(_background, "color", target, 0.8)
