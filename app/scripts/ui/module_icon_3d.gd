@@ -1,171 +1,43 @@
-# Fretboard Master – ikona 3D modułu w kafelku menu (assets/models/module-icons.glb od autora).
-#  • Wszystkie ikony delikatnie kołyszą się i pochylają w stronę kursora (jak logo); każda z
-#    innym przesunięciem fazy i nieco inną szybkością, więc ruch przechodzi po nich falą.
-#  • Po najechaniu na kafel (spin = true) ikona wyraźnie obraca się wokół osi pionowej; po zjechaniu
-#    kończy rozpoczęty obrót i płynnie zatrzymuje się frontem do widza.
-#  • Po IDLE_STOP s bez ruchu myszy ikona wraca do spoczynku, przetwarzanie i odświeżanie stają.
-# Materiały i oświetlenie – dokładnie te same co w logo 3D (Logo3D.material, Logo3D.add_lighting).
+# Fretboard Master – siatki ikon 3D modułów (assets/models/module-icons.glb od autora).
+# Ikony są rysowane we wspólnej scenie menu (MenuStage3D) – tutaj tylko przygotowanie siatek.
+# Materiały – dokładnie te same co w logo 3D (Logo3D.material).
+# Ikona Ustawień (zębatka) nie ma jej w pliku autora – jest budowana w kodzie (_gear_mesh) w tym
+# samym stylu: te same warstwy, grubości, skala i materiały. Gdy plik dostanie warstwy
+# „ustawienia-…”, zostaną użyte zamiast niej.
 # Optymalizacja: plik wczytywany raz; warstwy każdej ikony scalane w jedną siatkę z trzema
-# powierzchniami (tafla, obwódka, symbol), współdzieloną przez wszystkie wystąpienia.
+# powierzchniami (tafla, obwódka, symbol) – 3 wywołania rysowania na ikonę, materiały wspólne.
 # Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name ModuleIcon3D
-extends SubViewportContainer
+extends RefCounted
 
 const MODEL_PATH := "res://assets/models/module-icons.glb"
 # Moduł → przedrostek nazw warstw w pliku („<przedrostek>-krawedz/-obrys/-podkladka/-symbol”).
 const PREFIX := {
 	&"encyclopedia": "encyklopedia", &"trainers": "cwiczenia", &"reading": "czytanie-nut",
 	&"tuning": "tuner", &"metronome": "metronom", &"plan": "plan-cwiczen", &"progress": "postepy",
-	&"looper": "looper",
+	&"looper": "looper", &"settings": "ustawienia",
 }
 # Warstwa → część logo (ten sam materiał): ciemna tafla, pomarańczowa obwódka, pomarańczowy symbol.
 const LAYER_PART := {"krawedz": &"panel", "podkladka": &"panel", "obrys": &"frame", "symbol": &"orange"}
 
-const SWAY_DEG := Vector2(2.2, 3.5)
-const SWAY_PERIOD := Vector2(5.3, 7.1)
-const CURSOR_DEG := Vector2(9.0, 14.0)
-const FOLLOW := 5.0
-const IDLE_STOP := 8.0
-const SPIN_SPEED := 300.0     # °/s przy obrocie po najechaniu
-const SPIN_ACCEL := 900.0     # °/s² – rozpędzanie
-const FOV := 22.0
-
 static var _meshes := {}      # przedrostek → ArrayMesh
 static var _sizes := {}       # przedrostek → Vector3
-
-var module_id: StringName
-var index := 0                # kolejność kafla – przesunięcie fazy kołysania
-var spin := false:
-	set(v):
-		spin = v
-		_wake()
-
-var _vp: SubViewport
-var _pivot: Node3D
-var _time := 0.0
-var _idle := 0.0
-var _amp := 1.0
-var _rot := Vector2.ZERO
-var _angle := 0.0
-var _speed := 0.0
-var _sway := true
-var _live := true
 
 
 static func available(id: StringName) -> bool:
 	return PREFIX.has(id) and ResourceLoader.exists(MODEL_PATH)
 
 
-static func create(p_id: StringName, p_min: Vector2, p_index := 0) -> ModuleIcon3D:
-	var c := ModuleIcon3D.new()
-	c.module_id = p_id
-	c.index = p_index
-	c.custom_minimum_size = p_min
-	c.stretch = true
-	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return c
-
-
-func _ready() -> void:
+static func mesh(id: StringName) -> ArrayMesh:
 	if _meshes.is_empty():
 		_build_meshes()
-	var prefix: String = PREFIX.get(module_id, "")
-	_vp = SubViewport.new()
-	_vp.transparent_bg = true
-	_vp.own_world_3d = true
-	_vp.msaa_3d = Graphics.msaa_mode()
-	_vp.positional_shadow_atlas_size = 0
-	_vp.audio_listener_enable_3d = false
-	_vp.gui_disable_input = true
-	add_child(_vp)
-	Logo3D.add_lighting(_vp)
-
-	_pivot = Node3D.new()
-	_vp.add_child(_pivot)
-	var mi := MeshInstance3D.new()
-	mi.mesh = _meshes.get(prefix)
-	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	_pivot.add_child(mi)
-
-	var cam := Camera3D.new()
-	cam.fov = FOV
-	_vp.add_child(cam)
-	_fit_camera(cam, _sizes.get(prefix, Vector3.ONE * 0.05))
-	resized.connect(_fit_camera.bind(cam, _sizes.get(prefix, Vector3.ONE * 0.05)))
-
-	var audit := "--perf-audit" in OS.get_cmdline_user_args()
-	_live = not audit and App.animations() != "off"
-	_sway = App.animations() == "full"
-	if not _sway:
-		_amp = 0.0
-	_time = index * 1.7
-	_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if _live else SubViewport.UPDATE_ONCE
-	set_process(_live)
-	set_process_input(_live)
+	return _meshes.get(PREFIX.get(id, ""))
 
 
-func _process(delta: float) -> void:
-	_time += delta
-	_idle += delta
-	var active := _idle < IDLE_STOP and _sway
-	_amp = move_toward(_amp, 1.0 if active else 0.0, delta * 0.5)
-	var target := Vector2(
-			sin(_time * TAU / SWAY_PERIOD.x) * SWAY_DEG.x,
-			sin(_time * TAU / SWAY_PERIOD.y) * SWAY_DEG.y) * _amp
-	if active:
-		target += _cursor_tilt() * minf(_amp * 2.0, 1.0)
-	# Każdy kolejny kafel dochodzi do pozycji nieco wolniej – ruch biegnie po ikonach falą.
-	_rot = _rot.lerp(target, 1.0 - exp(-(FOLLOW - index * 0.4) * delta))
-
-	if spin:
-		_speed = move_toward(_speed, SPIN_SPEED, SPIN_ACCEL * delta)
-		_angle += _speed * delta
-	elif _angle != 0.0:
-		# Dokończenie obrotu do najbliższej pełnej wielokrotności 360° z łagodnym hamowaniem.
-		var goal := ceilf(_angle / 360.0) * 360.0
-		var left := goal - _angle
-		_speed = clampf(left * 4.0, 40.0, maxf(_speed, 40.0))
-		_angle = minf(_angle + _speed * delta, goal)
-		if _angle >= goal:
-			_angle = 0.0
-			_speed = 0.0
-	_pivot.rotation_degrees = Vector3(_rot.x, _rot.y + fmod(_angle, 360.0), 0)
-
-	if not active and not spin and _angle == 0.0 and _amp == 0.0 and _rot.length() < 0.02:
-		_pivot.rotation_degrees = Vector3.ZERO
-		_vp.render_target_update_mode = SubViewport.UPDATE_ONCE
-		set_process(false)
-
-
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		_idle = 0.0
-		_wake()
-
-
-func _wake() -> void:
-	if _live and _vp and not is_processing():
-		_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-		set_process(true)
-
-
-func _cursor_tilt() -> Vector2:
-	var rel := (get_global_mouse_position() - get_global_rect().get_center()) / (get_viewport_rect().size * 0.5)
-	rel = rel.clamp(-Vector2.ONE, Vector2.ONE)
-	return Vector2(rel.y * CURSOR_DEG.x, rel.x * CURSOR_DEG.y)
-
-
-func _fit_camera(cam: Camera3D, sz: Vector3) -> void:
-	var aspect := maxf(size.x, 1.0) / maxf(size.y, 1.0)
-	var half_v := deg_to_rad(FOV) * 0.5
-	var half_h := atan(tan(half_v) * aspect)
-	# Zapas na kołysanie; przy obrocie szerokość się nie zwiększa.
-	var dist := maxf(sz.x * 0.56 / tan(half_h), sz.y * 0.56 / tan(half_v)) + sz.z
-	cam.position = Vector3(0, 0, dist)
-	cam.near = maxf(dist - sz.x, 0.001)
-	cam.far = dist + sz.x
-	if _vp and not is_processing():
-		_vp.render_target_update_mode = SubViewport.UPDATE_ONCE
+static func mesh_size(id: StringName) -> Vector3:
+	if _meshes.is_empty():
+		_build_meshes()
+	return _sizes.get(PREFIX.get(id, ""), Vector3.ONE * 0.05)
 
 
 # Jednorazowo: każda ikona jako osobna siatka, frontem do kamery (+Z), wyśrodkowana.
@@ -211,6 +83,9 @@ static func _build_meshes() -> void:
 			mesh.surface_set_material(mesh.get_surface_count() - 1, Logo3D.material(part))
 		_meshes[prefix] = mesh
 		_sizes[prefix] = (boxes[prefix] as AABB).size
+	if not _meshes.has("ustawienia"):
+		_meshes["ustawienia"] = _gear_mesh()
+		_sizes["ustawienia"] = (_meshes["ustawienia"] as ArrayMesh).get_aabb().size
 
 
 static func _local_xform(root: Node3D, n: Node3D) -> Transform3D:
@@ -221,3 +96,113 @@ static func _local_xform(root: Node3D, n: Node3D) -> Transform3D:
 			t = (cur as Node3D).transform * t
 		cur = cur.get_parent()
 	return t
+
+
+# --- Zębatka Ustawień -------------------------------------------------------------------------
+# Wymiary w mm (jak w pliku ikon: 1 mm = 0,001 j.). Warstwy i ich połowy grubości jak w pliku:
+# krawędź ±5, obrys ±6, podkładka ±7, symbol ±10 (×0,001).
+const GEAR_TEETH := 8
+const GEAR_TIP := 20.0        # promień wierzchołków zębów
+const GEAR_ROOT := 15.0       # promień u nasady zębów
+const GEAR_TIP_W := 5.6       # szerokość zęba na wierzchołku
+const GEAR_BASE_W := 8.4      # szerokość zęba u nasady
+const GEAR_EDGE := 1.1        # cienka ciemna krawędź na zewnątrz obrysu
+const GEAR_RIM := 2.3         # grubość pomarańczowego obrysu
+const GEAR_HUB := Vector2(4.2, 8.2)   # symbol: pierścień (promień otworu, promień zewnętrzny)
+const MM := 0.001
+
+
+static func _gear_mesh() -> ArrayMesh:
+	var outline := PackedVector2Array()
+	var step := TAU / GEAR_TEETH
+	for i in GEAR_TEETH:
+		var a := i * step
+		var hb := GEAR_BASE_W * 0.5 / GEAR_ROOT
+		var ht := GEAR_TIP_W * 0.5 / GEAR_TIP
+		outline.append(Vector2.from_angle(a - hb) * GEAR_ROOT)
+		outline.append(Vector2.from_angle(a - ht) * GEAR_TIP)
+		outline.append(Vector2.from_angle(a + ht) * GEAR_TIP)
+		outline.append(Vector2.from_angle(a + hb) * GEAR_ROOT)
+		var gap := step - 2.0 * hb
+		for k in range(1, 4):
+			outline.append(Vector2.from_angle(a + hb + gap * k / 4.0) * GEAR_ROOT)
+	# Zaokrąglenie narożników: wypukłych (zwężenie i poszerzenie) i wklęsłych (odwrotnie).
+	outline = _offset(_offset(outline, -1.0), 1.0)
+	outline = _offset(_offset(outline, 0.8), -0.8)
+
+	var panel := SurfaceTool.new()
+	panel.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var frame := SurfaceTool.new()
+	frame.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var symbol := SurfaceTool.new()
+	symbol.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_extrude(panel, _offset(outline, GEAR_EDGE), 5.0)       # krawędź
+	_extrude(frame, outline, 6.0)                           # obrys
+	_extrude(panel, _offset(outline, -GEAR_RIM), 7.0)       # podkładka
+	_ring(symbol, GEAR_HUB.x, GEAR_HUB.y, 10.0)              # symbol – pierścień z otworem
+	var mesh := ArrayMesh.new()
+	for pair in [[panel, &"panel"], [frame, &"frame"], [symbol, &"orange"]]:
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, (pair[0] as SurfaceTool).commit_to_arrays())
+		mesh.surface_set_material(mesh.get_surface_count() - 1, Logo3D.material(pair[1]))
+	return mesh
+
+
+static func _offset(poly: PackedVector2Array, d: float) -> PackedVector2Array:
+	var res := Geometry2D.offset_polygon(poly, d, Geometry2D.JOIN_ROUND)
+	return res[0] if not res.is_empty() else poly
+
+
+# Trójkąt zwrócony przodem w stronę n (Godot: przód = zgodnie z ruchem wskazówek zegara).
+static func _tri(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, n: Vector3) -> void:
+	if (b - a).cross(c - a).dot(n) > 0.0:
+		var t := b
+		b = c
+		c = t
+	for v in [a, b, c]:
+		st.set_normal(n)
+		st.add_vertex(v * MM)
+
+
+static func _extrude(st: SurfaceTool, poly: PackedVector2Array, half: float) -> void:
+	var idx := Geometry2D.triangulate_polygon(poly)
+	for i in range(0, idx.size(), 3):
+		var p := [poly[idx[i]], poly[idx[i + 1]], poly[idx[i + 2]]]
+		_tri(st, _v(p[0], half), _v(p[1], half), _v(p[2], half), Vector3.BACK)
+		_tri(st, _v(p[0], -half), _v(p[1], -half), _v(p[2], -half), Vector3.FORWARD)
+	_walls(st, poly, half, not Geometry2D.is_polygon_clockwise(poly))
+
+
+# Ściany boczne: normalna na zewnątrz konturu (outward) albo do środka (otwór).
+static func _walls(st: SurfaceTool, poly: PackedVector2Array, half: float, ccw: bool, inward := false) -> void:
+	for i in poly.size():
+		var p := poly[i]
+		var q := poly[(i + 1) % poly.size()]
+		var d := (q - p).normalized()
+		var out := Vector2(d.y, -d.x) if ccw else Vector2(-d.y, d.x)
+		if inward:
+			out = -out
+		var n := Vector3(out.x, out.y, 0.0)
+		_tri(st, _v(p, half), _v(q, half), _v(q, -half), n)
+		_tri(st, _v(p, half), _v(q, -half), _v(p, -half), n)
+
+
+static func _ring(st: SurfaceTool, r_in: float, r_out: float, half: float) -> void:
+	var seg := 48
+	var outer := PackedVector2Array()
+	var inner := PackedVector2Array()
+	for i in seg:
+		var a := TAU * i / seg
+		outer.append(Vector2.from_angle(a) * r_out)
+		inner.append(Vector2.from_angle(a) * r_in)
+	for i in seg:
+		var j := (i + 1) % seg
+		for z in [half, -half]:
+			var n := Vector3.BACK if z > 0.0 else Vector3.FORWARD
+			_tri(st, _v(outer[i], z), _v(outer[j], z), _v(inner[j], z), n)
+			_tri(st, _v(outer[i], z), _v(inner[j], z), _v(inner[i], z), n)
+	_walls(st, outer, half, true)
+	_walls(st, inner, half, true, true)
+
+
+static func _v(p: Vector2, z: float) -> Vector3:
+	return Vector3(p.x, p.y, z)

@@ -100,6 +100,15 @@ func _ready() -> void:
 		var tile := ModuleTile.create(App.MODULES[i], i == 0)
 		grid.add_child(tile)
 		_tiles.append(tile)
+	# Ilustracje 3D wszystkich kafelków – jedna wspólna scena i jeden przebieg renderowania.
+	var arts: Array = []
+	for t in _tiles:
+		if (t as ModuleTile).art:
+			arts.append((t as ModuleTile).art)
+	if not arts.is_empty():
+		var stage := MenuStage3D.new()
+		add_child(stage)
+		stage.setup(grid, arts)
 
 	# Stopka – wyśrodkowana w pionie między linią a dolną krawędzią okna
 	page.add_child(HSeparator.new())

@@ -1,5 +1,5 @@
 # Fretboard Master – kafelek modułu w menu głównym (przycisk z ikoną, nazwą i opisem).
-# Ilustracja: duża ikona 3D modułu z pliku autora (ModuleIcon3D) albo, w kaflu Encyklopedii, model gitary.
+# Ilustracja 3D (ikona modułu albo gitara) – miejsce MenuArt, rysowane we wspólnej scenie MenuStage3D.
 # Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name ModuleTile
 extends Button
@@ -8,7 +8,8 @@ var module: Dictionary
 var big := false
 var _icon_box: PanelContainer
 var _icon: IconGlyph
-var _icons: Array[ModuleIcon3D] = []
+## Miejsce na ilustrację 3D (rysowaną we wspólnej scenie menu) albo null.
+var art: MenuArt
 
 
 static func create(p_module: Dictionary, p_big := false) -> ModuleTile:
@@ -42,27 +43,22 @@ func _ready() -> void:
 	_icon_box.add_child(_icon)
 
 	# Ilustracja kafla: model 3D gitary (Encyklopedia, wg ustawienia) albo duża ikona 3D modułu,
-	# wypełniająca wolne miejsce kafla tak jak gitara.
-	var order := App.MODULES.find(module)
-	# Mała ikona tylko w kaflu bez dużej ilustracji (np. Ustawienia).
+	# wyśrodkowana w wolnym miejscu kafla. Mała ikona tylko w kaflu bez ilustracji.
 	_icon_box.visible = false
 	var guitar_ok := big and GuitarModel3D.available() and str(App.setting(&"menu_encyclopedia_art")) != "icon"
 	if guitar_ok:
-		# Model 3D gitary (pod ukosem, powoli obracany) w miejscu przewidzianym na grafikę gitary.
-		var guitar := GuitarModel3D.create(Vector2(0, 220))
-		guitar.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		box.add_child(guitar)
+		art = MenuArt.create(MenuArt.Kind.GUITAR, module.id, Vector2(0, 220))
 	elif ModuleIcon3D.available(module.id):
-		var art := ModuleIcon3D.create(module.id, Vector2(0, 220 if big else 60), order)
-		art.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		art = MenuArt.create(MenuArt.Kind.ICON, module.id, Vector2(0, 220 if big else 120))
+	if art:
+		art.tile = self
 		box.add_child(art)
-		_icons.append(art)
 	elif big:
 		_icon_box.visible = true
-		var art := Placeholder.create("Guitar artwork", "assets/graphics/menu-guitar.png",
+		var ph := Placeholder.create("Guitar artwork", "assets/graphics/menu-guitar.png",
 				"1800 × 1200 px (3:2), PNG", Vector2(0, 220))
-		art.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		box.add_child(art)
+		ph.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		box.add_child(ph)
 	else:
 		_icon_box.visible = true
 		var spacer := Control.new()
@@ -82,9 +78,6 @@ func _ready() -> void:
 	box.add_child(desc)
 
 	pressed.connect(func(): App.go(module.id))
-	# Po najechaniu na kafel jego ikona 3D obraca się wokół osi pionowej.
-	mouse_entered.connect(_set_spin.bind(true))
-	mouse_exited.connect(_set_spin.bind(false))
 	ThemeManager.theme_changed.connect(_apply_styles)
 	_apply_styles()
 
@@ -100,7 +93,3 @@ func _apply_styles() -> void:
 	get_theme_stylebox("focus").draw_center = false
 	_icon_box.add_theme_stylebox_override("panel", ThemeManager.box(Color(c, 0.12), Color.TRANSPARENT, 16, 0, 0, 0))
 
-
-func _set_spin(on: bool) -> void:
-	for ic in _icons:
-		ic.spin = on
