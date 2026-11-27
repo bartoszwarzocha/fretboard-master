@@ -183,7 +183,6 @@ func _build_general() -> void:
 	_update_sample()
 
 	_section("Start")
-	_toggle(&"show_splash", "Show the start screen")
 	var screens := [["menu", "Main menu"], ["last", "Last opened screen"]]
 	for m in App.MODULES:
 		screens.append([String(m.id), m.name])

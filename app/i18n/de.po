@@ -184,9 +184,6 @@ msgstr "Sprache der Oberfläche"
 msgid "Start"
 msgstr "Start"
 
-msgid "Show the start screen"
-msgstr "Startbildschirm anzeigen"
-
 msgid "Last opened screen"
 msgstr "Zuletzt geöffneter Bildschirm"
 

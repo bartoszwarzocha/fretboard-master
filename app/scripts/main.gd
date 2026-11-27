@@ -16,10 +16,7 @@ var _screen: Control
 func _ready() -> void:
 	set_process(false)
 	App.screen_requested.connect(_show)
-	if bool(App.setting(&"show_splash")) or "--perf-audit" in OS.get_cmdline_user_args():
-		_show(&"splash")
-	else:
-		_show(App.start_screen())
+	_show(&"splash")   # ekran startowy (reklama firmy) zawsze – bez wyłączania i pomijania
 
 
 func _show(screen_id: StringName) -> void:

@@ -12,7 +12,7 @@ const LANGUAGES: Array[String] = ["", "en", "pl", "de", "es", "ru"]  # "" = jęz
 # (przycisk „Przywróć domyślne” przywraca klucze jednej grupy).
 const DEFAULTS := {
 	&"general": {
-		&"language": "", &"notation": 0, &"show_splash": true, &"start_screen": "menu",
+		&"language": "", &"notation": 0, &"start_screen": "menu",
 		&"last_screen": "menu",
 	},
 	&"look": {

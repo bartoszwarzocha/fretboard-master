@@ -183,9 +183,6 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-msgid "Show the start screen"
-msgstr ""
-
 msgid "Last opened screen"
 msgstr ""
 

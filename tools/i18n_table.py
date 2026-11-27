@@ -101,7 +101,6 @@ T = {
  "Restore defaults": ("Przywróć domyślne", "Standard wiederherstellen", "Restablecer valores", "Сбросить настройки"),
  "Interface language": ("Język interfejsu", "Sprache der Oberfläche", "Idioma de la interfaz", "Язык интерфейса"),
  "Start": ("Uruchamianie", "Start", "Inicio", "Запуск"),
- "Show the start screen": ("Pokazuj ekran startowy", "Startbildschirm anzeigen", "Mostrar la pantalla de inicio", "Показывать заставку"),
  "Last opened screen": ("Ostatnio otwarty ekran", "Zuletzt geöffneter Bildschirm", "Última pantalla abierta", "Последний открытый экран"),
  "After start-up open": ("Po uruchomieniu otwórz", "Nach dem Start öffnen", "Al iniciar, abrir", "После запуска открыть"),
  "Theme": ("Motyw", "Design", "Tema", "Тема"),

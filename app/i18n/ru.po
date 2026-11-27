@@ -184,9 +184,6 @@ msgstr "Язык интерфейса"
 msgid "Start"
 msgstr "Запуск"
 
-msgid "Show the start screen"
-msgstr "Показывать заставку"
-
 msgid "Last opened screen"
 msgstr "Последний открытый экран"
 
