@@ -86,7 +86,6 @@ T = {
  "Guitar artwork": ("Grafika gitary", "Gitarrengrafik", "Ilustración de la guitarra", "Изображение гитары"),
  "1800 × 1200 px (3:2), PNG": ("1800 × 1200 px (3:2), PNG", "1800 × 1200 px (3:2), PNG", "1800 × 1200 px (3:2), PNG", "1800 × 1200 пикс. (3:2), PNG"),
  "presents": ("przedstawia", "präsentiert", "presenta", "представляет"),
- "Loading...": ("Wczytywanie...", "Wird geladen...", "Cargando...", "Загрузка..."),
  "fretboard · theory · training": ("gryf · teoria · trening", "Griffbrett · Theorie · Training", "mástil · teoría · práctica", "гриф · теория · тренировка"),
  "Hello!": ("Dzień dobry!", "Hallo!", "¡Hola!", "Здравствуйте!"),
  "What shall we practise today?": ("Co dziś ćwiczymy?", "Was üben wir heute?", "¿Qué practicamos hoy?", "Что сегодня тренируем?"),

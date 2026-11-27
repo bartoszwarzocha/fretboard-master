@@ -150,9 +150,6 @@ msgstr ""
 msgid "presents"
 msgstr ""
 
-msgid "Loading..."
-msgstr ""
-
 msgid "fretboard · theory · training"
 msgstr ""
 
