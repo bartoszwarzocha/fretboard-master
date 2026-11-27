@@ -6,7 +6,7 @@
 extends Node
 
 const BUDGETS_PATH := "res://perf/budgets.cfg"
-const SETTLE_FRAMES := 8
+const SETTLE_FRAMES := 12
 const SAMPLE_FRAMES := 30
 
 var _overlay: CanvasLayer
@@ -117,6 +117,9 @@ func _run_audit() -> void:
 	var lines: PackedStringArray = ["screen                draw  all vp  objects  prims  proc.nodes  nodes  vram MB  budget"]
 	for screen in budgets.get_sections():
 		App.go(StringName(screen))
+		# Odczekanie, aż poprzedni ekran zniknie z drzewa, a nowy się narysuje (także przy wolnym
+		# pierwszym uruchomieniu, gdy kompilują się shadery).
+		await get_tree().create_timer(0.3).timeout
 		for i in SETTLE_FRAMES:
 			await RenderingServer.frame_post_draw
 		var worst := {}
