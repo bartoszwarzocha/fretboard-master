@@ -913,6 +913,15 @@ msgstr "Caja de ritmos"
 msgid "Tap tempo"
 msgstr "Tap tempo"
 
+msgid "Tap the button or press T in time with the music – at least 3 times."
+msgstr "Marca el pulso de la música: pulsa el botón o la tecla T, al menos 3 veces."
+
+msgid "Taps: %d – keep tapping…"
+msgstr "Toques: %d – sigue marcando…"
+
+msgid "Taps: %d – tempo set to %d BPM."
+msgstr "Toques: %d – tempo fijado en %d BPM."
+
 msgid "beats per minute"
 msgstr "pulsaciones por minuto"
 

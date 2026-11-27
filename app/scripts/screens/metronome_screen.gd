@@ -26,6 +26,8 @@ var _core: Object
 var _playing := false
 var _pattern: Array = []          # wiersze × kroki, wartości 0/1/2
 var _taps: Array[float] = []
+var _tap_info: Label
+var _from_edit: LineEdit
 var _main: VBoxContainer
 var _aside: VBoxContainer
 var _subtitle: Label
@@ -74,6 +76,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_accept") or (event is InputEventKey and event.pressed and not event.echo \
 			and (event as InputEventKey).keycode == KEY_SPACE):
 		_toggle()
+		get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed and not event.echo and (event as InputEventKey).keycode == KEY_T:
+		_tap()
 		get_viewport().set_input_as_handled()
 
 
@@ -135,6 +140,13 @@ func _rebuild() -> void:
 		tap.add_theme_stylebox_override(state, ThemeManager.box(bg, ThemeManager.color("border_strong"), 17, 1, 34, 10))
 	tap.pressed.connect(_tap)
 	buttons.add_child(tap)
+	_tap_info = _label("", 15, Color("8C96B3"))
+	_tap_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_tap_info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	_main.add_child(_gap(4))
+	_main.add_child(_tap_info)
+	_taps.clear()
+	_show_tap_info()
 	_update_play_button()
 
 	_build_aside(drums)
@@ -287,7 +299,7 @@ func _build_aside(drums: bool) -> void:
 	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var update_info := func() -> void:
 		info.text = tr("Tempo rises by %d BPM every %d bars.") % [int(App.setting(&"met_ramp_step")), int(App.setting(&"met_ramp_bars"))]
-	for spec in [[&"met_ramp_from", "From", BPM_MIN, BPM_MAX, ""], [&"met_ramp_to", "To", BPM_MIN, BPM_MAX, ""],
+	for spec in [[&"met_bpm", "From", BPM_MIN, BPM_MAX, ""], [&"met_ramp_to", "To", BPM_MIN, BPM_MAX, ""],
 			[&"met_ramp_step", "Step", 1, 20, "+"]]:
 		boxes.add_child(_value_box(spec[0], spec[1], spec[2], spec[3], spec[4], update_info))
 	update_info.call()
@@ -350,11 +362,9 @@ func _apply(starting := false) -> void:
 	if _core == null:
 		return
 	var bpm := _bpm()
-	# Z przyspieszaniem tempo startuje od „Od” i dalej prowadzi je rdzeń (bez nadpisywania w trakcie gry).
-	if (starting or _playing) and bool(App.setting(&"met_ramp")):
-		bpm = int(App.setting(&"met_ramp_from"))
-		if starting:
-			_show_bpm(bpm)
+	# Z przyspieszaniem „Od” to tempo z regulatora: start od niego, dalej tempo prowadzi rdzeń.
+	if starting:
+		_show_bpm(bpm)
 	var m := _metre()
 	var g := _grid_kind()
 	var mask := 0
@@ -379,6 +389,8 @@ func _set_bpm(bpm: int) -> void:
 	bpm = clampi(bpm, BPM_MIN, BPM_MAX)
 	_store(&"met_bpm", bpm)
 	_show_bpm(bpm)
+	if _from_edit and is_instance_valid(_from_edit):
+		_from_edit.text = str(bpm)
 	_apply()
 
 
@@ -389,17 +401,34 @@ func _show_bpm(bpm: int) -> void:
 		_set_tempo_text(bpm)
 
 
-# Wystukiwanie tempa: średnia z ostatnich odstępów (do 4), po przerwie dłuższej niż 2 s – od nowa.
+# Wystukiwanie tempa: od 3. stuknięcia średnia z ostatnich odstępów (do 4), po przerwie dłuższej niż 2 s – od nowa.
+var _tap_count := 0
+
+
 func _tap() -> void:
 	var now := Time.get_ticks_msec() / 1000.0
 	if not _taps.is_empty() and now - _taps[-1] > 2.0:
 		_taps.clear()
+		_tap_count = 0
 	_taps.append(now)
+	_tap_count += 1
 	if _taps.size() > 5:
 		_taps.remove_at(0)
-	if _taps.size() >= 2:
+	if _taps.size() >= 3:
 		var span := (_taps[-1] - _taps[0]) / (_taps.size() - 1)
 		_set_bpm(roundi(60.0 / span))
+	_show_tap_info()
+
+
+func _show_tap_info() -> void:
+	if _tap_info == null:
+		return
+	if _taps.is_empty():
+		_tap_info.text = tr("Tap the button or press T in time with the music – at least 3 times.")
+	elif _taps.size() < 3:
+		_tap_info.text = tr("Taps: %d – keep tapping…") % _tap_count
+	else:
+		_tap_info.text = tr("Taps: %d – tempo set to %d BPM.") % [_tap_count, _bpm()]
 
 
 func _preset(i: int) -> void:
@@ -766,9 +795,14 @@ func _value_box(key: StringName, title: String, lo: int, hi: int, prefix: String
 	var empty := StyleBoxEmpty.new()
 	for s in ["normal", "focus", "read_only"]:
 		e.add_theme_stylebox_override(s, empty)
+	if key == &"met_bpm":
+		_from_edit = e
 	var commit := func() -> void:
 		var v := clampi(int(e.text.replace("+", "")), lo, hi)
 		e.text = prefix + str(v)
+		if key == &"met_bpm":
+			_set_bpm(v)
+			return
 		_store(key, v)
 		on_change.call()
 		_apply()

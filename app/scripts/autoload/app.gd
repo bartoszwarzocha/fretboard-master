@@ -46,7 +46,7 @@ const DEFAULTS := {
 	# Metronom – ostatnie ustawienia ekranu (bez zakładki w konfiguracji).
 	&"metronome": {
 		&"met_mode": 0, &"met_bpm": 96, &"met_metre": 2, &"met_sub": 0, &"met_sound": 0, &"met_grid": 0,
-		&"met_kit": 0, &"met_pattern": "", &"met_ramp": true, &"met_ramp_from": 80, &"met_ramp_to": 120,
+		&"met_kit": 0, &"met_pattern": "", &"met_ramp": true, &"met_ramp_to": 120,
 		&"met_ramp_step": 4, &"met_ramp_bars": 8,
 	},
 	# Stan programu zapamiętywany między uruchomieniami – bez zakładki, nie jest przywracany.

@@ -913,6 +913,15 @@ msgstr "Драм-машина"
 msgid "Tap tempo"
 msgstr "Тап-темп"
 
+msgid "Tap the button or press T in time with the music – at least 3 times."
+msgstr "Отстукивайте ритм музыки – нажимайте кнопку или клавишу T, минимум 3 раза."
+
+msgid "Taps: %d – keep tapping…"
+msgstr "Нажатий: %d – продолжайте…"
+
+msgid "Taps: %d – tempo set to %d BPM."
+msgstr "Нажатий: %d – темп %d BPM."
+
 msgid "beats per minute"
 msgstr "ударов в минуту"
 

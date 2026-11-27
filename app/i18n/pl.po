@@ -913,6 +913,15 @@ msgstr "Automat perkusyjny"
 msgid "Tap tempo"
 msgstr "Wystukaj tempo"
 
+msgid "Tap the button or press T in time with the music – at least 3 times."
+msgstr "Stukaj w rytm muzyki – klikaj przycisk albo naciskaj T, co najmniej 3 razy."
+
+msgid "Taps: %d – keep tapping…"
+msgstr "Stuknięcia: %d – stukaj dalej…"
+
+msgid "Taps: %d – tempo set to %d BPM."
+msgstr "Stuknięcia: %d – ustawiono tempo %d BPM."
+
 msgid "beats per minute"
 msgstr "uderzeń na minutę"
 
