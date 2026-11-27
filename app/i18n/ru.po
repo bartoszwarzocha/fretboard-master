@@ -217,6 +217,15 @@ msgstr "Авторские права"
 msgid "Licence"
 msgstr "Лицензия"
 
+msgid "Show licence"
+msgstr "Показать лицензию"
+
+msgid "Program licence"
+msgstr "Лицензия программы"
+
+msgid "Close"
+msgstr "Закрыть"
+
 msgid "Freeware – proprietary licence"
 msgstr "Freeware – проприетарная лицензия"
 

@@ -1,0 +1,45 @@
+# Fretboard Master – składniki innych autorów / Third-party notices
+
+Fretboard Master jest programem zamkniętym (freeware), objętym licencją z pliku `LICENSE.md`. Program korzysta z poniższych składników innych autorów. Każdy z nich podlega własnej licencji. Pełne teksty licencji można przeczytać w programie: „O programie” → „Pokaż licencję” → „Składniki innych autorów”.
+
+Fretboard Master is closed-source freeware covered by `LICENSE.md`. It uses the third-party components listed below. Each component is governed by its own licence. The full licence texts are available in the program: "About" → "Show licence" → "Third-party components".
+
+| Składnik / Component | Zastosowanie / Use | Licencja / Licence | Źródło / Source |
+|---|---|---|---|
+| Godot Engine | grafika i interfejs / graphics and UI | MIT | https://godotengine.org |
+| Składniki Godota (FreeType, HarfBuzz, ICU, mbed TLS i inne) / Godot third-party components | wbudowane w silnik / built into the engine | wg `COPYRIGHT.txt` Godota (MIT, BSD, FreeType License, Apache 2.0 i inne) | https://github.com/godotengine/godot/blob/master/COPYRIGHT.txt |
+| godot-cpp | połączenie z rdzeniem C++ / C++ bindings | MIT | https://github.com/godotengine/godot-cpp |
+| PortAudio | wejście i wyjście dźwięku / audio I/O | MIT (PortAudio License) | https://www.portaudio.com |
+| ASIO SDK (Steinberg Media Technologies GmbH) | sterownik ASIO w PortAudio – planowane (wersja z ASIO) / ASIO host support in PortAudio – planned (ASIO build) | licencja własnościowa Steinberga (Proprietary ASIO SDK Licensing Agreement) / Steinberg proprietary licence | https://www.steinberg.net/asiosdk |
+| GeneralUser GS (S. Christian Collins) | brzmienia wbudowanego syntezatora MIDI (SoundFont) / built-in MIDI synthesizer sounds | GeneralUser GS License v2.0 | https://www.schristiancollins.com/generaluser |
+| PortMidi | urządzenia MIDI – planowane / MIDI devices – planned | MIT-style | https://github.com/PortMidi/portmidi |
+| libsndfile | zapis i odczyt plików dźwiękowych – planowane / audio file I/O – planned | LGPL 2.1 lub nowsza / or later | https://libsndfile.github.io/libsndfile/ |
+| TinySoundFont | wbudowany syntezator MIDI / built-in MIDI synthesizer | MIT | https://github.com/schellingb/TinySoundFont |
+| PFFFT lub/or KissFFT | analiza widma – planowane / spectrum analysis – planned | BSD-like (FFTPACK) / BSD-3-Clause | https://bitbucket.org/jpommier/pffft · https://github.com/mborgerding/kissfft |
+| Spotify Basic Pitch (model) | rozpoznawanie akordów – planowane / chord (polyphonic) recognition – planned | Apache 2.0 | https://github.com/spotify/basic-pitch |
+| ONNX Runtime | uruchamianie modelu Basic Pitch – planowane / runs the Basic Pitch model – planned | MIT | https://onnxruntime.ai |
+| SQLite | profil i postępy – planowane / profile and progress – planned | domena publiczna / public domain | https://sqlite.org |
+| Manrope, Montserrat, Rubik, Inter, Space Grotesk, Anton, Noto Music, Noto Sans Symbols, Noto Sans Symbols 2 | kroje pisma / fonts | SIL Open Font License 1.1 | https://fonts.google.com |
+| Bravura (Steinberg Media Technologies GmbH) | symbole muzyczne, nuty (SMuFL) / music symbols, notation (SMuFL) | SIL Open Font License 1.1 | https://github.com/steinbergmedia/bravura |
+
+## Warunki szczególne / Specific obligations
+
+**Godot Engine i składniki na licencjach MIT/BSD.** Informacja o prawach autorskich i tekst licencji muszą być dołączone do programu. W oknie „O programie” wyświetlany jest wykaz składników, a pełne teksty licencji – w oknie „Licencja” (licencja Godota i jego składników pochodzi wprost z silnika).
+
+*Godot Engine and MIT/BSD components: the copyright notice and licence text must accompany the program. The "About" window lists the components; the full texts are in the "Licence" window (Godot's licence and its components come directly from the engine).*
+
+**libsndfile (LGPL 2.1+).** Biblioteka jest dołączana wyłącznie jako osobna biblioteka dynamiczna (`sndfile.dll`), niezmieniona, łączona dynamicznie. Użytkownik może ją zastąpić własną, zgodną wersją. Kod źródłowy użytej wersji jest dostępny pod adresem projektu lub na żądanie. Licencja programu nie zakazuje modyfikowania tej biblioteki ani odtwarzania kodu w zakresie potrzebnym do debugowania takich modyfikacji – tak jak wymaga tego LGPL.
+
+*libsndfile (LGPL 2.1+): shipped only as a separate, unmodified, dynamically linked library (`sndfile.dll`) that the user may replace with a compatible version. The source of the version used is available from the project site or on request. The program licence does not prohibit modifying this library or reverse engineering to the extent needed to debug such modifications, as required by the LGPL.*
+
+**Apache 2.0 (Basic Pitch).** Do programu dołączany jest tekst licencji Apache 2.0 oraz plik NOTICE projektu, jeśli istnieje; zmiany w modelu, jeśli zostaną wprowadzone, będą oznaczone.
+
+*Apache 2.0 (Basic Pitch): the Apache 2.0 licence text and the project's NOTICE file (if any) are shipped with the program; any modifications to the model will be marked.*
+
+**ASIO.** ASIO is a registered trademark of Steinberg Media Technologies GmbH. / ASIO jest zastrzeżonym znakiem towarowym Steinberg Media Technologies GmbH. Obsługa ASIO korzysta z ASIO SDK na licencji własnościowej Steinberga (nie GPL). Kod SDK nie jest rozpowszechniany ani przechowywany w repozytorium. Przed publikacją wersji z ASIO (także bezpłatnej wersji testowej) umowa licencyjna podpisana przez autora musi zostać wysłana do Steinberga (sdklicenseagreements@steinberg.de) i kontrasygnowana. Do tego czasu wolno rozwijać i testować program wewnętrznie.
+
+**GeneralUser GS.** Bank brzmień SoundFont (`app/assets/sound/GeneralUser-GS.sf2`) dołączony bez zmian, z plikiem licencji (`GeneralUser-GS-LICENSE.txt`); licencja zezwala na użycie w programach, także komercyjnych.
+
+**Kroje OFL.** Kroje pisma mogą być osadzone w programie; nie są sprzedawane osobno, a ich licencja (OFL 1.1) jest dołączona.
+
+*OFL fonts: the fonts may be embedded in the program; they are not sold separately, and their licence (OFL 1.1) is included.*

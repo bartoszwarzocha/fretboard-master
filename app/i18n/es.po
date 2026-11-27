@@ -217,6 +217,15 @@ msgstr "Derechos de autor"
 msgid "Licence"
 msgstr "Licencia"
 
+msgid "Show licence"
+msgstr "Ver licencia"
+
+msgid "Program licence"
+msgstr "Licencia del programa"
+
+msgid "Close"
+msgstr "Cerrar"
+
 msgid "Freeware – proprietary licence"
 msgstr "Freeware – licencia propietaria"
 

@@ -216,6 +216,15 @@ msgstr ""
 msgid "Licence"
 msgstr ""
 
+msgid "Show licence"
+msgstr ""
+
+msgid "Program licence"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
 msgid "Freeware – proprietary licence"
 msgstr ""
 

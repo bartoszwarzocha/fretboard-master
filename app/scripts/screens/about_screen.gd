@@ -11,6 +11,7 @@ const COMPONENTS := [
 
 var _version: Label
 var _core: Label
+var _licence: LicenseView
 
 
 func _init() -> void:
@@ -51,6 +52,11 @@ func _build_content() -> void:
 	_fact(facts, "Copyright", "© 2026 BW Digital Systems & Publishing", false)
 	_fact(facts, "Licence", "Freeware – proprietary licence", true)
 	_core = _fact(facts, "C++ core", "", false)
+	var show := Button.new()
+	show.text = "Show licence"
+	show.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	show.pressed.connect(_open_licence)
+	col.add_child(show)
 
 	col.add_child(HSeparator.new())
 	var head := Label.new()
@@ -77,6 +83,19 @@ func _build_content() -> void:
 	tm.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	col.add_child(tm)
 	_refresh()
+
+
+# Okno licencji nad treścią ekranu (tworzone przy pierwszym otwarciu).
+func _open_licence() -> void:
+	if _licence == null:
+		_licence = LicenseView.new()
+		_licence.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		_licence.offset_left = 64
+		_licence.offset_right = -64
+		_licence.offset_top = 110
+		_licence.offset_bottom = -40
+		add_child(_licence)
+	_licence.show()
 
 
 func _fact(grid: GridContainer, key: String, value: String, translate: bool) -> Label:

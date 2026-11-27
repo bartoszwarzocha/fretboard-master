@@ -26,7 +26,7 @@ Rozpowszechnianie Programu jest dozwolone wyłącznie w niezmienionej postaci (o
 Licencjodawca zastrzega sobie prawo do umieszczania w Programie reklam, komunikatów, informacji o własnych i cudzych produktach i usługach, odnośników do stron internetowych oraz innych treści dodatkowych, a także do ich zmiany w kolejnych wersjach lub przez aktualizacje pobierane z internetu. Bezpłatny charakter Programu nie daje prawa do wyłączania ani ukrywania tych treści.
 
 ### 5. Składniki innych autorów
-Program zawiera składniki udostępnione przez innych autorów na ich własnych licencjach (wykaz w pliku `THIRD-PARTY-NOTICES.md` i w oknie „O programie”). Do tych składników stosuje się ich licencje. Niniejsza licencja nie ogranicza praw, które przysługują Ci na podstawie tych licencji.
+Program zawiera składniki udostępnione przez innych autorów na ich własnych licencjach (wykaz i pełne teksty licencji: „O programie” → „Pokaż licencję”). Do tych składników stosuje się ich licencje. Niniejsza licencja nie ogranicza praw, które przysługują Ci na podstawie tych licencji.
 
 ### 6. Prawa własności
 Wszelkie prawa do Programu, w tym prawa autorskie, znaki towarowe, nazwa „Fretboard Master”, logo, grafika, teksty i bazy danych, należą do Licencjodawcy lub jego licencjodawców. Licencja nie przenosi na Ciebie żadnych praw poza wyraźnie wymienionymi w punkcie 2.
@@ -77,7 +77,7 @@ Redistribution is permitted only in unmodified form (the original installer or a
 The Licensor reserves the right to display in the Software advertisements, messages, information about its own and third-party products and services, links to websites and other additional content, and to change such content in later versions or through updates downloaded from the internet. The free nature of the Software does not entitle you to disable or hide this content.
 
 ### 5. Third-party components
-The Software includes components provided by other authors under their own licences (listed in `THIRD-PARTY-NOTICES.md` and in the "About" window). Those components are governed by their respective licences. Nothing in this licence limits the rights granted to you under those licences.
+The Software includes components provided by other authors under their own licences (list and full licence texts: "About" → "Show licence"). Those components are governed by their respective licences. Nothing in this licence limits the rights granted to you under those licences.
 
 ### 6. Ownership
 All rights in the Software, including copyright, trademarks, the name "Fretboard Master", the logo, graphics, texts and databases, belong to the Licensor or its licensors. This licence grants you no rights other than those expressly stated in section 2.
