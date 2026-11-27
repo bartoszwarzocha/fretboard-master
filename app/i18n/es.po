@@ -1258,3 +1258,144 @@ msgstr "Borrar la pista"
 msgid "Delete?"
 msgstr "¿Borrar?"
 
+msgid "Pitches"
+msgstr "Notas"
+
+msgid "Intervals"
+msgstr "Intervalos"
+
+msgid "Degrees"
+msgstr "Grados"
+
+msgid "Fingering"
+msgstr "Digitación"
+
+msgid "Scales"
+msgstr "Escalas"
+
+msgid "Arpeggios"
+msgstr "Arpegios"
+
+msgid "Chords"
+msgstr "Acordes"
+
+msgid "Search for a scale, chord or notes"
+msgstr "Busca una escala, un acorde o notas"
+
+msgid "e.g. Dorian or C E G B"
+msgstr "p. ej. dórica o C E G B"
+
+msgid "Nothing found"
+msgstr "No se encontró nada"
+
+msgid "Tonic"
+msgstr "Tónica"
+
+msgid "Root"
+msgstr "Fundamental"
+
+msgid "Formula"
+msgstr "Fórmula"
+
+msgid "Chords in the scale"
+msgstr "Acordes de la escala"
+
+msgid "%s chord"
+msgstr "acorde %s"
+
+msgid "arpeggio"
+msgstr "arpegio"
+
+msgid "%d notes"
+msgstr "%d notas"
+
+msgid "%d notes (2–4)"
+msgstr "%d notas"
+
+msgid "also: %s"
+msgstr "también: %s"
+
+msgid "Practise this scale"
+msgstr "Practicar esta escala"
+
+msgid "Practise this arpeggio"
+msgstr "Practicar este arpegio"
+
+msgid "Practise this chord"
+msgstr "Practicar este acorde"
+
+msgid "Listen"
+msgstr "Escuchar"
+
+msgid "+ Add to plan"
+msgstr "+ Al plan"
+
+msgid "Available with the Exercises module."
+msgstr "Disponible con el módulo Ejercicios."
+
+msgid "Available with the Practice plan module."
+msgstr "Disponible con el módulo Plan de práctica."
+
+msgid "Exercises for this scale:"
+msgstr "Ejercicios para esta escala:"
+
+msgid "Exercises for this chord:"
+msgstr "Ejercicios para este acorde:"
+
+msgid "Scale in range"
+msgstr "Escala en el rango"
+
+msgid "Sequences"
+msgstr "Secuencias"
+
+msgid "Find the note"
+msgstr "Encuentra la nota"
+
+msgid "Intervals on the neck"
+msgstr "Intervalos en el mástil"
+
+msgid "Arpeggio in range"
+msgstr "Arpegio en el rango"
+
+msgid "Recognise the chord"
+msgstr "Reconoce el acorde"
+
+msgid "practice range: frets %d–%d, all strings"
+msgstr "rango de práctica: trastes %d–%d, todas las cuerdas"
+
+msgid "From fret"
+msgstr "Desde el traste"
+
+msgid "To fret"
+msgstr "Hasta el traste"
+
+msgid "shift range"
+msgstr "mover el rango"
+
+msgid "Preset ranges:"
+msgstr "Rangos predefinidos:"
+
+msgid "Position"
+msgstr "Posición"
+
+msgid "CAGED"
+msgstr "CAGED"
+
+msgid "3 notes per string"
+msgstr "3 notas por cuerda"
+
+msgid "Whole neck"
+msgstr "Todo el mástil"
+
+msgid "fret"
+msgstr "traste"
+
+msgid "Staff"
+msgstr "Pentagrama"
+
+msgid "treble clef"
+msgstr "clave de sol"
+
+msgid "treble clef, octave lower (guitar)"
+msgstr "clave de sol octava baja (guitarra)"
+

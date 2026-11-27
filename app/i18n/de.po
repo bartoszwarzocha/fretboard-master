@@ -1258,3 +1258,144 @@ msgstr "Spur löschen"
 msgid "Delete?"
 msgstr "Löschen?"
 
+msgid "Pitches"
+msgstr "Töne"
+
+msgid "Intervals"
+msgstr "Intervalle"
+
+msgid "Degrees"
+msgstr "Stufen"
+
+msgid "Fingering"
+msgstr "Fingersatz"
+
+msgid "Scales"
+msgstr "Tonleitern"
+
+msgid "Arpeggios"
+msgstr "Arpeggien"
+
+msgid "Chords"
+msgstr "Akkorde"
+
+msgid "Search for a scale, chord or notes"
+msgstr "Tonleiter, Akkord oder Töne suchen"
+
+msgid "e.g. Dorian or C E G B"
+msgstr "z. B. dorisch oder C E G H"
+
+msgid "Nothing found"
+msgstr "Nichts gefunden"
+
+msgid "Tonic"
+msgstr "Grundton"
+
+msgid "Root"
+msgstr "Grundton"
+
+msgid "Formula"
+msgstr "Aufbau"
+
+msgid "Chords in the scale"
+msgstr "Akkorde der Tonleiter"
+
+msgid "%s chord"
+msgstr "Akkord: %s"
+
+msgid "arpeggio"
+msgstr "Arpeggio"
+
+msgid "%d notes"
+msgstr "%d Töne"
+
+msgid "%d notes (2–4)"
+msgstr "%d Töne"
+
+msgid "also: %s"
+msgstr "auch: %s"
+
+msgid "Practise this scale"
+msgstr "Diese Tonleiter üben"
+
+msgid "Practise this arpeggio"
+msgstr "Dieses Arpeggio üben"
+
+msgid "Practise this chord"
+msgstr "Diesen Akkord üben"
+
+msgid "Listen"
+msgstr "Anhören"
+
+msgid "+ Add to plan"
+msgstr "+ Zum Plan"
+
+msgid "Available with the Exercises module."
+msgstr "Verfügbar mit dem Modul Übungen."
+
+msgid "Available with the Practice plan module."
+msgstr "Verfügbar mit dem Modul Übungsplan."
+
+msgid "Exercises for this scale:"
+msgstr "Übungen zu dieser Tonleiter:"
+
+msgid "Exercises for this chord:"
+msgstr "Übungen zu diesem Akkord:"
+
+msgid "Scale in range"
+msgstr "Tonleiter im Bereich"
+
+msgid "Sequences"
+msgstr "Sequenzen"
+
+msgid "Find the note"
+msgstr "Finde den Ton"
+
+msgid "Intervals on the neck"
+msgstr "Intervalle auf dem Griffbrett"
+
+msgid "Arpeggio in range"
+msgstr "Arpeggio im Bereich"
+
+msgid "Recognise the chord"
+msgstr "Erkenne den Akkord"
+
+msgid "practice range: frets %d–%d, all strings"
+msgstr "Übungsbereich: Bünde %d–%d, alle Saiten"
+
+msgid "From fret"
+msgstr "Ab Bund"
+
+msgid "To fret"
+msgstr "Bis Bund"
+
+msgid "shift range"
+msgstr "Bereich verschieben"
+
+msgid "Preset ranges:"
+msgstr "Fertige Bereiche:"
+
+msgid "Position"
+msgstr "Lage"
+
+msgid "CAGED"
+msgstr "CAGED"
+
+msgid "3 notes per string"
+msgstr "3 Töne pro Saite"
+
+msgid "Whole neck"
+msgstr "Ganzes Griffbrett"
+
+msgid "fret"
+msgstr "Bund"
+
+msgid "Staff"
+msgstr "Notensystem"
+
+msgid "treble clef"
+msgstr "Violinschlüssel"
+
+msgid "treble clef, octave lower (guitar)"
+msgstr "Violinschlüssel, oktaviert (Gitarre)"
+

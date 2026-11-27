@@ -9,11 +9,14 @@
 # cały gryf): LPM – kliknięcie zaznacza dźwięk (sygnał note_picked), przeciągnięcie przesuwa
 # przybliżony gryf; kółko – zoom do kursora; PPM – nachylenie na boki i wzdłuż osi gryfu (w zakresie
 # z ustawień); dwuklik – widok domyślny. Zoom, nachylenie i przesuwanie dotyczą widoku 3D.
+# Zakres ćwiczenia (Encyklopedia): fret_range przyciemnia gryf poza zakresem, a ruler = true rysuje
+# pod gryfem linijkę progów z zaznaczonym zakresem (kliknięcie progu – sygnał fret_clicked).
 # Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name FretboardView
 extends Control
 
 signal note_picked(string_index: int, fret: int)
+signal fret_clicked(fret: int)
 
 # Ustawienia, których zmiana przebudowuje gryf.
 const KEYS := [&"neck_view", &"fretboard_wood", &"fret_metal", &"string_color", &"inlays", &"strings",
@@ -24,11 +27,15 @@ const TOP := 30.0           # wiersz numerów progów
 const PAD := 10.0
 const SS := 2               # nadpróbkowanie obrazu 3D (2× w każdą stronę) – gładkie struny i krawędzie
 const THICK := [1.0, 1.3, 1.7, 2.2, 2.7, 3.2, 3.7, 4.2]
+const RULER_H := 62.0       # linijka progów pod gryfem (tryb ruler)
+const SHADE := Color(0.02, 0.03, 0.07, 0.62)   # przyciemnienie poza zakresem
 
 var spec: NeckSpec
 var interactive := false    # sterowanie myszą (Encyklopedia, Ćwiczenia)
 var selected := Vector2i(-1, -1)   # zaznaczony dźwięk: (struna, próg)
 var demo := false           # przykładowa skala (podgląd w ustawieniach) – odtwarzana po każdej zmianie
+var ruler := false          # linijka progów z zakresem pod gryfem (zamiast numerów progów nad nim)
+var fret_range := Vector2i(-1, -1)   # zakres progów (od, do); (-1, -1) – cały gryf bez przyciemnienia
 var _notes: Array = []
 var _view := ""
 var _lefty := false
@@ -58,6 +65,11 @@ func set_notes(notes: Array) -> void:
 	if _neck:
 		_neck.set_notes(_notes)
 		_render()
+	queue_redraw()
+
+
+func set_range(from: int, to: int) -> void:
+	fret_range = Vector2i(from, to)
 	queue_redraw()
 
 
@@ -192,6 +204,10 @@ static func warm_up(host: Node) -> void:
 func _on_resized() -> void:
 	if _vp and size.x > 1 and size.y > 1:
 		_vp.size = Vector2i(size * SS)
+		# Duży obraz (Encyklopedia – gryf na całą szerokość): nadpróbkowanie 2× już wygładza krawędzie,
+		# więc MSAA najwyżej 2× – bufor wielopróbkowy 4× zająłby kilkadziesiąt MB pamięci karty.
+		var cap := Viewport.MSAA_2X if _vp.size.x * _vp.size.y > 4000000 else Viewport.MSAA_4X
+		_vp.msaa_3d = mini(Graphics.msaa_mode(), cap) as Viewport.MSAA
 		_apply_camera()
 	queue_redraw()
 
@@ -223,9 +239,15 @@ func _vp_px(p: Vector2) -> Vector2:
 
 
 func _gui_input(event: InputEvent) -> void:
+	var mb := event as InputEventMouseButton
+	if ruler and mb and mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT and mb.position.y >= size.y - RULER_H:
+		var f := _ruler_fret(mb.position.x)
+		if f >= 0:
+			fret_clicked.emit(f)
+		accept_event()
+		return
 	if not interactive:
 		return
-	var mb := event as InputEventMouseButton
 	if mb:
 		if mb.double_click and mb.button_index == MOUSE_BUTTON_LEFT:
 			reset_view()
@@ -303,7 +325,16 @@ func _render() -> void:
 # Prostokąt gryfu w obrazie 3D (bez kolumny nazw strun i wiersza numerów progów). U leworęcznych
 # obraz jest odbity w poziomie, więc ten sam prostokąt trafia na ekranie na drugą stronę kolumny nazw.
 func _region_3d() -> Rect2:
-	return Rect2(GUTTER, TOP, size.x - GUTTER - PAD, size.y - TOP - PAD)
+	return Rect2(GUTTER, _top(), size.x - GUTTER - PAD, _bottom() - _top())
+
+
+# Górna i dolna krawędź pola gryfu (bez numerów progów u góry albo bez linijki u dołu).
+func _top() -> float:
+	return PAD + 6.0 if ruler else TOP
+
+
+func _bottom() -> float:
+	return size.y - PAD - (RULER_H if ruler else 0.0)
 
 
 # Odbicie współrzędnej x dla leworęcznych.
@@ -328,6 +359,11 @@ func _draw() -> void:
 		_:
 			if _neck:
 				_draw_3d()
+	if _cells.is_empty():
+		return
+	_draw_range_shade()
+	if ruler:
+		_draw_ruler()
 
 
 func _font() -> Font:
@@ -341,6 +377,8 @@ func _text_c(pos: Vector2, t: String, fs: int, col: Color) -> void:
 
 
 func _fret_label(pos: Vector2, n: int) -> void:
+	if ruler:
+		return
 	_text_c(pos, str(n), 13, NeckSpec.ORANGE if n == 12 else ThemeManager.color("faint"))
 
 
@@ -425,9 +463,9 @@ func _draw_table() -> void:
 	var x0 := GUTTER
 	var c0 := 52.0
 	var cw := (size.x - x0 - c0 - PAD) / spec.frets
-	var rh := (size.y - TOP - PAD) / spec.strings
+	var rh := (_bottom() - _top()) / spec.strings
 	var line := ThemeManager.color("border").lerp(Color("#2A3558"), 0.5)
-	var y0 := TOP
+	var y0 := _top()
 	var w := c0 + cw * spec.frets
 	draw_rect(Rect2(_lx(x0, w), y0, w, rh * spec.strings), Color("#0F1528"))
 	for f in _inlay_cells():
@@ -464,8 +502,8 @@ const SCH_INLAY := Color("#3A4566")
 func _draw_grid() -> void:
 	var x0 := GUTTER + 44.0
 	var cw := (size.x - x0 - PAD) / spec.frets
-	var top := TOP + 12.0
-	var sp := (size.y - top - PAD - 12.0) / (spec.strings - 1)
+	var top := _top() + 12.0
+	var sp := (_bottom() - top - 12.0) / (spec.strings - 1)
 	var h := sp * (spec.strings - 1)
 	draw_rect(Rect2(_lx(x0, cw * spec.frets), top - 12, cw * spec.frets, h + 24), SCH_BOARD)
 	var mid := h * 0.5
@@ -488,8 +526,8 @@ func _draw_grid() -> void:
 func _draw_shape() -> void:
 	var x0 := GUTTER + 44.0
 	var xend := spec.x_end
-	var k := minf((size.x - x0 - PAD) / xend, (size.y - TOP - PAD - 6.0) / (2.0 * spec.half_w(xend)))
-	var yc := TOP + 6.0 + spec.half_w(xend) * k
+	var k := minf((size.x - x0 - PAD) / xend, (_bottom() - _top() - 6.0) / (2.0 * spec.half_w(xend)))
+	var yc := _top() + 6.0 + spec.half_w(xend) * k
 	var X := func(x: float) -> float: return _mx(x0 + x * k)
 	var Z := func(z: float) -> float: return yc + z * k
 	draw_colored_polygon(PackedVector2Array([
@@ -520,3 +558,89 @@ func _draw_shape() -> void:
 				px = _mx(x0 - rpx - 10.0)
 			return Vector2(px, Z.call(spec.string_z(s, maxf(x, 0.0)))),
 		func(f): return spec.marker_radius(f) * k if f > 0 else rpx)
+
+
+# --- Zakres i linijka progów ------------------------------------------------------------
+# Granice pól liczone ze środków pól (_cells), więc działają tak samo w 3D (perspektywa, zoom,
+# nachylenie) i w schematach.
+
+# Punkt na granicy pól f i f + 1 na strunie s (f = -1: lewa krawędź pustej struny).
+func _edge(s: int, f: int) -> Vector2:
+	var last := spec.frets
+	if f < 0:
+		var a: Vector2 = _cells[Vector2i(s, 0)]
+		return a - (_cells[Vector2i(s, 1)] - a) * 0.5
+	if f >= last:
+		var b: Vector2 = _cells[Vector2i(s, last)]
+		return b + (b - _cells[Vector2i(s, last - 1)]) * 0.5
+	return (_cells[Vector2i(s, f)] + _cells[Vector2i(s, f + 1)]) * 0.5
+
+
+# Wielokąt pól od progu a do b (włącznie) na całej szerokości gryfu.
+func _span_poly(a: int, b: int) -> PackedVector2Array:
+	var n := spec.strings - 1
+	var up: Vector2 = (_cells[Vector2i(0, a)] - _cells[Vector2i(1, a)]) * 0.62
+	var down: Vector2 = (_cells[Vector2i(n, a)] - _cells[Vector2i(n - 1, a)]) * 0.62
+	var up2: Vector2 = (_cells[Vector2i(0, b)] - _cells[Vector2i(1, b)]) * 0.62
+	var down2: Vector2 = (_cells[Vector2i(n, b)] - _cells[Vector2i(n - 1, b)]) * 0.62
+	return PackedVector2Array([_edge(0, a - 1) + up, _edge(0, b) + up2, _edge(n, b) + down2, _edge(n, a - 1) + down])
+
+
+func _draw_range_shade() -> void:
+	if fret_range.x < 0:
+		return
+	var a := clampi(fret_range.x, 0, spec.frets)
+	var b := clampi(fret_range.y, a, spec.frets)
+	draw_colored_polygon(_span_poly(a, b), Color(1.0, 0.75, 0.43, 0.07))   # ciepła poświata zakresu (makieta)
+	if a > 0:
+		draw_colored_polygon(_span_poly(0, a - 1), SHADE)
+	if b < spec.frets:
+		draw_colored_polygon(_span_poly(b + 1, spec.frets), SHADE)
+
+
+# Próg pod współrzędną x linijki (-1 poza gryfem).
+func _ruler_fret(x: float) -> int:
+	if _cells.is_empty():
+		return -1
+	var n := spec.strings - 1
+	for f in spec.frets + 1:
+		var l := _edge(n, f - 1).x
+		var r := _edge(n, f).x
+		if x >= minf(l, r) and x <= maxf(l, r):
+			return f
+	return -1
+
+
+func _draw_ruler() -> void:
+	var n := spec.strings - 1
+	var y0 := size.y - RULER_H + 4.0
+	var h := RULER_H - 10.0
+	var accent := ThemeManager.color("accent")
+	var inlays := [3, 5, 7, 9, 15, 17, 19, 21]   # kropki jak na boku gryfu – niezależnie od wkładek
+	var doubles := [12, 24]
+	_text_c(Vector2(_mx(GUTTER * 0.5), y0 + 24.0), tr("fret"), 12, ThemeManager.color("hint"))
+	for f in spec.frets + 1:
+		var l := _edge(n, f - 1).x
+		var r := _edge(n, f).x
+		var x0 := minf(l, r)
+		var w := absf(r - l)
+		if x0 + w < GUTTER * 0.5 or x0 > size.x:
+			continue
+		var on := fret_range.x >= 0 and f >= fret_range.x and f <= fret_range.y
+		if on:
+			draw_rect(Rect2(x0, y0, w, h), Color(accent, 0.16))
+		draw_rect(Rect2(x0, y0 + h - 3.0, w, 3.0), accent if on else ThemeManager.color("border"))
+		var cx := x0 + w * 0.5
+		if fret_range.x >= 0 and (f == fret_range.x or f == fret_range.y):
+			_triangle(Vector2(cx, y0 + 8.0), 5.0, accent)
+		_text_c(Vector2(cx, y0 + 24.0), str(f), 13, accent.lightened(0.35) if on else ThemeManager.color("hint"))
+		var dot := ThemeManager.color("dim")
+		if f in doubles:
+			draw_circle(Vector2(cx - 4.0, y0 + 38.0), 2.2, dot)
+			draw_circle(Vector2(cx + 4.0, y0 + 38.0), 2.2, dot)
+		elif f in inlays:
+			draw_circle(Vector2(cx, y0 + 38.0), 2.2, dot)
+
+
+func _triangle(c: Vector2, r: float, col: Color) -> void:
+	draw_colored_polygon(PackedVector2Array([c + Vector2(0, -r), c + Vector2(r, r * 0.8), c + Vector2(-r, r * 0.8)]), col)

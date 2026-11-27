@@ -1258,3 +1258,144 @@ msgstr "Usuń ścieżkę"
 msgid "Delete?"
 msgstr "Usunąć?"
 
+msgid "Pitches"
+msgstr "Dźwięki"
+
+msgid "Intervals"
+msgstr "Interwały"
+
+msgid "Degrees"
+msgstr "Stopnie"
+
+msgid "Fingering"
+msgstr "Palcowanie"
+
+msgid "Scales"
+msgstr "Skale"
+
+msgid "Arpeggios"
+msgstr "Arpeggia"
+
+msgid "Chords"
+msgstr "Akordy"
+
+msgid "Search for a scale, chord or notes"
+msgstr "Szukaj skali, akordu lub dźwięków"
+
+msgid "e.g. Dorian or C E G B"
+msgstr "np. dorycka albo C E G H"
+
+msgid "Nothing found"
+msgstr "Nic nie znaleziono"
+
+msgid "Tonic"
+msgstr "Tonika"
+
+msgid "Root"
+msgstr "Podstawa"
+
+msgid "Formula"
+msgstr "Budowa"
+
+msgid "Chords in the scale"
+msgstr "Akordy w skali"
+
+msgid "%s chord"
+msgstr "akord %s"
+
+msgid "arpeggio"
+msgstr "arpeggio"
+
+msgid "%d notes"
+msgstr "%d dźwięków"
+
+msgid "%d notes (2–4)"
+msgstr "%d dźwięki"
+
+msgid "also: %s"
+msgstr "także: %s"
+
+msgid "Practise this scale"
+msgstr "Ćwicz tę skalę"
+
+msgid "Practise this arpeggio"
+msgstr "Ćwicz to arpeggio"
+
+msgid "Practise this chord"
+msgstr "Ćwicz ten akord"
+
+msgid "Listen"
+msgstr "Posłuchaj"
+
+msgid "+ Add to plan"
+msgstr "+ Do planu"
+
+msgid "Available with the Exercises module."
+msgstr "Dostępne razem z modułem Ćwiczenia."
+
+msgid "Available with the Practice plan module."
+msgstr "Dostępne razem z modułem Plan ćwiczeń."
+
+msgid "Exercises for this scale:"
+msgstr "Ćwiczenia dla tej skali:"
+
+msgid "Exercises for this chord:"
+msgstr "Ćwiczenia dla tego akordu:"
+
+msgid "Scale in range"
+msgstr "Skala w zakresie"
+
+msgid "Sequences"
+msgstr "Sekwencje"
+
+msgid "Find the note"
+msgstr "Znajdź dźwięk"
+
+msgid "Intervals on the neck"
+msgstr "Interwały na gryfie"
+
+msgid "Arpeggio in range"
+msgstr "Arpeggio w zakresie"
+
+msgid "Recognise the chord"
+msgstr "Rozpoznaj akord"
+
+msgid "practice range: frets %d–%d, all strings"
+msgstr "zakres ćwiczenia: progi %d–%d, wszystkie struny"
+
+msgid "From fret"
+msgstr "Od progu"
+
+msgid "To fret"
+msgstr "Do progu"
+
+msgid "shift range"
+msgstr "przesuń zakres"
+
+msgid "Preset ranges:"
+msgstr "Gotowe zakresy:"
+
+msgid "Position"
+msgstr "Pozycja"
+
+msgid "CAGED"
+msgstr "CAGED"
+
+msgid "3 notes per string"
+msgstr "3 dźwięki na strunę"
+
+msgid "Whole neck"
+msgstr "Cały gryf"
+
+msgid "fret"
+msgstr "próg"
+
+msgid "Staff"
+msgstr "Pięciolinia"
+
+msgid "treble clef"
+msgstr "klucz wiolinowy"
+
+msgid "treble clef, octave lower (guitar)"
+msgstr "klucz wiolinowy oktawowy (gitarowy)"
+

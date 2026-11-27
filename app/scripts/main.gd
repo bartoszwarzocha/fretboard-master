@@ -10,6 +10,7 @@ const SettingsScreen := preload("res://scripts/screens/settings_screen.gd")
 const AboutScreen := preload("res://scripts/screens/about_screen.gd")
 const MetronomeScreen := preload("res://scripts/screens/metronome_screen.gd")
 const TunerScreen := preload("res://scripts/screens/tuner_screen.gd")
+const EncyclopediaScreen := preload("res://scripts/screens/encyclopedia_screen.gd")
 
 var _screen: Control
 
@@ -52,6 +53,8 @@ func _show(screen_id: StringName) -> void:
 			_screen = MetronomeScreen.new()
 		&"tuning":
 			_screen = TunerScreen.new()
+		&"encyclopedia":
+			_screen = EncyclopediaScreen.new()
 		_:
 			_screen = ModuleScreen.new()
 			_screen.module_id = screen_id

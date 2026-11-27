@@ -55,6 +55,11 @@ const DEFAULTS := {
 	&"tuner": {
 		&"tun_view": 0, &"tun_mode": 0, &"tun_string": 1, &"tun_chromatic": false, &"tun_note": 9,
 	},
+	# Encyklopedia – ostatnio wybrana pozycja, tonika, opis dźwięków, zakres progów i klucz.
+	&"encyclopedia": {
+		&"enc_kind": "scale", &"enc_scale": "dorian", &"enc_chord": "maj7", &"enc_tonic": 2,
+		&"enc_mode": "names", &"enc_from": 5, &"enc_to": 9, &"enc_clef": "treble",
+	},
 	# Stan programu zapamiętywany między uruchomieniami – bez zakładki, nie jest przywracany.
 	&"state": {
 		&"last_screen": "menu", &"window_rect": "",

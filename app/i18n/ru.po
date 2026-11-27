@@ -1258,3 +1258,144 @@ msgstr "Удалить дорожку"
 msgid "Delete?"
 msgstr "Удалить?"
 
+msgid "Pitches"
+msgstr "Звуки"
+
+msgid "Intervals"
+msgstr "Интервалы"
+
+msgid "Degrees"
+msgstr "Ступени"
+
+msgid "Fingering"
+msgstr "Аппликатура"
+
+msgid "Scales"
+msgstr "Гаммы"
+
+msgid "Arpeggios"
+msgstr "Арпеджио"
+
+msgid "Chords"
+msgstr "Аккорды"
+
+msgid "Search for a scale, chord or notes"
+msgstr "Поиск гаммы, аккорда или нот"
+
+msgid "e.g. Dorian or C E G B"
+msgstr "напр. дорийский или C E G B"
+
+msgid "Nothing found"
+msgstr "Ничего не найдено"
+
+msgid "Tonic"
+msgstr "Тоника"
+
+msgid "Root"
+msgstr "Основной тон"
+
+msgid "Formula"
+msgstr "Формула"
+
+msgid "Chords in the scale"
+msgstr "Аккорды гаммы"
+
+msgid "%s chord"
+msgstr "%s аккорд"
+
+msgid "arpeggio"
+msgstr "арпеджио"
+
+msgid "%d notes"
+msgstr "%d звуков"
+
+msgid "%d notes (2–4)"
+msgstr "%d звука"
+
+msgid "also: %s"
+msgstr "также: %s"
+
+msgid "Practise this scale"
+msgstr "Упражняться в этой гамме"
+
+msgid "Practise this arpeggio"
+msgstr "Упражняться в этом арпеджио"
+
+msgid "Practise this chord"
+msgstr "Упражняться в этом аккорде"
+
+msgid "Listen"
+msgstr "Послушать"
+
+msgid "+ Add to plan"
+msgstr "+ В план"
+
+msgid "Available with the Exercises module."
+msgstr "Будет доступно вместе с модулем «Упражнения»."
+
+msgid "Available with the Practice plan module."
+msgstr "Будет доступно вместе с модулем «План занятий»."
+
+msgid "Exercises for this scale:"
+msgstr "Упражнения для этой гаммы:"
+
+msgid "Exercises for this chord:"
+msgstr "Упражнения для этого аккорда:"
+
+msgid "Scale in range"
+msgstr "Гамма в диапазоне"
+
+msgid "Sequences"
+msgstr "Секвенции"
+
+msgid "Find the note"
+msgstr "Найди ноту"
+
+msgid "Intervals on the neck"
+msgstr "Интервалы на грифе"
+
+msgid "Arpeggio in range"
+msgstr "Арпеджио в диапазоне"
+
+msgid "Recognise the chord"
+msgstr "Узнай аккорд"
+
+msgid "practice range: frets %d–%d, all strings"
+msgstr "диапазон: лады %d–%d, все струны"
+
+msgid "From fret"
+msgstr "С лада"
+
+msgid "To fret"
+msgstr "По лад"
+
+msgid "shift range"
+msgstr "сдвинуть"
+
+msgid "Preset ranges:"
+msgstr "Готовые диапазоны:"
+
+msgid "Position"
+msgstr "Позиция"
+
+msgid "CAGED"
+msgstr "CAGED"
+
+msgid "3 notes per string"
+msgstr "3 ноты на струну"
+
+msgid "Whole neck"
+msgstr "Весь гриф"
+
+msgid "fret"
+msgstr "лад"
+
+msgid "Staff"
+msgstr "Нотный стан"
+
+msgid "treble clef"
+msgstr "скрипичный ключ"
+
+msgid "treble clef, octave lower (guitar)"
+msgstr "скрипичный ключ с октавой ниже (гитарный)"
+
