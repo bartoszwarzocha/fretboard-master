@@ -260,6 +260,9 @@ static func _build_mesh() -> void:
 			mat.clearcoat_enabled = true
 			mat.clearcoat = 0.8
 			mat.clearcoat_roughness = 0.08
+		elif part == &"panel":
+			mat.roughness = 0.85   # czarna, matowa tafla
+			mat.metallic_specular = 0.15
 		else:
 			mat.roughness = 0.6
 			mat.metallic_specular = 0.35
