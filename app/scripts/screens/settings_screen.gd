@@ -315,7 +315,7 @@ func _build_graphics() -> void:
 		for r in Graphics.resolutions():
 			res.append([r, r.replace("x", " × ")])
 		_select(&"resolution", "Window size", res, false)
-	var monitors := [[-1, "Automatic"]]
+	var monitors := [[-1, tr("Automatic")]]
 	for i in DisplayServer.get_screen_count():
 		var s := DisplayServer.screen_get_size(i)
 		monitors.append([i, "%s %d (%d × %d)" % [tr("Monitor"), i + 1, s.x, s.y]])
