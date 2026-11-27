@@ -252,12 +252,17 @@ static func _build_mesh() -> void:
 		_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		var mat := StandardMaterial3D.new()
 		mat.albedo_color = COLORS[part]
-		# Połysk: gładka powierzchnia z lakierem (clearcoat) – wyraźne odblaski przy kołysaniu.
-		mat.roughness = 0.45 if part == &"panel" else 0.28
-		mat.metallic_specular = 0.7
-		mat.clearcoat_enabled = true
-		mat.clearcoat = 0.6
-		mat.clearcoat_roughness = 0.12
+		# Połysk tylko na elementach pomarańczowych (obwódka, F z kluczami, „Master”): gładka
+		# powierzchnia z lakierem – wyraźne odblaski przy kołysaniu. Tafla i „retboard” matowe.
+		if part == &"frame" or part == &"orange":
+			mat.roughness = 0.22
+			mat.metallic_specular = 0.8
+			mat.clearcoat_enabled = true
+			mat.clearcoat = 0.8
+			mat.clearcoat_roughness = 0.08
+		else:
+			mat.roughness = 0.6
+			mat.metallic_specular = 0.35
 		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		_mesh.surface_set_material(_mesh.get_surface_count() - 1, mat)
 	_size = box.size
