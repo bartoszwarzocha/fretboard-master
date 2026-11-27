@@ -1,0 +1,2919 @@
+{
+ "scales": [
+  {
+   "id": "ionian",
+   "cat": "modes",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Ionian (major)",
+    "pl": "jońska (durowa)",
+    "de": "Ionisch (Dur)",
+    "es": "jónica (mayor)",
+    "ru": "ионийский (мажор)"
+   },
+   "parent": "1"
+  },
+  {
+   "id": "dorian",
+   "cat": "modes",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "4",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Dorian",
+    "pl": "dorycka",
+    "de": "Dorisch",
+    "es": "dórica",
+    "ru": "дорийский"
+   },
+   "parent": "b7"
+  },
+  {
+   "id": "phrygian",
+   "cat": "modes",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "4",
+    "5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Phrygian",
+    "pl": "frygijska",
+    "de": "Phrygisch",
+    "es": "frigia",
+    "ru": "фригийский"
+   },
+   "parent": "b6"
+  },
+  {
+   "id": "lydian",
+   "cat": "modes",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "#4",
+    "5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Lydian",
+    "pl": "lidyjska",
+    "de": "Lydisch",
+    "es": "lidia",
+    "ru": "лидийский"
+   },
+   "parent": "5"
+  },
+  {
+   "id": "mixolydian",
+   "cat": "modes",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Mixolydian",
+    "pl": "miksolidyjska",
+    "de": "Mixolydisch",
+    "es": "mixolidia",
+    "ru": "миксолидийский"
+   },
+   "parent": "4"
+  },
+  {
+   "id": "aeolian",
+   "cat": "modes",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "4",
+    "5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Aeolian (natural minor)",
+    "pl": "eolska (molowa naturalna)",
+    "de": "Äolisch (natürliches Moll)",
+    "es": "eólica (menor natural)",
+    "ru": "эолийский (натуральный минор)"
+   },
+   "aliases": [
+    {
+     "en": "Ethiopian",
+     "pl": "etiopska",
+     "de": "Äthiopisch",
+     "es": "etíope",
+     "ru": "эфиопский"
+    }
+   ],
+   "parent": "b3"
+  },
+  {
+   "id": "locrian",
+   "cat": "modes",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "4",
+    "b5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Locrian",
+    "pl": "lokrycka",
+    "de": "Lokrisch",
+    "es": "locria",
+    "ru": "локрийский"
+   },
+   "parent": "b2"
+  },
+  {
+   "id": "melodic_minor",
+   "cat": "melodic",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "4",
+    "5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Melodic minor (jazz minor)",
+    "pl": "molowa melodyczna (jazzowa)",
+    "de": "Melodisch Moll (Jazz-Moll)",
+    "es": "menor melódica (menor de jazz)",
+    "ru": "мелодический минор (джазовый)"
+   },
+   "aliases": [
+    {
+     "en": "Hawaiian",
+     "pl": "hawajska",
+     "de": "Hawaiianisch",
+     "es": "hawaiana",
+     "ru": "гавайский"
+    }
+   ]
+  },
+  {
+   "id": "dorian_b2",
+   "cat": "melodic",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "4",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Dorian ♭2",
+    "pl": "dorycka ♭2",
+    "de": "Dorisch ♭2",
+    "es": "dórica ♭2",
+    "ru": "дорийский ♭2"
+   },
+   "aliases": [
+    {
+     "en": "Javanese",
+     "pl": "jawajska",
+     "de": "Javanisch",
+     "es": "javanesa",
+     "ru": "яванский"
+    }
+   ]
+  },
+  {
+   "id": "lydian_aug",
+   "cat": "melodic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "#4",
+    "#5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Lydian augmented",
+    "pl": "lidyjska zwiększona",
+    "de": "Lydisch übermäßig",
+    "es": "lidia aumentada",
+    "ru": "лидийский увеличенный"
+   }
+  },
+  {
+   "id": "lydian_dom",
+   "cat": "melodic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "#4",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Lydian dominant",
+    "pl": "lidyjska dominantowa",
+    "de": "Lydisch dominant",
+    "es": "lidia dominante",
+    "ru": "лидийский доминантовый"
+   },
+   "aliases": [
+    {
+     "en": "Overtone (acoustic)",
+     "pl": "alikwotowa (akustyczna)",
+     "de": "Obertonskala (akustisch)",
+     "es": "de armónicos (acústica)",
+     "ru": "обертоновый (акустический)"
+    }
+   ]
+  },
+  {
+   "id": "mixolydian_b6",
+   "cat": "melodic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Mixolydian ♭6",
+    "pl": "miksolidyjska ♭6",
+    "de": "Mixolydisch ♭6",
+    "es": "mixolidia ♭6",
+    "ru": "миксолидийский ♭6"
+   },
+   "aliases": [
+    {
+     "en": "Hindu",
+     "pl": "hinduska",
+     "de": "Hindu",
+     "es": "hindú",
+     "ru": "индийский"
+    }
+   ]
+  },
+  {
+   "id": "locrian_n2",
+   "cat": "melodic",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "4",
+    "b5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Locrian ♮2 (half-diminished)",
+    "pl": "lokrycka ♮2 (półzmniejszona)",
+    "de": "Lokrisch ♮2 (halbvermindert)",
+    "es": "locria ♮2 (semidisminuida)",
+    "ru": "локрийский ♮2 (полууменьшённый)"
+   }
+  },
+  {
+   "id": "altered",
+   "cat": "melodic",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Altered (super Locrian)",
+    "pl": "alterowana (superlokrycka)",
+    "de": "Alteriert (Superlokrisch)",
+    "es": "alterada (superlocria)",
+    "ru": "альтерированный (суперлокрийский)"
+   },
+   "sig": "minor"
+  },
+  {
+   "id": "harmonic_minor",
+   "cat": "harmonic",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "4",
+    "5",
+    "b6",
+    "7"
+   ],
+   "name": {
+    "en": "Harmonic minor",
+    "pl": "molowa harmoniczna",
+    "de": "Harmonisch Moll",
+    "es": "menor armónica",
+    "ru": "гармонический минор"
+   },
+   "aliases": [
+    {
+     "en": "Mohammedan",
+     "pl": "mahometańska",
+     "de": "Mohammedanisch",
+     "es": "mahometana",
+     "ru": "магометанский"
+    }
+   ]
+  },
+  {
+   "id": "locrian_n6",
+   "cat": "harmonic",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "4",
+    "b5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Locrian ♮6",
+    "pl": "lokrycka ♮6",
+    "de": "Lokrisch ♮6",
+    "es": "locria ♮6",
+    "ru": "локрийский ♮6"
+   }
+  },
+  {
+   "id": "ionian_s5",
+   "cat": "harmonic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "#5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Ionian ♯5",
+    "pl": "jońska ♯5",
+    "de": "Ionisch ♯5",
+    "es": "jónica ♯5",
+    "ru": "ионийский ♯5"
+   }
+  },
+  {
+   "id": "dorian_s4",
+   "cat": "harmonic",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "#4",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Dorian ♯4 (Ukrainian Dorian)",
+    "pl": "dorycka ♯4 (ukraińska dorycka)",
+    "de": "Dorisch ♯4 (ukrainisch-dorisch)",
+    "es": "dórica ♯4 (dórica ucraniana)",
+    "ru": "дорийский ♯4 (украинский дорийский)"
+   },
+   "aliases": [
+    {
+     "en": "Romanian minor",
+     "pl": "rumuńska molowa",
+     "de": "Rumänisch Moll",
+     "es": "menor rumana",
+     "ru": "румынский минор"
+    }
+   ]
+  },
+  {
+   "id": "phrygian_dom",
+   "cat": "harmonic",
+   "degrees": [
+    "1",
+    "b2",
+    "3",
+    "4",
+    "5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Phrygian dominant",
+    "pl": "frygijska dominantowa",
+    "de": "Phrygisch dominant",
+    "es": "frigia dominante",
+    "ru": "фригийский доминантовый"
+   },
+   "aliases": [
+    {
+     "en": "Spanish (Phrygian major)",
+     "pl": "hiszpańska (frygijska durowa)",
+     "de": "Spanisch (Phrygisch Dur)",
+     "es": "española (frigia mayor)",
+     "ru": "испанский (фригийский мажор)"
+    },
+    {
+     "en": "Ahava Rabbah (Jewish)",
+     "pl": "Ahawa Rabba (żydowska)",
+     "de": "Ahava Rabba (jüdisch)",
+     "es": "Ahavá Rabá (judía)",
+     "ru": "Ахава Раба (еврейский)"
+    }
+   ]
+  },
+  {
+   "id": "lydian_s2",
+   "cat": "harmonic",
+   "degrees": [
+    "1",
+    "#2",
+    "3",
+    "#4",
+    "5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Lydian ♯2",
+    "pl": "lidyjska ♯2",
+    "de": "Lydisch ♯2",
+    "es": "lidia ♯2",
+    "ru": "лидийский ♯2"
+   }
+  },
+  {
+   "id": "ultralocrian",
+   "cat": "harmonic",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "b6",
+    "bb7"
+   ],
+   "name": {
+    "en": "Ultralocrian",
+    "pl": "ultralokrycka",
+    "de": "Ultralokrisch",
+    "es": "ultralocria",
+    "ru": "ультралокрийский"
+   },
+   "sig": "minor"
+  },
+  {
+   "id": "penta_major",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "5",
+    "6"
+   ],
+   "name": {
+    "en": "Major pentatonic",
+    "pl": "pentatonika durowa",
+    "de": "Dur-Pentatonik",
+    "es": "pentatónica mayor",
+    "ru": "мажорная пентатоника"
+   },
+   "aliases": [
+    {
+     "en": "Mongolian",
+     "pl": "mongolska",
+     "de": "Mongolisch",
+     "es": "mongola",
+     "ru": "монгольский"
+    },
+    {
+     "en": "Chinese (gong)",
+     "pl": "chińska (gong)",
+     "de": "Chinesisch (Gong)",
+     "es": "china (gong)",
+     "ru": "китайский (гун)"
+    }
+   ]
+  },
+  {
+   "id": "penta_minor",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "b3",
+    "4",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "Minor pentatonic",
+    "pl": "pentatonika molowa",
+    "de": "Moll-Pentatonik",
+    "es": "pentatónica menor",
+    "ru": "минорная пентатоника"
+   }
+  },
+  {
+   "id": "penta_dom",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "Dominant pentatonic",
+    "pl": "pentatonika dominantowa",
+    "de": "Dominant-Pentatonik",
+    "es": "pentatónica dominante",
+    "ru": "доминантовая пентатоника"
+   }
+  },
+  {
+   "id": "egyptian",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "2",
+    "4",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "Egyptian (suspended)",
+    "pl": "egipska (zawieszona)",
+    "de": "Ägyptisch (suspendiert)",
+    "es": "egipcia (suspendida)",
+    "ru": "египетский (подвешенный)"
+   },
+   "sig": "minor"
+  },
+  {
+   "id": "yo",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "2",
+    "4",
+    "5",
+    "6"
+   ],
+   "name": {
+    "en": "Yo",
+    "pl": "yo",
+    "de": "Yo",
+    "es": "yo",
+    "ru": "ё"
+   },
+   "aliases": [
+    {
+     "en": "Ritusen",
+     "pl": "ritsusen",
+     "de": "Ritsusen",
+     "es": "ritsusen",
+     "ru": "рицусэн"
+    }
+   ],
+   "sig": "major"
+  },
+  {
+   "id": "man_gong",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "b3",
+    "4",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Man gong (blues minor pentatonic)",
+    "pl": "man gong (bluesowa molowa)",
+    "de": "Man Gong (Blues-Moll-Pentatonik)",
+    "es": "man gong (pentatónica de blues menor)",
+    "ru": "мань гун (блюзовая минорная)"
+   }
+  },
+  {
+   "id": "hirajoshi",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "5",
+    "b6"
+   ],
+   "name": {
+    "en": "Hirajōshi",
+    "pl": "hirajoshi",
+    "de": "Hirajōshi",
+    "es": "hirajōshi",
+    "ru": "хирадзёси"
+   }
+  },
+  {
+   "id": "kumoi",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "5",
+    "6"
+   ],
+   "name": {
+    "en": "Kumoi",
+    "pl": "kumoi",
+    "de": "Kumoi",
+    "es": "kumoi",
+    "ru": "кумои"
+   }
+  },
+  {
+   "id": "in_sen",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "b2",
+    "4",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "In-sen",
+    "pl": "in-sen",
+    "de": "In-Sen",
+    "es": "in-sen",
+    "ru": "ин-сэн"
+   },
+   "sig": "minor"
+  },
+  {
+   "id": "in",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "b2",
+    "4",
+    "5",
+    "b6"
+   ],
+   "name": {
+    "en": "In (Miyako-bushi)",
+    "pl": "in (miyako-bushi)",
+    "de": "In (Miyako-bushi)",
+    "es": "in (miyako-bushi)",
+    "ru": "ин (мияко-буси)"
+   },
+   "aliases": [
+    {
+     "en": "Japanese",
+     "pl": "japońska",
+     "de": "Japanisch",
+     "es": "japonesa",
+     "ru": "японский"
+    }
+   ],
+   "sig": "minor"
+  },
+  {
+   "id": "iwato",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "b2",
+    "4",
+    "b5",
+    "b7"
+   ],
+   "name": {
+    "en": "Iwato",
+    "pl": "iwato",
+    "de": "Iwato",
+    "es": "iwato",
+    "ru": "ивато"
+   },
+   "sig": "minor"
+  },
+  {
+   "id": "pelog",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "5",
+    "b6"
+   ],
+   "name": {
+    "en": "Pelog (Balinese)",
+    "pl": "pelog (balijska)",
+    "de": "Pelog (balinesisch)",
+    "es": "pelog (balinesa)",
+    "ru": "пелог (балийский)"
+   }
+  },
+  {
+   "id": "chinese",
+   "cat": "pentatonic",
+   "degrees": [
+    "1",
+    "3",
+    "#4",
+    "5",
+    "7"
+   ],
+   "name": {
+    "en": "Chinese",
+    "pl": "chińska",
+    "de": "Chinesisch",
+    "es": "china",
+    "ru": "китайский"
+   }
+  },
+  {
+   "id": "blues",
+   "cat": "blues",
+   "degrees": [
+    "1",
+    "b3",
+    "4",
+    "b5",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "Blues (minor)",
+    "pl": "bluesowa (molowa)",
+    "de": "Blues (Moll)",
+    "es": "blues (menor)",
+    "ru": "блюзовый (минорный)"
+   }
+  },
+  {
+   "id": "blues_major",
+   "cat": "blues",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "3",
+    "5",
+    "6"
+   ],
+   "name": {
+    "en": "Major blues",
+    "pl": "bluesowa durowa",
+    "de": "Blues (Dur)",
+    "es": "blues mayor",
+    "ru": "мажорный блюзовый"
+   },
+   "sig": "major"
+  },
+  {
+   "id": "blues_nonatonic",
+   "cat": "blues",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "3",
+    "4",
+    "b5",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Blues nonatonic",
+    "pl": "bluesowa dziewięciodźwiękowa",
+    "de": "Blues (neuntönig)",
+    "es": "blues nonatónica",
+    "ru": "девятиступенный блюзовый"
+   },
+   "sig": "major"
+  },
+  {
+   "id": "bebop_dom",
+   "cat": "bebop",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "b7",
+    "7"
+   ],
+   "name": {
+    "en": "Bebop dominant",
+    "pl": "bebopowa dominantowa",
+    "de": "Bebop dominant",
+    "es": "bebop dominante",
+    "ru": "бибоп доминантовый"
+   }
+  },
+  {
+   "id": "bebop_major",
+   "cat": "bebop",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "#5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Bebop major",
+    "pl": "bebopowa durowa",
+    "de": "Bebop Dur",
+    "es": "bebop mayor",
+    "ru": "бибоп мажорный"
+   }
+  },
+  {
+   "id": "bebop_dorian",
+   "cat": "bebop",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "3",
+    "4",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Bebop Dorian (minor)",
+    "pl": "bebopowa dorycka (molowa)",
+    "de": "Bebop dorisch (Moll)",
+    "es": "bebop dórica (menor)",
+    "ru": "бибоп дорийский (минорный)"
+   },
+   "sig": "minor"
+  },
+  {
+   "id": "bebop_melodic",
+   "cat": "bebop",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "4",
+    "5",
+    "#5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Bebop melodic minor",
+    "pl": "bebopowa molowa melodyczna",
+    "de": "Bebop melodisch Moll",
+    "es": "bebop menor melódica",
+    "ru": "бибоп мелодический минор"
+   }
+  },
+  {
+   "id": "bebop_locrian",
+   "cat": "bebop",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "4",
+    "b5",
+    "5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Bebop Locrian (half-diminished)",
+    "pl": "bebopowa lokrycka (półzmniejszona)",
+    "de": "Bebop lokrisch (halbvermindert)",
+    "es": "bebop locria (semidisminuida)",
+    "ru": "бибоп локрийский (полууменьшённый)"
+   }
+  },
+  {
+   "id": "hexa_major",
+   "cat": "hexatonic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+   ],
+   "name": {
+    "en": "Major hexatonic",
+    "pl": "heksatonika durowa",
+    "de": "Dur-Hexatonik",
+    "es": "hexatónica mayor",
+    "ru": "мажорная гексатоника"
+   }
+  },
+  {
+   "id": "hexa_minor",
+   "cat": "hexatonic",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "4",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "Minor hexatonic",
+    "pl": "heksatonika molowa",
+    "de": "Moll-Hexatonik",
+    "es": "hexatónica menor",
+    "ru": "минорная гексатоника"
+   }
+  },
+  {
+   "id": "prometheus",
+   "cat": "hexatonic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "#4",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Prometheus",
+    "pl": "prometejska",
+    "de": "Prometheus",
+    "es": "prometeo",
+    "ru": "прометеев"
+   }
+  },
+  {
+   "id": "tritone",
+   "cat": "hexatonic",
+   "degrees": [
+    "1",
+    "b2",
+    "3",
+    "b5",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "Tritone",
+    "pl": "trytonowa",
+    "de": "Tritonus-Skala",
+    "es": "de tritonos",
+    "ru": "тритоновый"
+   }
+  },
+  {
+   "id": "tetra_genus",
+   "cat": "hexatonic",
+   "degrees": [
+    "1",
+    "2",
+    "4",
+    "5"
+   ],
+   "name": {
+    "en": "Genus primum",
+    "pl": "genus primum",
+    "de": "Genus primum",
+    "es": "genus primum",
+    "ru": "genus primum"
+   },
+   "sig": "major"
+  },
+  {
+   "id": "tetra_eskimo",
+   "cat": "hexatonic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "5"
+   ],
+   "name": {
+    "en": "Eskimo tetratonic",
+    "pl": "eskimoska",
+    "de": "Eskimo-Tetratonik",
+    "es": "tetratónica esquimal",
+    "ru": "эскимосская тетратоника"
+   }
+  },
+  {
+   "id": "tetra_biyu",
+   "cat": "hexatonic",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "Bi yu",
+    "pl": "bi yu",
+    "de": "Bi Yu",
+    "es": "bi yu",
+    "ru": "би юй"
+   }
+  },
+  {
+   "id": "whole_tone",
+   "cat": "symmetric",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "#4",
+    "#5",
+    "#6"
+   ],
+   "name": {
+    "en": "Whole tone",
+    "pl": "całotonowa",
+    "de": "Ganztonleiter",
+    "es": "de tonos enteros",
+    "ru": "целотонный"
+   }
+  },
+  {
+   "id": "dim_hw",
+   "cat": "symmetric",
+   "degrees": [
+    "1",
+    "b2",
+    "#2",
+    "3",
+    "#4",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Diminished half–whole (dominant)",
+    "pl": "zmniejszona półton–cały ton (dominantowa)",
+    "de": "Halbton-Ganzton (dominantisch vermindert)",
+    "es": "disminuida semitono–tono (dominante)",
+    "ru": "уменьшённый полутон–тон (доминантовый)"
+   }
+  },
+  {
+   "id": "dim_wh",
+   "cat": "symmetric",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "4",
+    "b5",
+    "#5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Diminished whole–half",
+    "pl": "zmniejszona cały ton–półton",
+    "de": "Ganzton-Halbton (vermindert)",
+    "es": "disminuida tono–semitono",
+    "ru": "уменьшённый тон–полутон"
+   }
+  },
+  {
+   "id": "augmented",
+   "cat": "symmetric",
+   "degrees": [
+    "1",
+    "#2",
+    "3",
+    "5",
+    "#5",
+    "7"
+   ],
+   "name": {
+    "en": "Augmented",
+    "pl": "zwiększona",
+    "de": "Übermäßige Skala",
+    "es": "aumentada",
+    "ru": "увеличенный"
+   }
+  },
+  {
+   "id": "chromatic",
+   "cat": "symmetric",
+   "degrees": [
+    "1",
+    "#1",
+    "2",
+    "#2",
+    "3",
+    "4",
+    "#4",
+    "5",
+    "#5",
+    "6",
+    "#6",
+    "7"
+   ],
+   "name": {
+    "en": "Chromatic",
+    "pl": "chromatyczna",
+    "de": "Chromatisch",
+    "es": "cromática",
+    "ru": "хроматическая"
+   },
+   "sig": "major"
+  },
+  {
+   "id": "double_harmonic",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "b2",
+    "3",
+    "4",
+    "5",
+    "b6",
+    "7"
+   ],
+   "name": {
+    "en": "Double harmonic (Byzantine)",
+    "pl": "podwójna harmoniczna (bizantyjska)",
+    "de": "Doppelharmonisch (Byzantinisch)",
+    "es": "doble armónica (bizantina)",
+    "ru": "двойной гармонический (византийский)"
+   },
+   "aliases": [
+    {
+     "en": "Arabic (Hijaz Kar)",
+     "pl": "arabska (hidżaz kar)",
+     "de": "Arabisch (Hijaz Kar)",
+     "es": "árabe (hijaz kar)",
+     "ru": "арабский (хиджаз кар)"
+    },
+    {
+     "en": "Gypsy major",
+     "pl": "cygańska durowa",
+     "de": "Zigeuner-Dur",
+     "es": "gitana mayor",
+     "ru": "цыганский мажор"
+    }
+   ]
+  },
+  {
+   "id": "hungarian_minor",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "#4",
+    "5",
+    "b6",
+    "7"
+   ],
+   "name": {
+    "en": "Hungarian minor",
+    "pl": "węgierska molowa",
+    "de": "Ungarisch Moll",
+    "es": "menor húngara",
+    "ru": "венгерский минор"
+   },
+   "aliases": [
+    {
+     "en": "Gypsy minor",
+     "pl": "cygańska molowa",
+     "de": "Zigeuner-Moll",
+     "es": "gitana menor",
+     "ru": "цыганский минор"
+    },
+    {
+     "en": "Algerian",
+     "pl": "algierska",
+     "de": "Algerisch",
+     "es": "argelina",
+     "ru": "алжирский"
+    }
+   ]
+  },
+  {
+   "id": "hungarian_major",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "#2",
+    "3",
+    "#4",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Hungarian major",
+    "pl": "węgierska durowa",
+    "de": "Ungarisch Dur",
+    "es": "mayor húngara",
+    "ru": "венгерский мажор"
+   }
+  },
+  {
+   "id": "neapolitan_major",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "4",
+    "5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Neapolitan major",
+    "pl": "neapolitańska durowa",
+    "de": "Neapolitanisch Dur",
+    "es": "napolitana mayor",
+    "ru": "неаполитанский мажор"
+   }
+  },
+  {
+   "id": "neapolitan_minor",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "4",
+    "5",
+    "b6",
+    "7"
+   ],
+   "name": {
+    "en": "Neapolitan minor",
+    "pl": "neapolitańska molowa",
+    "de": "Neapolitanisch Moll",
+    "es": "napolitana menor",
+    "ru": "неаполитанский минор"
+   }
+  },
+  {
+   "id": "persian",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "b2",
+    "3",
+    "4",
+    "b5",
+    "b6",
+    "7"
+   ],
+   "name": {
+    "en": "Persian",
+    "pl": "perska",
+    "de": "Persisch",
+    "es": "persa",
+    "ru": "персидский"
+   }
+  },
+  {
+   "id": "oriental",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "b2",
+    "3",
+    "4",
+    "b5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "Oriental",
+    "pl": "orientalna",
+    "de": "Orientalisch",
+    "es": "oriental",
+    "ru": "восточный"
+   }
+  },
+  {
+   "id": "major_locrian",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "b5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Major Locrian (Arabian)",
+    "pl": "lokrycka durowa (arabska)",
+    "de": "Lokrisch Dur (Arabisch)",
+    "es": "locria mayor (arábiga)",
+    "ru": "мажорный локрийский (арабский)"
+   }
+  },
+  {
+   "id": "lydian_minor",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "#4",
+    "5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Lydian minor",
+    "pl": "lidyjska molowa",
+    "de": "Lydisch Moll",
+    "es": "lidia menor",
+    "ru": "лидийский минор"
+   }
+  },
+  {
+   "id": "lydian_dim",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "2",
+    "b3",
+    "#4",
+    "5",
+    "6",
+    "7"
+   ],
+   "name": {
+    "en": "Lydian diminished",
+    "pl": "lidyjska zmniejszona",
+    "de": "Lydisch vermindert",
+    "es": "lidia disminuida",
+    "ru": "лидийский уменьшённый"
+   }
+  },
+  {
+   "id": "enigmatic",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "b2",
+    "3",
+    "#4",
+    "#5",
+    "#6",
+    "7"
+   ],
+   "name": {
+    "en": "Enigmatic",
+    "pl": "enigmatyczna",
+    "de": "Enigmatisch",
+    "es": "enigmática",
+    "ru": "загадочный"
+   }
+  },
+  {
+   "id": "leading_whole_tone",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "#4",
+    "#5",
+    "#6",
+    "7"
+   ],
+   "name": {
+    "en": "Leading whole tone",
+    "pl": "całotonowa z dźwiękiem prowadzącym",
+    "de": "Ganzton mit Leitton",
+    "es": "de tonos enteros con sensible",
+    "ru": "целотонный с вводным тоном"
+   }
+  },
+  {
+   "id": "harmonic_major",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "b6",
+    "7"
+   ],
+   "name": {
+    "en": "Harmonic major",
+    "pl": "durowa harmoniczna",
+    "de": "Harmonisch Dur",
+    "es": "mayor armónica",
+    "ru": "гармонический мажор"
+   }
+  },
+  {
+   "id": "flamenco",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "b2",
+    "b3",
+    "3",
+    "4",
+    "5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Flamenco",
+    "pl": "flamenco",
+    "de": "Flamenco",
+    "es": "flamenca",
+    "ru": "фламенко"
+   },
+   "sig": "minor"
+  },
+  {
+   "id": "spanish_8",
+   "cat": "ethnic",
+   "degrees": [
+    "1",
+    "b2",
+    "#2",
+    "3",
+    "4",
+    "b5",
+    "b6",
+    "b7"
+   ],
+   "name": {
+    "en": "Spanish eight-tone",
+    "pl": "hiszpańska ośmiodźwiękowa",
+    "de": "Spanisch achttönig",
+    "es": "española de ocho tonos",
+    "ru": "испанский восьмиступенный"
+   }
+  }
+ ],
+ "scale_categories": [
+  {
+   "id": "modes",
+   "name": {
+    "en": "Modes of the major scale",
+    "pl": "Skale modalne",
+    "de": "Kirchentonarten",
+    "es": "Modos de la escala mayor",
+    "ru": "Лады мажорной гаммы"
+   }
+  },
+  {
+   "id": "melodic",
+   "name": {
+    "en": "Melodic minor modes",
+    "pl": "Modusy skali molowej melodycznej",
+    "de": "Modi von Melodisch Moll",
+    "es": "Modos de la menor melódica",
+    "ru": "Лады мелодического минора"
+   }
+  },
+  {
+   "id": "harmonic",
+   "name": {
+    "en": "Harmonic minor modes",
+    "pl": "Modusy skali molowej harmonicznej",
+    "de": "Modi von Harmonisch Moll",
+    "es": "Modos de la menor armónica",
+    "ru": "Лады гармонического минора"
+   }
+  },
+  {
+   "id": "pentatonic",
+   "name": {
+    "en": "Pentatonic",
+    "pl": "Pentatonika",
+    "de": "Pentatonik",
+    "es": "Pentatónicas",
+    "ru": "Пентатоника"
+   }
+  },
+  {
+   "id": "blues",
+   "name": {
+    "en": "Blues",
+    "pl": "Blues",
+    "de": "Blues",
+    "es": "Blues",
+    "ru": "Блюз"
+   }
+  },
+  {
+   "id": "bebop",
+   "name": {
+    "en": "Bebop",
+    "pl": "Bebop",
+    "de": "Bebop",
+    "es": "Bebop",
+    "ru": "Бибоп"
+   }
+  },
+  {
+   "id": "hexatonic",
+   "name": {
+    "en": "Hexatonic and tetratonic",
+    "pl": "Heksatonika i tetratonika",
+    "de": "Hexatonik und Tetratonik",
+    "es": "Hexatónicas y tetratónicas",
+    "ru": "Гексатоника и тетратоника"
+   }
+  },
+  {
+   "id": "symmetric",
+   "name": {
+    "en": "Symmetric",
+    "pl": "Symetryczne",
+    "de": "Symmetrische",
+    "es": "Simétricas",
+    "ru": "Симметричные"
+   }
+  },
+  {
+   "id": "ethnic",
+   "name": {
+    "en": "Ethnic and exotic",
+    "pl": "Etniczne i egzotyczne",
+    "de": "Ethnische und exotische",
+    "es": "Étnicas y exóticas",
+    "ru": "Этнические и экзотические"
+   }
+  }
+ ],
+ "chords": [
+  {
+   "id": "maj",
+   "cat": "major",
+   "symbol": "",
+   "degrees": [
+    "1",
+    "3",
+    "5"
+   ],
+   "name": {
+    "en": "major",
+    "pl": "durowy",
+    "de": "Dur",
+    "es": "mayor",
+    "ru": "мажорный"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "add9",
+   "cat": "major",
+   "symbol": "add9",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "9"
+   ],
+   "name": {
+    "en": "added ninth",
+    "pl": "durowy z noną",
+    "de": "Dur mit None",
+    "es": "mayor con novena añadida",
+    "ru": "мажорный с ноной"
+   },
+   "aliases": [
+    {
+     "en": "add2",
+     "pl": "add2",
+     "de": "add2",
+     "es": "add2",
+     "ru": "add2"
+    }
+   ]
+  },
+  {
+   "id": "add11",
+   "cat": "major",
+   "symbol": "add11",
+   "degrees": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "name": {
+    "en": "added eleventh (add4)",
+    "pl": "durowy z kwartą (add4)",
+    "de": "Dur mit Quarte (add4)",
+    "es": "mayor con cuarta añadida (add4)",
+    "ru": "мажорный с квартой (add4)"
+   }
+  },
+  {
+   "id": "6",
+   "cat": "major",
+   "symbol": "6",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "6"
+   ],
+   "name": {
+    "en": "major sixth",
+    "pl": "durowy z sekstą",
+    "de": "Sextakkord (Dur)",
+    "es": "sexta mayor",
+    "ru": "мажорный секстаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "69",
+   "cat": "major",
+   "symbol": "6/9",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "6",
+    "9"
+   ],
+   "name": {
+    "en": "six-nine",
+    "pl": "durowy z sekstą i noną",
+    "de": "Sext-None",
+    "es": "sexta-novena",
+    "ru": "секстнонаккорд"
+   }
+  },
+  {
+   "id": "maj7",
+   "cat": "major",
+   "symbol": "maj7",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "7"
+   ],
+   "name": {
+    "en": "major seventh",
+    "pl": "wielki septymowy",
+    "de": "großer Septakkord",
+    "es": "séptima mayor",
+    "ru": "большой мажорный септаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "maj9",
+   "cat": "major",
+   "symbol": "maj9",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "7",
+    "9"
+   ],
+   "name": {
+    "en": "major ninth",
+    "pl": "wielki nonowy",
+    "de": "großer Nonenakkord",
+    "es": "novena mayor",
+    "ru": "большой мажорный нонаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "maj7s11",
+   "cat": "major",
+   "symbol": "maj7♯11",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "7",
+    "#11"
+   ],
+   "name": {
+    "en": "major seventh sharp eleven",
+    "pl": "wielki septymowy z ♯11",
+    "de": "großer Septakkord ♯11",
+    "es": "séptima mayor ♯11",
+    "ru": "большой мажорный септаккорд ♯11"
+   }
+  },
+  {
+   "id": "maj9s11",
+   "cat": "major",
+   "symbol": "maj9♯11",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "7",
+    "9",
+    "#11"
+   ],
+   "name": {
+    "en": "major ninth sharp eleven",
+    "pl": "wielki nonowy z ♯11",
+    "de": "großer Nonenakkord ♯11",
+    "es": "novena mayor ♯11",
+    "ru": "большой мажорный нонаккорд ♯11"
+   }
+  },
+  {
+   "id": "maj11",
+   "cat": "major",
+   "symbol": "maj11",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "7",
+    "9",
+    "11"
+   ],
+   "name": {
+    "en": "major eleventh",
+    "pl": "wielki undecymowy",
+    "de": "großer Undezimakkord",
+    "es": "oncena mayor",
+    "ru": "большой мажорный ундецимаккорд"
+   }
+  },
+  {
+   "id": "maj13",
+   "cat": "major",
+   "symbol": "maj13",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "7",
+    "9",
+    "13"
+   ],
+   "name": {
+    "en": "major thirteenth",
+    "pl": "wielki tercdecymowy",
+    "de": "großer Tredezimakkord",
+    "es": "trecena mayor",
+    "ru": "большой мажорный терцдецимаккорд"
+   }
+  },
+  {
+   "id": "maj13s11",
+   "cat": "major",
+   "symbol": "maj13♯11",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "7",
+    "9",
+    "#11",
+    "13"
+   ],
+   "name": {
+    "en": "major thirteenth sharp eleven",
+    "pl": "wielki tercdecymowy z ♯11",
+    "de": "großer Tredezimakkord ♯11",
+    "es": "trecena mayor ♯11",
+    "ru": "большой мажорный терцдецимаккорд ♯11"
+   }
+  },
+  {
+   "id": "maj7b5",
+   "cat": "major",
+   "symbol": "maj7♭5",
+   "degrees": [
+    "1",
+    "3",
+    "b5",
+    "7"
+   ],
+   "name": {
+    "en": "major seventh flat five",
+    "pl": "wielki septymowy z ♭5",
+    "de": "großer Septakkord ♭5",
+    "es": "séptima mayor ♭5",
+    "ru": "большой мажорный септаккорд ♭5"
+   }
+  },
+  {
+   "id": "maj7s5",
+   "cat": "major",
+   "symbol": "maj7♯5",
+   "degrees": [
+    "1",
+    "3",
+    "#5",
+    "7"
+   ],
+   "name": {
+    "en": "augmented major seventh",
+    "pl": "zwiększony wielki septymowy",
+    "de": "übermäßiger großer Septakkord",
+    "es": "séptima mayor aumentada",
+    "ru": "увеличенный большой септаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "m",
+   "cat": "minor",
+   "symbol": "m",
+   "degrees": [
+    "1",
+    "b3",
+    "5"
+   ],
+   "name": {
+    "en": "minor",
+    "pl": "molowy",
+    "de": "Moll",
+    "es": "menor",
+    "ru": "минорный"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "madd9",
+   "cat": "minor",
+   "symbol": "m(add9)",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "9"
+   ],
+   "name": {
+    "en": "minor added ninth",
+    "pl": "molowy z noną",
+    "de": "Moll mit None",
+    "es": "menor con novena añadida",
+    "ru": "минорный с ноной"
+   },
+   "aliases": [
+    {
+     "en": "m(add2)",
+     "pl": "m(add2)",
+     "de": "m(add2)",
+     "es": "m(add2)",
+     "ru": "m(add2)"
+    }
+   ]
+  },
+  {
+   "id": "madd11",
+   "cat": "minor",
+   "symbol": "m(add11)",
+   "degrees": [
+    "1",
+    "b3",
+    "4",
+    "5"
+   ],
+   "name": {
+    "en": "minor added eleventh (add4)",
+    "pl": "molowy z kwartą (add4)",
+    "de": "Moll mit Quarte (add4)",
+    "es": "menor con cuarta añadida (add4)",
+    "ru": "минорный с квартой (add4)"
+   }
+  },
+  {
+   "id": "m6",
+   "cat": "minor",
+   "symbol": "m6",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "6"
+   ],
+   "name": {
+    "en": "minor sixth",
+    "pl": "molowy z sekstą",
+    "de": "Moll-Sextakkord",
+    "es": "sexta menor",
+    "ru": "минорный секстаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "m69",
+   "cat": "minor",
+   "symbol": "m6/9",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "6",
+    "9"
+   ],
+   "name": {
+    "en": "minor six-nine",
+    "pl": "molowy z sekstą i noną",
+    "de": "Moll-Sext-None",
+    "es": "menor sexta-novena",
+    "ru": "минорный секстнонаккорд"
+   }
+  },
+  {
+   "id": "m7",
+   "cat": "minor",
+   "symbol": "m7",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "minor seventh",
+    "pl": "molowy septymowy",
+    "de": "Moll-Septakkord",
+    "es": "séptima menor",
+    "ru": "малый минорный септаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "mmaj7",
+   "cat": "minor",
+   "symbol": "m(maj7)",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "7"
+   ],
+   "name": {
+    "en": "minor major seventh",
+    "pl": "molowy z septymą wielką",
+    "de": "Moll mit großer Septime",
+    "es": "menor con séptima mayor",
+    "ru": "минорный большой септаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "m7add11",
+   "cat": "minor",
+   "symbol": "m7(add11)",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "b7",
+    "11"
+   ],
+   "name": {
+    "en": "minor seventh added eleventh",
+    "pl": "molowy septymowy z undecymą",
+    "de": "Moll-Septakkord mit Undezime",
+    "es": "séptima menor con oncena",
+    "ru": "малый минорный септаккорд с ундецимой"
+   }
+  },
+  {
+   "id": "m9",
+   "cat": "minor",
+   "symbol": "m9",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "b7",
+    "9"
+   ],
+   "name": {
+    "en": "minor ninth",
+    "pl": "molowy nonowy",
+    "de": "Moll-Nonenakkord",
+    "es": "novena menor",
+    "ru": "минорный нонаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "mmaj9",
+   "cat": "minor",
+   "symbol": "m(maj9)",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "7",
+    "9"
+   ],
+   "name": {
+    "en": "minor major ninth",
+    "pl": "molowy nonowy z septymą wielką",
+    "de": "Moll-Nonenakkord mit großer Septime",
+    "es": "novena menor con séptima mayor",
+    "ru": "минорный нонаккорд с большой септимой"
+   }
+  },
+  {
+   "id": "m11",
+   "cat": "minor",
+   "symbol": "m11",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "b7",
+    "9",
+    "11"
+   ],
+   "name": {
+    "en": "minor eleventh",
+    "pl": "molowy undecymowy",
+    "de": "Moll-Undezimakkord",
+    "es": "oncena menor",
+    "ru": "минорный ундецимаккорд"
+   }
+  },
+  {
+   "id": "m13",
+   "cat": "minor",
+   "symbol": "m13",
+   "degrees": [
+    "1",
+    "b3",
+    "5",
+    "b7",
+    "9",
+    "11",
+    "13"
+   ],
+   "name": {
+    "en": "minor thirteenth",
+    "pl": "molowy tercdecymowy",
+    "de": "Moll-Tredezimakkord",
+    "es": "trecena menor",
+    "ru": "минорный терцдецимаккорд"
+   }
+  },
+  {
+   "id": "m7b5",
+   "cat": "minor",
+   "symbol": "m7♭5",
+   "degrees": [
+    "1",
+    "b3",
+    "b5",
+    "b7"
+   ],
+   "name": {
+    "en": "half-diminished (minor seventh flat five)",
+    "pl": "półzmniejszony (m7♭5)",
+    "de": "halbvermindert (m7♭5)",
+    "es": "semidisminuido (m7♭5)",
+    "ru": "полууменьшённый (m7♭5)"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "m9b5",
+   "cat": "minor",
+   "symbol": "m9♭5",
+   "degrees": [
+    "1",
+    "b3",
+    "b5",
+    "b7",
+    "9"
+   ],
+   "name": {
+    "en": "half-diminished ninth",
+    "pl": "półzmniejszony z noną",
+    "de": "halbverminderter Nonenakkord",
+    "es": "semidisminuido con novena",
+    "ru": "полууменьшённый с ноной"
+   }
+  },
+  {
+   "id": "m7s5",
+   "cat": "minor",
+   "symbol": "m7♯5",
+   "degrees": [
+    "1",
+    "b3",
+    "#5",
+    "b7"
+   ],
+   "name": {
+    "en": "minor seventh sharp five",
+    "pl": "molowy septymowy z ♯5",
+    "de": "Moll-Septakkord ♯5",
+    "es": "séptima menor ♯5",
+    "ru": "малый минорный септаккорд ♯5"
+   }
+  },
+  {
+   "id": "7",
+   "cat": "dominant",
+   "symbol": "7",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "dominant seventh",
+    "pl": "dominantowy septymowy",
+    "de": "Dominantseptakkord",
+    "es": "séptima dominante",
+    "ru": "доминантсептаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "9",
+   "cat": "dominant",
+   "symbol": "9",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "9"
+   ],
+   "name": {
+    "en": "dominant ninth",
+    "pl": "dominantowy nonowy",
+    "de": "Dominantnonenakkord",
+    "es": "novena dominante",
+    "ru": "доминантнонаккорд"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "11",
+   "cat": "dominant",
+   "symbol": "11",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "9",
+    "11"
+   ],
+   "name": {
+    "en": "dominant eleventh",
+    "pl": "dominantowy undecymowy",
+    "de": "Dominant-Undezimakkord",
+    "es": "oncena dominante",
+    "ru": "доминантовый ундецимаккорд"
+   }
+  },
+  {
+   "id": "13",
+   "cat": "dominant",
+   "symbol": "13",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "9",
+    "13"
+   ],
+   "name": {
+    "en": "dominant thirteenth",
+    "pl": "dominantowy tercdecymowy",
+    "de": "Dominant-Tredezimakkord",
+    "es": "trecena dominante",
+    "ru": "доминантовый терцдецимаккорд"
+   }
+  },
+  {
+   "id": "7add11",
+   "cat": "dominant",
+   "symbol": "7(add11)",
+   "degrees": [
+    "1",
+    "3",
+    "4",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "seventh added eleventh",
+    "pl": "septymowy z kwartą",
+    "de": "Septakkord mit Quarte",
+    "es": "séptima con cuarta añadida",
+    "ru": "септаккорд с квартой"
+   }
+  },
+  {
+   "id": "7add13",
+   "cat": "dominant",
+   "symbol": "7(add13)",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "6",
+    "b7"
+   ],
+   "name": {
+    "en": "seventh added thirteenth",
+    "pl": "septymowy z sekstą",
+    "de": "Septakkord mit Sexte",
+    "es": "séptima con sexta añadida",
+    "ru": "септаккорд с секстой"
+   }
+  },
+  {
+   "id": "7sus2",
+   "cat": "dominant",
+   "symbol": "7sus2",
+   "degrees": [
+    "1",
+    "2",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "seventh suspended second",
+    "pl": "septymowy z zawieszoną sekundą",
+    "de": "Septakkord sus2",
+    "es": "séptima suspendida 2",
+    "ru": "септаккорд sus2"
+   }
+  },
+  {
+   "id": "7sus4",
+   "cat": "dominant",
+   "symbol": "7sus4",
+   "degrees": [
+    "1",
+    "4",
+    "5",
+    "b7"
+   ],
+   "name": {
+    "en": "seventh suspended fourth",
+    "pl": "septymowy z zawieszoną kwartą",
+    "de": "Septakkord sus4",
+    "es": "séptima suspendida 4",
+    "ru": "септаккорд sus4"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "9sus4",
+   "cat": "dominant",
+   "symbol": "9sus4",
+   "degrees": [
+    "1",
+    "4",
+    "5",
+    "b7",
+    "9"
+   ],
+   "name": {
+    "en": "ninth suspended fourth",
+    "pl": "nonowy z zawieszoną kwartą",
+    "de": "Nonenakkord sus4",
+    "es": "novena suspendida 4",
+    "ru": "нонаккорд sus4"
+   }
+  },
+  {
+   "id": "13sus4",
+   "cat": "dominant",
+   "symbol": "13sus4",
+   "degrees": [
+    "1",
+    "4",
+    "5",
+    "b7",
+    "9",
+    "13"
+   ],
+   "name": {
+    "en": "thirteenth suspended fourth",
+    "pl": "tercdecymowy z zawieszoną kwartą",
+    "de": "Tredezimakkord sus4",
+    "es": "trecena suspendida 4",
+    "ru": "терцдецимаккорд sus4"
+   }
+  },
+  {
+   "id": "7s11",
+   "cat": "dominant",
+   "symbol": "7♯11",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "#11"
+   ],
+   "name": {
+    "en": "seventh sharp eleven",
+    "pl": "septymowy z ♯11",
+    "de": "Septakkord ♯11",
+    "es": "séptima ♯11",
+    "ru": "септаккорд ♯11"
+   }
+  },
+  {
+   "id": "9s11",
+   "cat": "dominant",
+   "symbol": "9♯11",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "9",
+    "#11"
+   ],
+   "name": {
+    "en": "ninth sharp eleven",
+    "pl": "nonowy z ♯11",
+    "de": "Nonenakkord ♯11",
+    "es": "novena ♯11",
+    "ru": "нонаккорд ♯11"
+   }
+  },
+  {
+   "id": "13s11",
+   "cat": "dominant",
+   "symbol": "13♯11",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "9",
+    "#11",
+    "13"
+   ],
+   "name": {
+    "en": "thirteenth sharp eleven",
+    "pl": "tercdecymowy z ♯11",
+    "de": "Tredezimakkord ♯11",
+    "es": "trecena ♯11",
+    "ru": "терцдецимаккорд ♯11"
+   }
+  },
+  {
+   "id": "7b13",
+   "cat": "dominant",
+   "symbol": "7♭13",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "b13"
+   ],
+   "name": {
+    "en": "seventh flat thirteen",
+    "pl": "septymowy z ♭13",
+    "de": "Septakkord ♭13",
+    "es": "séptima ♭13",
+    "ru": "септаккорд ♭13"
+   }
+  },
+  {
+   "id": "7b5",
+   "cat": "altered",
+   "symbol": "7♭5",
+   "degrees": [
+    "1",
+    "3",
+    "b5",
+    "b7"
+   ],
+   "name": {
+    "en": "seventh flat five",
+    "pl": "septymowy z ♭5",
+    "de": "Septakkord ♭5",
+    "es": "séptima ♭5",
+    "ru": "септаккорд ♭5"
+   }
+  },
+  {
+   "id": "7s5",
+   "cat": "altered",
+   "symbol": "7♯5",
+   "degrees": [
+    "1",
+    "3",
+    "#5",
+    "b7"
+   ],
+   "name": {
+    "en": "augmented seventh",
+    "pl": "septymowy zwiększony",
+    "de": "übermäßiger Septakkord",
+    "es": "séptima aumentada",
+    "ru": "увеличенный септаккорд"
+   },
+   "aliases": [
+    {
+     "en": "+7",
+     "pl": "+7",
+     "de": "+7",
+     "es": "+7",
+     "ru": "+7"
+    }
+   ],
+   "arpeggio": true
+  },
+  {
+   "id": "7b9",
+   "cat": "altered",
+   "symbol": "7♭9",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "b9"
+   ],
+   "name": {
+    "en": "seventh flat nine",
+    "pl": "septymowy z ♭9",
+    "de": "Septakkord ♭9",
+    "es": "séptima ♭9",
+    "ru": "септаккорд ♭9"
+   }
+  },
+  {
+   "id": "7s9",
+   "cat": "altered",
+   "symbol": "7♯9",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "#9"
+   ],
+   "name": {
+    "en": "seventh sharp nine",
+    "pl": "septymowy z ♯9",
+    "de": "Septakkord ♯9",
+    "es": "séptima ♯9",
+    "ru": "септаккорд ♯9"
+   }
+  },
+  {
+   "id": "7b5b9",
+   "cat": "altered",
+   "symbol": "7♭5♭9",
+   "degrees": [
+    "1",
+    "3",
+    "b5",
+    "b7",
+    "b9"
+   ],
+   "name": {
+    "en": "seventh flat five flat nine",
+    "pl": "septymowy z ♭5 i ♭9",
+    "de": "Septakkord ♭5 ♭9",
+    "es": "séptima ♭5 ♭9",
+    "ru": "септаккорд ♭5 ♭9"
+   }
+  },
+  {
+   "id": "7b5s9",
+   "cat": "altered",
+   "symbol": "7♭5♯9",
+   "degrees": [
+    "1",
+    "3",
+    "b5",
+    "b7",
+    "#9"
+   ],
+   "name": {
+    "en": "seventh flat five sharp nine",
+    "pl": "septymowy z ♭5 i ♯9",
+    "de": "Septakkord ♭5 ♯9",
+    "es": "séptima ♭5 ♯9",
+    "ru": "септаккорд ♭5 ♯9"
+   }
+  },
+  {
+   "id": "7s5b9",
+   "cat": "altered",
+   "symbol": "7♯5♭9",
+   "degrees": [
+    "1",
+    "3",
+    "#5",
+    "b7",
+    "b9"
+   ],
+   "name": {
+    "en": "seventh sharp five flat nine",
+    "pl": "septymowy z ♯5 i ♭9",
+    "de": "Septakkord ♯5 ♭9",
+    "es": "séptima ♯5 ♭9",
+    "ru": "септаккорд ♯5 ♭9"
+   }
+  },
+  {
+   "id": "7s5s9",
+   "cat": "altered",
+   "symbol": "7♯5♯9",
+   "degrees": [
+    "1",
+    "3",
+    "#5",
+    "b7",
+    "#9"
+   ],
+   "name": {
+    "en": "seventh sharp five sharp nine",
+    "pl": "septymowy z ♯5 i ♯9",
+    "de": "Septakkord ♯5 ♯9",
+    "es": "séptima ♯5 ♯9",
+    "ru": "септаккорд ♯5 ♯9"
+   }
+  },
+  {
+   "id": "9b5",
+   "cat": "altered",
+   "symbol": "9♭5",
+   "degrees": [
+    "1",
+    "3",
+    "b5",
+    "b7",
+    "9"
+   ],
+   "name": {
+    "en": "ninth flat five",
+    "pl": "nonowy z ♭5",
+    "de": "Nonenakkord ♭5",
+    "es": "novena ♭5",
+    "ru": "нонаккорд ♭5"
+   }
+  },
+  {
+   "id": "9s5",
+   "cat": "altered",
+   "symbol": "9♯5",
+   "degrees": [
+    "1",
+    "3",
+    "#5",
+    "b7",
+    "9"
+   ],
+   "name": {
+    "en": "ninth sharp five",
+    "pl": "nonowy z ♯5",
+    "de": "Nonenakkord ♯5",
+    "es": "novena ♯5",
+    "ru": "нонаккорд ♯5"
+   }
+  },
+  {
+   "id": "11b9",
+   "cat": "altered",
+   "symbol": "11♭9",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "b9",
+    "11"
+   ],
+   "name": {
+    "en": "eleventh flat nine",
+    "pl": "undecymowy z ♭9",
+    "de": "Undezimakkord ♭9",
+    "es": "oncena ♭9",
+    "ru": "ундецимаккорд ♭9"
+   }
+  },
+  {
+   "id": "13b9",
+   "cat": "altered",
+   "symbol": "13♭9",
+   "degrees": [
+    "1",
+    "3",
+    "5",
+    "b7",
+    "b9",
+    "13"
+   ],
+   "name": {
+    "en": "thirteenth flat nine",
+    "pl": "tercdecymowy z ♭9",
+    "de": "Tredezimakkord ♭9",
+    "es": "trecena ♭9",
+    "ru": "терцдецимаккорд ♭9"
+   }
+  },
+  {
+   "id": "5",
+   "cat": "other",
+   "symbol": "5",
+   "degrees": [
+    "1",
+    "5"
+   ],
+   "name": {
+    "en": "power chord (fifth)",
+    "pl": "kwintowy (power chord)",
+    "de": "Powerchord (Quinte)",
+    "es": "quinta (power chord)",
+    "ru": "квинта (пауэр-аккорд)"
+   }
+  },
+  {
+   "id": "aug",
+   "cat": "other",
+   "symbol": "+",
+   "degrees": [
+    "1",
+    "3",
+    "#5"
+   ],
+   "name": {
+    "en": "augmented",
+    "pl": "zwiększony",
+    "de": "übermäßig",
+    "es": "aumentado",
+    "ru": "увеличенный"
+   },
+   "aliases": [
+    {
+     "en": "aug",
+     "pl": "aug",
+     "de": "aug",
+     "es": "aug",
+     "ru": "aug"
+    }
+   ],
+   "arpeggio": true
+  },
+  {
+   "id": "dim",
+   "cat": "other",
+   "symbol": "°",
+   "degrees": [
+    "1",
+    "b3",
+    "b5"
+   ],
+   "name": {
+    "en": "diminished",
+    "pl": "zmniejszony",
+    "de": "vermindert",
+    "es": "disminuido",
+    "ru": "уменьшённый"
+   },
+   "aliases": [
+    {
+     "en": "dim",
+     "pl": "dim",
+     "de": "dim",
+     "es": "dim",
+     "ru": "dim"
+    }
+   ],
+   "arpeggio": true
+  },
+  {
+   "id": "dim7",
+   "cat": "other",
+   "symbol": "°7",
+   "degrees": [
+    "1",
+    "b3",
+    "b5",
+    "bb7"
+   ],
+   "name": {
+    "en": "diminished seventh",
+    "pl": "zmniejszony septymowy",
+    "de": "verminderter Septakkord",
+    "es": "séptima disminuida",
+    "ru": "уменьшённый септаккорд"
+   },
+   "aliases": [
+    {
+     "en": "dim7",
+     "pl": "dim7",
+     "de": "dim7",
+     "es": "dim7",
+     "ru": "dim7"
+    }
+   ],
+   "arpeggio": true
+  },
+  {
+   "id": "dimmaj7",
+   "cat": "other",
+   "symbol": "°(maj7)",
+   "degrees": [
+    "1",
+    "b3",
+    "b5",
+    "7"
+   ],
+   "name": {
+    "en": "diminished major seventh",
+    "pl": "zmniejszony z septymą wielką",
+    "de": "vermindert mit großer Septime",
+    "es": "disminuido con séptima mayor",
+    "ru": "уменьшённый с большой септимой"
+   }
+  },
+  {
+   "id": "sus2",
+   "cat": "other",
+   "symbol": "sus2",
+   "degrees": [
+    "1",
+    "2",
+    "5"
+   ],
+   "name": {
+    "en": "suspended second",
+    "pl": "z zawieszoną sekundą",
+    "de": "sus2",
+    "es": "suspendido 2",
+    "ru": "sus2"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "sus4",
+   "cat": "other",
+   "symbol": "sus4",
+   "degrees": [
+    "1",
+    "4",
+    "5"
+   ],
+   "name": {
+    "en": "suspended fourth",
+    "pl": "z zawieszoną kwartą",
+    "de": "sus4",
+    "es": "suspendido 4",
+    "ru": "sus4"
+   },
+   "arpeggio": true
+  },
+  {
+   "id": "sus24",
+   "cat": "other",
+   "symbol": "sus2sus4",
+   "degrees": [
+    "1",
+    "2",
+    "4",
+    "5"
+   ],
+   "name": {
+    "en": "suspended second and fourth",
+    "pl": "z zawieszoną sekundą i kwartą",
+    "de": "sus2 sus4",
+    "es": "suspendido 2 y 4",
+    "ru": "sus2 sus4"
+   }
+  }
+ ],
+ "chord_categories": [
+  {
+   "id": "major",
+   "name": {
+    "en": "Major",
+    "pl": "Durowe",
+    "de": "Dur",
+    "es": "Mayores",
+    "ru": "Мажорные"
+   }
+  },
+  {
+   "id": "minor",
+   "name": {
+    "en": "Minor",
+    "pl": "Molowe",
+    "de": "Moll",
+    "es": "Menores",
+    "ru": "Минорные"
+   }
+  },
+  {
+   "id": "dominant",
+   "name": {
+    "en": "Dominant",
+    "pl": "Dominantowe",
+    "de": "Dominant",
+    "es": "Dominantes",
+    "ru": "Доминантовые"
+   }
+  },
+  {
+   "id": "altered",
+   "name": {
+    "en": "Altered",
+    "pl": "Alterowane",
+    "de": "Alteriert",
+    "es": "Alterados",
+    "ru": "Альтерированные"
+   }
+  },
+  {
+   "id": "other",
+   "name": {
+    "en": "Other",
+    "pl": "Pozostałe",
+    "de": "Weitere",
+    "es": "Otros",
+    "ru": "Другие"
+   }
+  }
+ ]
+}
