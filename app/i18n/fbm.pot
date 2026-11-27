@@ -387,15 +387,6 @@ msgstr ""
 msgid "Fretboard look"
 msgstr ""
 
-msgid "Electric"
-msgstr ""
-
-msgid "Acoustic"
-msgstr ""
-
-msgid "Classical"
-msgstr ""
-
 msgid "Fretboard wood"
 msgstr ""
 
@@ -643,5 +634,26 @@ msgid "Custom colour"
 msgstr ""
 
 msgid "Cancel"
+msgstr ""
+
+msgid "Fretboard view"
+msgstr ""
+
+msgid "Classical guitar (3D)"
+msgstr ""
+
+msgid "Acoustic guitar (3D)"
+msgstr ""
+
+msgid "Electric guitar (3D)"
+msgstr ""
+
+msgid "Diagram – drawn table"
+msgstr ""
+
+msgid "Diagram – right angles"
+msgstr ""
+
+msgid "Diagram – neck shape"
 msgstr ""
 

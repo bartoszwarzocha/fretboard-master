@@ -25,7 +25,7 @@ const DEFAULTS := {
 	},
 	&"guitar": {
 		&"tuning": "standard", &"strings": 6, &"frets": 22, &"left_handed": false, &"a4": 440.0,
-		&"guitar_model": "electric", &"fretboard_wood": "rosewood", &"fret_metal": "nickel",
+		&"neck_view": "electric_3d", &"fretboard_wood": "rosewood", &"fret_metal": "nickel",
 		&"inlays": "dots", &"string_color": "nickel",
 	},
 	&"audio": {

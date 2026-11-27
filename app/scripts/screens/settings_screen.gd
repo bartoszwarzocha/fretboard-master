@@ -12,8 +12,15 @@ const TABS := [
 	[&"midi", "MIDI"], [&"graphics", "Graphics"],
 ]
 # Zmiana tych ustawień pokazuje lub ukrywa inne pola – zakładka jest wtedy budowana od nowa.
-const REBUILD_KEYS := [&"theme", &"accent", &"bg_mode", &"bg_animated", &"particles", &"hit_particles", &"window_mode",
+const REBUILD_KEYS := [&"theme", &"accent", &"bg_mode", &"bg_animated", &"particles", &"hit_particles", &"window_mode", &"neck_view",
 		&"quality", &"power_saving", &"logo_spin", &"animations", &"midi_output"]
+# Widoki gryfu: realistyczne 3D (trzy rodzaje gitar) i schematyczne (jak w pierwotnej makiecie).
+# Rysowanie powstanie razem z modułem gryfu; tu tylko wybór. Kolejne widoki – nowa pozycja listy.
+const NECK_VIEWS := [
+	["classical_3d", "Classical guitar (3D)"], ["acoustic_3d", "Acoustic guitar (3D)"],
+	["electric_3d", "Electric guitar (3D)"], ["table", "Diagram – drawn table"],
+	["grid", "Diagram – right angles"], ["neck_shape", "Diagram – neck shape"],
+]
 const BG_PALETTE := ["0B0F1E", "1D2A55", "2B1B3D", "123B3A", "3A2414", "1A1A1A", "4A4F5C"]
 const QUALITY_KEYS := [&"msaa", &"render_scale", &"anisotropy", &"shadows", &"reflections"]
 const TUNINGS := [
@@ -256,14 +263,15 @@ func _build_guitar() -> void:
 	_slider(&"a4", "Concert pitch (A4)", 415, 466, 1, "%d Hz")
 
 	_section("Fretboard look")
-	_select(&"guitar_model", "Guitar", [["electric", "Electric"], ["acoustic", "Acoustic"],
-			["classical", "Classical"]])
-	_select(&"fretboard_wood", "Fretboard wood", [["rosewood", "Rosewood"], ["maple", "Maple"],
-			["ebony", "Ebony"]])
-	_select(&"fret_metal", "Frets", [["nickel", "Nickel"], ["stainless", "Stainless steel"], ["gold", "Gold"]])
+	_select(&"neck_view", "Fretboard view", NECK_VIEWS)
+	# Drewno, progi i struny dotyczą tylko realistycznych widoków 3D; markery – wszystkich widoków.
+	if str(App.setting(&"neck_view")).ends_with("_3d"):
+		_select(&"fretboard_wood", "Fretboard wood", [["rosewood", "Rosewood"], ["maple", "Maple"],
+				["ebony", "Ebony"]])
+		_select(&"fret_metal", "Frets", [["nickel", "Nickel"], ["stainless", "Stainless steel"], ["gold", "Gold"]])
+		_select(&"string_color", "Strings", [["nickel", "Nickel"], ["bronze", "Bronze"], ["black", "Black"]])
 	_select(&"inlays", "Inlays", [["dots", "Dots"], ["blocks", "Blocks"], ["trapezoids", "Trapezoids"],
 			["none", "None"]])
-	_select(&"string_color", "Strings", [["nickel", "Nickel"], ["bronze", "Bronze"], ["black", "Black"]])
 
 
 func _build_audio() -> void:

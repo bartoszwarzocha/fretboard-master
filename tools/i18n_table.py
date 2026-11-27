@@ -169,9 +169,6 @@ T = {
  "Left-handed": ("Dla leworęcznych", "Linkshänder", "Zurdo", "Для левши"),
  "Concert pitch (A4)": ("Kamerton (A4)", "Kammerton (A4)", "Afinación de referencia (A4)", "Строй (частота A4)"),
  "Fretboard look": ("Wygląd gryfu", "Aussehen des Griffbretts", "Aspecto del mástil", "Внешний вид грифа"),
- "Electric": ("Elektryczna", "E-Gitarre", "Eléctrica", "Электрогитара"),
- "Acoustic": ("Akustyczna", "Westerngitarre", "Acústica", "Акустическая"),
- "Classical": ("Klasyczna", "Klassische Gitarre", "Clásica", "Классическая"),
  "Fretboard wood": ("Podstrunnica", "Griffbrettholz", "Madera del diapasón", "Накладка грифа"),
  "Rosewood": ("Palisander", "Palisander", "Palisandro", "Палисандр"),
  "Maple": ("Klon", "Ahorn", "Arce", "Клён"),
@@ -255,6 +252,13 @@ T = {
  "Perspective (field of view)": ("Perspektywa (pole widzenia)", "Perspektive (Sichtfeld)", "Perspectiva (campo de visión)", "Перспектива (угол обзора)"),
  "Custom colour": ("Własny kolor", "Eigene Farbe", "Color personalizado", "Свой цвет"),
  "Cancel": ("Anuluj", "Abbrechen", "Cancelar", "Отмена"),
+ "Fretboard view": ("Widok gryfu", "Griffbrett-Ansicht", "Vista del mástil", "Вид грифа"),
+ "Classical guitar (3D)": ("Gitara klasyczna (3D)", "Konzertgitarre (3D)", "Guitarra clásica (3D)", "Классическая гитара (3D)"),
+ "Acoustic guitar (3D)": ("Gitara akustyczna (3D)", "Westerngitarre (3D)", "Guitarra acústica (3D)", "Акустическая гитара (3D)"),
+ "Electric guitar (3D)": ("Gitara elektryczna (3D)", "E-Gitarre (3D)", "Guitarra eléctrica (3D)", "Электрогитара (3D)"),
+ "Diagram – drawn table": ("Schemat – rysowana tabela", "Diagramm – gezeichnete Tabelle", "Diagrama – tabla dibujada", "Схема – нарисованная таблица"),
+ "Diagram – right angles": ("Schemat – kąty proste", "Diagramm – rechtwinklig", "Diagrama – ángulos rectos", "Схема – прямые углы"),
+ "Diagram – neck shape": ("Schemat – kształt gryfu", "Diagramm – Halsform", "Diagrama – forma del mástil", "Схема – форма грифа"),
 }
 
 def esc(s): return s.replace("\\", "\\\\").replace('"', '\\"')

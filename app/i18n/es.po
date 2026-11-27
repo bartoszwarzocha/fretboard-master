@@ -388,15 +388,6 @@ msgstr "Afinación de referencia (A4)"
 msgid "Fretboard look"
 msgstr "Aspecto del mástil"
 
-msgid "Electric"
-msgstr "Eléctrica"
-
-msgid "Acoustic"
-msgstr "Acústica"
-
-msgid "Classical"
-msgstr "Clásica"
-
 msgid "Fretboard wood"
 msgstr "Madera del diapasón"
 
@@ -645,4 +636,25 @@ msgstr "Color personalizado"
 
 msgid "Cancel"
 msgstr "Cancelar"
+
+msgid "Fretboard view"
+msgstr "Vista del mástil"
+
+msgid "Classical guitar (3D)"
+msgstr "Guitarra clásica (3D)"
+
+msgid "Acoustic guitar (3D)"
+msgstr "Guitarra acústica (3D)"
+
+msgid "Electric guitar (3D)"
+msgstr "Guitarra eléctrica (3D)"
+
+msgid "Diagram – drawn table"
+msgstr "Diagrama – tabla dibujada"
+
+msgid "Diagram – right angles"
+msgstr "Diagrama – ángulos rectos"
+
+msgid "Diagram – neck shape"
+msgstr "Diagrama – forma del mástil"
 

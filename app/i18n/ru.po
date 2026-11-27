@@ -388,15 +388,6 @@ msgstr "Строй (частота A4)"
 msgid "Fretboard look"
 msgstr "Внешний вид грифа"
 
-msgid "Electric"
-msgstr "Электрогитара"
-
-msgid "Acoustic"
-msgstr "Акустическая"
-
-msgid "Classical"
-msgstr "Классическая"
-
 msgid "Fretboard wood"
 msgstr "Накладка грифа"
 
@@ -645,4 +636,25 @@ msgstr "Свой цвет"
 
 msgid "Cancel"
 msgstr "Отмена"
+
+msgid "Fretboard view"
+msgstr "Вид грифа"
+
+msgid "Classical guitar (3D)"
+msgstr "Классическая гитара (3D)"
+
+msgid "Acoustic guitar (3D)"
+msgstr "Акустическая гитара (3D)"
+
+msgid "Electric guitar (3D)"
+msgstr "Электрогитара (3D)"
+
+msgid "Diagram – drawn table"
+msgstr "Схема – нарисованная таблица"
+
+msgid "Diagram – right angles"
+msgstr "Схема – прямые углы"
+
+msgid "Diagram – neck shape"
+msgstr "Схема – форма грифа"
 

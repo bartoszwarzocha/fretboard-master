@@ -388,15 +388,6 @@ msgstr "Kammerton (A4)"
 msgid "Fretboard look"
 msgstr "Aussehen des Griffbretts"
 
-msgid "Electric"
-msgstr "E-Gitarre"
-
-msgid "Acoustic"
-msgstr "Westerngitarre"
-
-msgid "Classical"
-msgstr "Klassische Gitarre"
-
 msgid "Fretboard wood"
 msgstr "Griffbrettholz"
 
@@ -645,4 +636,25 @@ msgstr "Eigene Farbe"
 
 msgid "Cancel"
 msgstr "Abbrechen"
+
+msgid "Fretboard view"
+msgstr "Griffbrett-Ansicht"
+
+msgid "Classical guitar (3D)"
+msgstr "Konzertgitarre (3D)"
+
+msgid "Acoustic guitar (3D)"
+msgstr "Westerngitarre (3D)"
+
+msgid "Electric guitar (3D)"
+msgstr "E-Gitarre (3D)"
+
+msgid "Diagram – drawn table"
+msgstr "Diagramm – gezeichnete Tabelle"
+
+msgid "Diagram – right angles"
+msgstr "Diagramm – rechtwinklig"
+
+msgid "Diagram – neck shape"
+msgstr "Diagramm – Halsform"
 

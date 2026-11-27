@@ -388,15 +388,6 @@ msgstr "Kamerton (A4)"
 msgid "Fretboard look"
 msgstr "Wygląd gryfu"
 
-msgid "Electric"
-msgstr "Elektryczna"
-
-msgid "Acoustic"
-msgstr "Akustyczna"
-
-msgid "Classical"
-msgstr "Klasyczna"
-
 msgid "Fretboard wood"
 msgstr "Podstrunnica"
 
@@ -645,4 +636,25 @@ msgstr "Własny kolor"
 
 msgid "Cancel"
 msgstr "Anuluj"
+
+msgid "Fretboard view"
+msgstr "Widok gryfu"
+
+msgid "Classical guitar (3D)"
+msgstr "Gitara klasyczna (3D)"
+
+msgid "Acoustic guitar (3D)"
+msgstr "Gitara akustyczna (3D)"
+
+msgid "Electric guitar (3D)"
+msgstr "Gitara elektryczna (3D)"
+
+msgid "Diagram – drawn table"
+msgstr "Schemat – rysowana tabela"
+
+msgid "Diagram – right angles"
+msgstr "Schemat – kąty proste"
+
+msgid "Diagram – neck shape"
+msgstr "Schemat – kształt gryfu"
 
