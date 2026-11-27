@@ -910,6 +910,15 @@ msgstr "Metrónomo clásico"
 msgid "Drum machine"
 msgstr "Caja de ritmos"
 
+msgid "Restore pattern"
+msgstr "Restaurar patrón"
+
+msgid "Brings back the grid of the chosen pattern after your own changes."
+msgstr "Recupera la cuadrícula del patrón elegido tras tus cambios."
+
+msgid "Clear"
+msgstr "Borrar"
+
 msgid "Tap tempo"
 msgstr "Tap tempo"
 

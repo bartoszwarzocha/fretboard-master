@@ -910,6 +910,15 @@ msgstr "Klassisches Metronom"
 msgid "Drum machine"
 msgstr "Drumcomputer"
 
+msgid "Restore pattern"
+msgstr "Pattern zurücksetzen"
+
+msgid "Brings back the grid of the chosen pattern after your own changes."
+msgstr "Stellt das Raster des gewählten Patterns nach eigenen Änderungen wieder her."
+
+msgid "Clear"
+msgstr "Leeren"
+
 msgid "Tap tempo"
 msgstr "Tap Tempo"
 

@@ -909,6 +909,15 @@ msgstr ""
 msgid "Drum machine"
 msgstr ""
 
+msgid "Restore pattern"
+msgstr ""
+
+msgid "Brings back the grid of the chosen pattern after your own changes."
+msgstr ""
+
+msgid "Clear"
+msgstr ""
+
 msgid "Tap tempo"
 msgstr ""
 

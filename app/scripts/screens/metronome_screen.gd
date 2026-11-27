@@ -248,6 +248,19 @@ func _build_drums() -> void:
 	var loop := _label(tr("Loop: 1 bar, %s") % _steps_text(_steps(_metre(), _grid_kind())), 16, Color("8C96B3"))
 	loop.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	legend.add_child(loop)
+	var lsp := Control.new()
+	lsp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	legend.add_child(lsp)
+	var restore := _chip("Restore pattern", false, true)
+	restore.tooltip_text = tr("Brings back the grid of the chosen pattern after your own changes.")
+	restore.pressed.connect(_restore_pattern)
+	legend.add_child(restore)
+	var clear := _chip("Clear", false, true)
+	clear.pressed.connect(func() -> void:
+		_pattern = _empty(_steps(_metre(), _grid_kind()))
+		_save_pattern()
+		_rebuild())
+	legend.add_child(clear)
 
 
 func _build_aside(drums: bool) -> void:
@@ -258,7 +271,7 @@ func _build_aside(drums: bool) -> void:
 		var g := _grid_kind()
 		if i >= 3 and g == 1:
 			g = 0
-		App.set_settings({&"met_metre": i, &"met_grid": g})
+		App.set_settings({&"met_metre": i, &"met_grid": g, &"met_preset": -1})
 		_pattern = _basic(i, g)
 		_save_pattern()
 		_rebuild())))
@@ -276,7 +289,7 @@ func _build_aside(drums: bool) -> void:
 	else:
 		var grids := _chips_row(GRIDS, _grid_kind(), true, func(i: int) -> void:
 			_stop()
-			_store(&"met_grid", i)
+			App.set_settings({&"met_grid": i, &"met_preset": -1})
 			_pattern = _basic(_metre(), i)
 			_save_pattern()
 			_rebuild(), true)
@@ -439,11 +452,31 @@ func _tap() -> void:
 func _preset(i: int) -> void:
 	_stop()
 	var cfg: Array = [[2, 0], [2, 2], [2, 1], [1, 0], [3, 0]][i]
-	App.set_settings({&"met_metre": cfg[0], &"met_grid": cfg[1]})
-	_pattern = _empty(_steps(cfg[0], cfg[1]))
-	for key in _preset_cells(i):
+	App.set_settings({&"met_metre": cfg[0], &"met_grid": cfg[1], &"met_preset": i})
+	_pattern = _preset_pattern(i)
+	_save_pattern()
+	_rebuild()
+
+
+func _preset_pattern(i: int) -> Array:
+	var cfg: Array = [[2, 0], [2, 2], [2, 1], [1, 0], [3, 0]][i]
+	var out := _empty(_steps(cfg[0], cfg[1]))
+	var cells := _preset_cells(i)
+	for key in cells:
 		var p: PackedStringArray = (key as String).split(",")
-		_pattern[int(p[0])][int(p[1])] = _preset_cells(i)[key]
+		out[int(p[0])][int(p[1])] = cells[key]
+	return out
+
+
+# „Przywróć wzorzec”: siatka ostatnio wybranego wzorca, a po zmianie metrum lub siatki – rytm podstawowy.
+# Gra nie zostaje przerwana.
+func _restore_pattern() -> void:
+	var i := int(App.setting(&"met_preset"))
+	var cfg: Array = [[2, 0], [2, 2], [2, 1], [1, 0], [3, 0]][i] if i >= 0 else []
+	if i >= 0 and cfg[0] == _metre() and cfg[1] == _grid_kind():
+		_pattern = _preset_pattern(i)
+	else:
+		_pattern = _basic(_metre(), _grid_kind())
 	_save_pattern()
 	_rebuild()
 
@@ -611,12 +644,7 @@ func _load_pattern() -> Array:
 	var raw := str(App.setting(&"met_pattern"))
 	if raw.length() != ROWS.size() * steps:
 		if _metre() == 2 and _grid_kind() == 0:   # pierwsze uruchomienie: wzorzec „Rock” (jak w makiecie)
-			var p0 := _empty(steps)
-			var cells := _preset_cells(0)
-			for key in cells:
-				var rc: PackedStringArray = (key as String).split(",")
-				p0[int(rc[0])][int(rc[1])] = cells[key]
-			return p0
+			return _preset_pattern(0)
 		return _basic(_metre(), _grid_kind())
 	var p := _empty(steps)
 	for r in ROWS.size():

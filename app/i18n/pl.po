@@ -910,6 +910,15 @@ msgstr "Metronom klasyczny"
 msgid "Drum machine"
 msgstr "Automat perkusyjny"
 
+msgid "Restore pattern"
+msgstr "Przywróć wzorzec"
+
+msgid "Brings back the grid of the chosen pattern after your own changes."
+msgstr "Przywraca siatkę wybranego wzorca po własnych zmianach."
+
+msgid "Clear"
+msgstr "Wyczyść"
+
 msgid "Tap tempo"
 msgstr "Wystukaj tempo"
 

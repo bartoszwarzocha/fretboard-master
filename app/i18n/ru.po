@@ -910,6 +910,15 @@ msgstr "Классический метроном"
 msgid "Drum machine"
 msgstr "Драм-машина"
 
+msgid "Restore pattern"
+msgstr "Вернуть паттерн"
+
+msgid "Brings back the grid of the chosen pattern after your own changes."
+msgstr "Возвращает сетку выбранного паттерна после ваших изменений."
+
+msgid "Clear"
+msgstr "Очистить"
+
 msgid "Tap tempo"
 msgstr "Тап-темп"
 
