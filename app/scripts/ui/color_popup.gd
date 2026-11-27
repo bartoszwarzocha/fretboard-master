@@ -115,7 +115,8 @@ func open(start: Color, below: Rect2) -> void:
 	_update()
 	reset_size()
 	popup(Rect2i(Vector2i(below.position + Vector2(0, below.size.y + 8)), Vector2i.ZERO))
-	_sv.resized.connect(_update, CONNECT_ONE_SHOT)
+	if not _sv.resized.is_connected(_update):
+		_sv.resized.connect(_update, CONNECT_ONE_SHOT)
 
 
 func current() -> Color:

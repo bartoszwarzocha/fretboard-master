@@ -303,10 +303,12 @@ func _build_midi() -> void:
 	_section("Devices")
 	var outputs := [["internal", "Built-in synthesizer"]]
 	_select(&"midi_output", "Output", outputs)
-	OS.open_midi_inputs()
-	var inputs := [["", "None"]]
-	for name in OS.get_connected_midi_inputs():
-		inputs.append([name, name])
+	# Wejścia MIDI obsłuży rdzeń C++ (PortMidi). Wbudowane MIDI Godota (OS.open_midi_inputs)
+	# zawieszało program na Windows przy otwarciu tej zakładki – nie jest tu używane.
+	var inputs := [["", tr("None")]]
+	var saved := str(App.setting(&"midi_input"))
+	if not saved.is_empty():
+		inputs.append([saved, saved])
 	_select(&"midi_input", "Input (MIDI guitar, keyboard)", inputs, false)
 
 	_section("Sound")
