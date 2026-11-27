@@ -13,14 +13,14 @@ class_name MenuStage3D
 extends Node
 
 const UNIT := 0.01             # jednostki sceny na piksel układu
-const FILL := 0.88             # ikona zajmuje tyle wolnego miejsca kafla (zapas na kołysanie)
+const FILL := 0.73             # ikona zajmuje tyle wolnego miejsca kafla (2,5× zamiast 3× dawnej ikony)
 const SWAY_DEG := Vector2(2.2, 3.5)
 const SWAY_PERIOD := Vector2(5.3, 7.1)
 const CURSOR_DEG := Vector2(9.0, 14.0)
 const FOLLOW := 5.0
 const IDLE_STOP := 8.0
-const SPIN_SPEED := 300.0      # °/s przy obrocie po najechaniu
-const SPIN_ACCEL := 900.0      # °/s²
+const SPIN_SPEED := 240.0      # °/s przy obrocie po najechaniu
+const SPIN_ACCEL := 720.0      # °/s²
 const ICON_LAYER := 1
 const GUITAR_LAYER := 2
 
