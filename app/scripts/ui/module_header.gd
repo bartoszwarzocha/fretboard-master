@@ -55,6 +55,22 @@ func _ready() -> void:
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(spacer)
 
+	# Stan jak w makiecie: strój gitary i gotowość wejścia audio.
+	var status := HBoxContainer.new()
+	status.add_theme_constant_override("separation", 10)
+	status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(status)
+	status.add_child(_status_label(tr("Tuning:"), ThemeManager.color("muted"), false))
+	status.add_child(_status_label(tuning_text(), ThemeManager.color("text"), true))
+	status.add_child(_status_label("|", ThemeManager.color("placeholder"), false))
+	status.add_child(_status_label(tr("Audio input:"), ThemeManager.color("muted"), false))
+	var ready := AudioServer.get_input_device_list().size() > 0
+	status.add_child(_status_label(tr("ready") if ready else tr("none"),
+			ThemeManager.color("focus") if ready else ThemeManager.color("faint"), true))
+	var gap2 := Control.new()
+	gap2.custom_minimum_size.x = 8
+	row.add_child(gap2)
+
 	var settings := Button.new()
 	settings.theme_type_variation = &"NavButton"
 	settings.text = "⚙"
@@ -71,3 +87,31 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel"):
 		App.go(&"menu")
 		get_viewport().set_input_as_handled()
+
+
+func _status_label(text: String, color: Color, strong: bool) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	l.add_theme_font_size_override("font_size", ThemeManager.fs(15))
+	l.add_theme_color_override("font_color", color)
+	if strong:
+		l.add_theme_font_override("font", ThemeManager.font_body_bold)
+	return l
+
+
+# Dźwięki pustych strun z ustawienia „Strój” (od najniższej), w wybranym zapisie nazw dźwięków.
+const TUNING_MIDI := {
+	"standard": [40, 45, 50, 55, 59, 64], "drop_d": [38, 45, 50, 55, 59, 64],
+	"half_down": [39, 44, 49, 54, 58, 63], "full_down": [38, 43, 48, 53, 57, 62],
+	"drop_c": [36, 43, 48, 53, 57, 62], "dadgad": [38, 45, 50, 55, 57, 62],
+	"open_g": [38, 43, 50, 55, 59, 62], "open_d": [38, 45, 50, 54, 57, 62], "open_e": [40, 47, 52, 56, 59, 64],
+}
+
+
+static func tuning_text() -> String:
+	var notes: Array = TUNING_MIDI.get(str(App.setting(&"tuning")), TUNING_MIDI["standard"])
+	var parts := PackedStringArray()
+	for m in notes:
+		parts.append(NoteNames.note_name(m, App.notation()))
+	return " ".join(parts)

@@ -858,3 +858,144 @@ msgstr ""
 msgid "Search…"
 msgstr ""
 
+msgid "quarter notes"
+msgstr ""
+
+msgid "eighth notes"
+msgstr ""
+
+msgid "triplets"
+msgstr ""
+
+msgid "sixteenth notes"
+msgstr ""
+
+msgid "click"
+msgstr ""
+
+msgid "woodblock"
+msgstr ""
+
+msgid "bell"
+msgstr ""
+
+msgid "Waltz"
+msgstr ""
+
+msgid "Ballad 6/8"
+msgstr ""
+
+msgid "Crash"
+msgstr ""
+
+msgid "Ride"
+msgstr ""
+
+msgid "Open hi-hat"
+msgstr ""
+
+msgid "Closed hi-hat"
+msgstr ""
+
+msgid "Snare"
+msgstr ""
+
+msgid "Kick"
+msgstr ""
+
+msgid "Classic metronome"
+msgstr ""
+
+msgid "Drum machine"
+msgstr ""
+
+msgid "Tap tempo"
+msgstr ""
+
+msgid "beats per minute"
+msgstr ""
+
+msgid "Patterns:"
+msgstr ""
+
+msgid "Click a cell: hit → accent → empty."
+msgstr ""
+
+msgid "hit"
+msgstr ""
+
+msgid "accent"
+msgstr ""
+
+msgid "Loop: 1 bar, %s"
+msgstr ""
+
+msgid "Metre"
+msgstr ""
+
+msgid "Subdivision"
+msgstr ""
+
+msgid "Grid"
+msgstr ""
+
+msgid "MIDI drum kit"
+msgstr ""
+
+msgid "Built-in synthesizer, channel 10 (General MIDI drums). You can change this in the Sound and MIDI settings."
+msgstr ""
+
+msgid "Gradual speed-up"
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "To"
+msgstr ""
+
+msgid "Step"
+msgstr ""
+
+msgid "Tempo rises by %d BPM every %d bars."
+msgstr ""
+
+msgid "No sound output – check the Sound and MIDI settings."
+msgstr ""
+
+msgid "%s kit, MIDI"
+msgstr ""
+
+msgid "metre %s"
+msgstr ""
+
+msgid "Stop"
+msgstr ""
+
+msgid "&"
+msgstr ""
+
+msgid "e"
+msgstr ""
+
+msgid "a"
+msgstr ""
+
+msgid "Tuning:"
+msgstr ""
+
+msgid "Audio input:"
+msgstr ""
+
+msgid "ready"
+msgstr ""
+
+msgid "none"
+msgstr ""
+
+msgid "Run"
+msgstr ""
+
+msgid "Not available on this computer"
+msgstr ""
+

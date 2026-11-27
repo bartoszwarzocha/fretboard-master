@@ -859,3 +859,144 @@ msgstr "Fuente del sistema"
 msgid "Search…"
 msgstr "Buscar…"
 
+msgid "quarter notes"
+msgstr "negras"
+
+msgid "eighth notes"
+msgstr "corcheas"
+
+msgid "triplets"
+msgstr "tresillos"
+
+msgid "sixteenth notes"
+msgstr "semicorcheas"
+
+msgid "click"
+msgstr "clic"
+
+msgid "woodblock"
+msgstr "bloque de madera"
+
+msgid "bell"
+msgstr "campana"
+
+msgid "Waltz"
+msgstr "Vals"
+
+msgid "Ballad 6/8"
+msgstr "Balada 6/8"
+
+msgid "Crash"
+msgstr "Crash"
+
+msgid "Ride"
+msgstr "Ride"
+
+msgid "Open hi-hat"
+msgstr "Hi-hat abierto"
+
+msgid "Closed hi-hat"
+msgstr "Hi-hat cerrado"
+
+msgid "Snare"
+msgstr "Caja"
+
+msgid "Kick"
+msgstr "Bombo"
+
+msgid "Classic metronome"
+msgstr "Metrónomo clásico"
+
+msgid "Drum machine"
+msgstr "Caja de ritmos"
+
+msgid "Tap tempo"
+msgstr "Tap tempo"
+
+msgid "beats per minute"
+msgstr "pulsaciones por minuto"
+
+msgid "Patterns:"
+msgstr "Patrones:"
+
+msgid "Click a cell: hit → accent → empty."
+msgstr "Clic en una casilla: golpe → acento → vacío."
+
+msgid "hit"
+msgstr "golpe"
+
+msgid "accent"
+msgstr "acento"
+
+msgid "Loop: 1 bar, %s"
+msgstr "Bucle: 1 compás, %s"
+
+msgid "Metre"
+msgstr "Compás"
+
+msgid "Subdivision"
+msgstr "Subdivisión"
+
+msgid "Grid"
+msgstr "Cuadrícula"
+
+msgid "MIDI drum kit"
+msgstr "Kit de batería MIDI"
+
+msgid "Built-in synthesizer, channel 10 (General MIDI drums). You can change this in the Sound and MIDI settings."
+msgstr "Sintetizador integrado, canal 10 (batería General MIDI). Puedes cambiarlo en los ajustes de sonido y MIDI."
+
+msgid "Gradual speed-up"
+msgstr "Aceleración gradual"
+
+msgid "From"
+msgstr "Desde"
+
+msgid "To"
+msgstr "Hasta"
+
+msgid "Step"
+msgstr "Paso"
+
+msgid "Tempo rises by %d BPM every %d bars."
+msgstr "El tempo sube %d BPM cada %d compases."
+
+msgid "No sound output – check the Sound and MIDI settings."
+msgstr "Sin salida de sonido: revisa los ajustes de sonido y MIDI."
+
+msgid "%s kit, MIDI"
+msgstr "kit %s, MIDI"
+
+msgid "metre %s"
+msgstr "compás %s"
+
+msgid "Stop"
+msgstr "Detener"
+
+msgid "&"
+msgstr "y"
+
+msgid "e"
+msgstr "e"
+
+msgid "a"
+msgstr "a"
+
+msgid "Tuning:"
+msgstr "Afinación:"
+
+msgid "Audio input:"
+msgstr "Entrada de audio:"
+
+msgid "ready"
+msgstr "listo"
+
+msgid "none"
+msgstr "ninguna"
+
+msgid "Run"
+msgstr "Iniciar"
+
+msgid "Not available on this computer"
+msgstr "No disponible en este equipo"
+

@@ -859,3 +859,144 @@ msgstr "Системный шрифт"
 msgid "Search…"
 msgstr "Поиск…"
 
+msgid "quarter notes"
+msgstr "четверти"
+
+msgid "eighth notes"
+msgstr "восьмые"
+
+msgid "triplets"
+msgstr "триоли"
+
+msgid "sixteenth notes"
+msgstr "шестнадцатые"
+
+msgid "click"
+msgstr "щелчок"
+
+msgid "woodblock"
+msgstr "вуд-блок"
+
+msgid "bell"
+msgstr "колокольчик"
+
+msgid "Waltz"
+msgstr "Вальс"
+
+msgid "Ballad 6/8"
+msgstr "Баллада 6/8"
+
+msgid "Crash"
+msgstr "Крэш"
+
+msgid "Ride"
+msgstr "Райд"
+
+msgid "Open hi-hat"
+msgstr "Открытый хай-хэт"
+
+msgid "Closed hi-hat"
+msgstr "Закрытый хай-хэт"
+
+msgid "Snare"
+msgstr "Малый барабан"
+
+msgid "Kick"
+msgstr "Бочка"
+
+msgid "Classic metronome"
+msgstr "Классический метроном"
+
+msgid "Drum machine"
+msgstr "Драм-машина"
+
+msgid "Tap tempo"
+msgstr "Тап-темп"
+
+msgid "beats per minute"
+msgstr "ударов в минуту"
+
+msgid "Patterns:"
+msgstr "Паттерны:"
+
+msgid "Click a cell: hit → accent → empty."
+msgstr "Щелчок по клетке: удар → акцент → пусто."
+
+msgid "hit"
+msgstr "удар"
+
+msgid "accent"
+msgstr "акцент"
+
+msgid "Loop: 1 bar, %s"
+msgstr "Цикл: 1 такт, %s"
+
+msgid "Metre"
+msgstr "Размер"
+
+msgid "Subdivision"
+msgstr "Деление"
+
+msgid "Grid"
+msgstr "Сетка"
+
+msgid "MIDI drum kit"
+msgstr "MIDI-набор ударных"
+
+msgid "Built-in synthesizer, channel 10 (General MIDI drums). You can change this in the Sound and MIDI settings."
+msgstr "Встроенный синтезатор, канал 10 (ударные General MIDI). Это можно изменить в настройках звука и MIDI."
+
+msgid "Gradual speed-up"
+msgstr "Постепенное ускорение"
+
+msgid "From"
+msgstr "От"
+
+msgid "To"
+msgstr "До"
+
+msgid "Step"
+msgstr "Шаг"
+
+msgid "Tempo rises by %d BPM every %d bars."
+msgstr "Темп растёт на %d BPM каждые %d тактов."
+
+msgid "No sound output – check the Sound and MIDI settings."
+msgstr "Нет вывода звука – проверьте настройки звука и MIDI."
+
+msgid "%s kit, MIDI"
+msgstr "набор %s, MIDI"
+
+msgid "metre %s"
+msgstr "размер %s"
+
+msgid "Stop"
+msgstr "Стоп"
+
+msgid "&"
+msgstr "и"
+
+msgid "e"
+msgstr "и"
+
+msgid "a"
+msgstr "а"
+
+msgid "Tuning:"
+msgstr "Строй:"
+
+msgid "Audio input:"
+msgstr "Аудиовход:"
+
+msgid "ready"
+msgstr "готов"
+
+msgid "none"
+msgstr "нет"
+
+msgid "Run"
+msgstr "Старт"
+
+msgid "Not available on this computer"
+msgstr "Недоступен на этом компьютере"
+

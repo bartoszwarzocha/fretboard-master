@@ -6,6 +6,7 @@ extends Control
 
 var module_id: StringName
 var content: VBoxContainer
+var content_margin := Vector2(40, 40)   # marginesy treści (poziomo, pionowo)
 
 
 func _ready() -> void:
@@ -17,8 +18,10 @@ func _ready() -> void:
 	col.add_child(ModuleHeader.create(module_id))
 	var margin := MarginContainer.new()
 	margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	for side in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 40)
+	for side in ["left", "right"]:
+		margin.add_theme_constant_override("margin_" + side, int(content_margin.x))
+	for side in ["top", "bottom"]:
+		margin.add_theme_constant_override("margin_" + side, int(content_margin.y))
 	col.add_child(margin)
 	content = VBoxContainer.new()
 	content.add_theme_constant_override("separation", 24)

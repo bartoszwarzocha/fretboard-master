@@ -71,7 +71,8 @@ func _driver_card() -> Control:
 	var driver := str(App.setting(&"audio_driver"))
 	row.add_child(_segmented(DRIVERS, driver, func(v: Variant) -> void:
 		App.set_setting(&"audio_driver", v)
-		_refresh_pill(), 16))
+		_refresh_pill()
+		_fill_outputs(), 16))
 	_pill = Label.new()
 	_pill.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_pill.add_theme_font_override("font", ThemeManager.font_body_bold)
@@ -82,13 +83,41 @@ func _driver_card() -> Control:
 
 
 var _pill: Label
+var _outputs: OptionButton
+
+
+# Urządzenia wyjściowe: z rdzenia audio dla wybranego sterownika, a bez rdzenia – z Godota (WASAPI).
+func _fill_outputs() -> void:
+	var devices := AudioEngine.output_devices(AudioEngine.driver()) if AudioEngine.available() \
+			else AudioServer.get_output_device_list()
+	if devices.is_empty():
+		devices = PackedStringArray(["Default"])
+	_outputs.set_meta(&"devices", devices)
+	_outputs.clear()
+	var current := str(App.setting(&"audio_output"))
+	for i in devices.size():
+		_outputs.add_item(tr("System default") if devices[i] == "Default" else devices[i])
+		_outputs.set_item_auto_translate_mode(i, Node.AUTO_TRANSLATE_MODE_DISABLED)
+		if devices[i] == current:
+			_outputs.selected = i
+	if _outputs.selected < 0 and devices.size() > 0:
+		_outputs.selected = 0
 
 
 # Pastylka stanu: WASAPI działa już teraz; ASIO i WDM-KS – z nowym rdzeniem audio.
 func _refresh_pill() -> void:
-	var ok := str(App.setting(&"audio_driver")) == "wasapi"
+	var driver := str(App.setting(&"audio_driver"))
+	var ok: bool
+	var text: String
+	if AudioEngine.available():
+		# Sterownik obecny w rdzeniu i w systemie (ASIO – tylko w kompilacji z ASIO SDK i ze sterownikiem karty).
+		ok = driver in AudioEngine.drivers()
+		text = "Connected" if ok else "Not available on this computer"
+	else:
+		ok = driver == "wasapi"
+		text = "Connected" if ok else "Coming with the new audio engine"
 	var c: Color = ThemeManager.color("focus") if ok else ThemeManager.color("accent")
-	_pill.text = "●  " + tr("Connected" if ok else "Coming with the new audio engine")
+	_pill.text = "●  " + tr(text)
 	_pill.add_theme_color_override("font_color", c)
 	_pill.add_theme_stylebox_override("normal", ThemeManager.box(Color(c, 0.1), Color.TRANSPARENT, 20, 0, 16, 9))
 
@@ -156,7 +185,9 @@ func _output_card() -> Control:
 	col.add_child(_label("Output – headphones and speakers", 22, ThemeManager.color("text"), true))
 	col.add_child(_gap(4))
 	col.add_child(_label("Device", 15, ThemeManager.color("muted")))
-	col.add_child(_device_select(&"audio_output", AudioServer.get_output_device_list()))
+	_outputs = _device_select(&"audio_output", PackedStringArray())
+	col.add_child(_outputs)
+	_fill_outputs()
 	col.add_child(_gap(6))
 	var head := HBoxContainer.new()
 	col.add_child(head)
@@ -189,7 +220,9 @@ func _output_card() -> Control:
 	buttons.add_theme_constant_override("separation", 12)
 	col.add_child(buttons)
 	var test := _big_button("▶  " + tr("Test sound"))
-	test.pressed.connect(_check.play_test_tone)
+	test.pressed.connect(func() -> void:
+		if not AudioEngine.play_test_note():   # rdzeń C++ – wybrany instrument MIDI; bez rdzenia – Godot
+			_check.play_test_tone())
 	buttons.add_child(test)
 	_monitor_button = _big_button("")
 	_monitor_button.pressed.connect(func() -> void:
@@ -515,7 +548,9 @@ func _device_select(key: StringName, devices: PackedStringArray) -> OptionButton
 			opt.selected = i
 	if opt.selected < 0 and devices.size() > 0:
 		opt.selected = 0
-	opt.item_selected.connect(func(i: int) -> void: App.set_setting(key, devices[i]))
+	opt.item_selected.connect(func(i: int) -> void:
+		var list: PackedStringArray = opt.get_meta(&"devices", devices)
+		App.set_setting(key, list[i]))
 	return opt
 
 
