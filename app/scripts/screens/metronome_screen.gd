@@ -21,12 +21,12 @@ const BPM_MIN := 30
 const BPM_MAX := 260
 const TEAL := Color("3FD0C9")
 const STOP := Color("FF7A59")
+const ARROW_STEPS := {KEY_UP: 1, KEY_DOWN: -1, KEY_RIGHT: 5, KEY_LEFT: -5}
 
 var _core: Object
 var _playing := false
 var _pattern: Array = []          # wiersze × kroki, wartości 0/1/2
 var _taps: Array[float] = []
-var _tap_info: Label
 var _from_edit: LineEdit
 var _main: VBoxContainer
 var _aside: VBoxContainer
@@ -72,14 +72,23 @@ func _exit_tree() -> void:
 		_core.stop()
 
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"ui_accept") or (event is InputEventKey and event.pressed and not event.echo \
-			and (event as InputEventKey).keycode == KEY_SPACE):
+# Klawisze ekranu (przed obsługą przycisków, żeby spacja nie „klikała” przycisku z fokusem):
+# spacja – start/stop, T – wystukiwanie tempa, ↑/↓ ±1 BPM, →/← ±5 BPM (przytrzymanie powtarza).
+func _input(event: InputEvent) -> void:
+	var k := event as InputEventKey
+	if k == null or not k.pressed or not is_visible_in_tree():
+		return
+	if get_viewport().gui_get_focus_owner() is LineEdit:
+		return
+	if k.keycode == KEY_SPACE and not k.echo:
 		_toggle()
-		get_viewport().set_input_as_handled()
-	elif event is InputEventKey and event.pressed and not event.echo and (event as InputEventKey).keycode == KEY_T:
+	elif k.keycode == KEY_T and not k.echo:
 		_tap()
-		get_viewport().set_input_as_handled()
+	elif k.keycode in ARROW_STEPS:
+		_set_bpm(_bpm() + ARROW_STEPS[k.keycode])
+	else:
+		return
+	get_viewport().set_input_as_handled()
 
 
 # --- Budowa ekranu -----------------------------------------------------------------
@@ -140,13 +149,24 @@ func _rebuild() -> void:
 		tap.add_theme_stylebox_override(state, ThemeManager.box(bg, ThemeManager.color("border_strong"), 17, 1, 34, 10))
 	tap.pressed.connect(_tap)
 	buttons.add_child(tap)
-	_tap_info = _label("", 15, Color("8C96B3"))
-	_tap_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_tap_info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	_main.add_child(_gap(4))
-	_main.add_child(_tap_info)
+	# „?” przy wystukiwaniu – wyjaśnienie i skróty klawiszowe w dymku.
+	var help := Label.new()
+	help.text = "?"
+	help.mouse_filter = Control.MOUSE_FILTER_STOP
+	help.mouse_default_cursor_shape = Control.CURSOR_HELP
+	help.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	help.custom_minimum_size = Vector2(30, 30)
+	help.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	help.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	help.add_theme_font_override("font", ThemeManager.font_body_bold)
+	help.add_theme_font_size_override("font_size", ThemeManager.fs(16))
+	help.add_theme_color_override("font_color", Color("8C96B3"))
+	help.add_theme_stylebox_override("normal", ThemeManager.box(ThemeManager.color("surface_2"), ThemeManager.color("border_strong"), 15, 1, 0, 0))
+	help.tooltip_text = tr("Click the button (or press T) in time with the music – at least 2 times. The tempo sets itself.") + \
+			"\n" + tr("Space – start/stop · ↑/↓ – tempo ±1 · ←/→ – tempo ±5")
+	help.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	buttons.add_child(help)
 	_taps.clear()
-	_show_tap_info()
 	_update_play_button()
 
 	_build_aside(drums)
@@ -401,34 +421,19 @@ func _show_bpm(bpm: int) -> void:
 		_set_tempo_text(bpm)
 
 
-# Wystukiwanie tempa: od 3. stuknięcia średnia z ostatnich odstępów (do 4), po przerwie dłuższej niż 2 s – od nowa.
-var _tap_count := 0
+# Wystukiwanie tempa: od 2. stuknięcia średnia z ostatnich odstępów (do 4), po przerwie dłuższej niż 2 s – od nowa.
 
 
 func _tap() -> void:
 	var now := Time.get_ticks_msec() / 1000.0
 	if not _taps.is_empty() and now - _taps[-1] > 2.0:
 		_taps.clear()
-		_tap_count = 0
 	_taps.append(now)
-	_tap_count += 1
 	if _taps.size() > 5:
 		_taps.remove_at(0)
-	if _taps.size() >= 3:
+	if _taps.size() >= 2:
 		var span := (_taps[-1] - _taps[0]) / (_taps.size() - 1)
 		_set_bpm(roundi(60.0 / span))
-	_show_tap_info()
-
-
-func _show_tap_info() -> void:
-	if _tap_info == null:
-		return
-	if _taps.is_empty():
-		_tap_info.text = tr("Tap the button or press T in time with the music – at least 3 times.")
-	elif _taps.size() < 3:
-		_tap_info.text = tr("Taps: %d – keep tapping…") % _tap_count
-	else:
-		_tap_info.text = tr("Taps: %d – tempo set to %d BPM.") % [_tap_count, _bpm()]
 
 
 func _preset(i: int) -> void:
@@ -720,6 +725,11 @@ func _chip(text: String, on: bool, small := false) -> Button:
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	b.add_theme_font_override("font", ThemeManager.font_body_bold)
 	b.add_theme_font_size_override("font_size", ThemeManager.fs(14 if small else 16))
+	_style_chip(b, on, small)
+	return b
+
+
+func _style_chip(b: Button, on: bool, small: bool) -> void:
 	var pad := 13 if small else 17
 	var off := ThemeManager.box(ThemeManager.color("surface_2"), ThemeManager.color("border_strong"), 8 if small else 10, 1, pad, 4)
 	var sel := ThemeManager.box(Color(TEAL, 0.12), TEAL, 8 if small else 10, 1, pad, 4)
@@ -730,7 +740,9 @@ func _chip(text: String, on: bool, small := false) -> Button:
 	if on:
 		b.add_theme_color_override("font_color", TEAL)
 		b.add_theme_color_override("font_hover_color", TEAL)
-	return b
+	else:
+		b.remove_theme_color_override("font_color")
+		b.remove_theme_color_override("font_hover_color")
 
 
 func _chips_row(labels: Array, current: int, translate: bool, on_pick: Callable, small := false) -> HFlowContainer:
@@ -741,7 +753,11 @@ func _chips_row(labels: Array, current: int, translate: bool, on_pick: Callable,
 		var b := _chip(labels[i], i == current, small)
 		if not translate:
 			b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		b.pressed.connect(on_pick.bind(i))
+		b.pressed.connect(func() -> void:
+			# Podświetlenie wybranego od razu – także tam, gdzie wybór nie przebudowuje ekranu.
+			for k in row.get_child_count():
+				_style_chip(row.get_child(k) as Button, k == i, small)
+			on_pick.call(i))
 		row.add_child(b)
 	return row
 

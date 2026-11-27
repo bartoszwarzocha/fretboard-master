@@ -913,14 +913,11 @@ msgstr "Drumcomputer"
 msgid "Tap tempo"
 msgstr "Tap Tempo"
 
-msgid "Tap the button or press T in time with the music – at least 3 times."
-msgstr "Tippe im Takt der Musik – Button klicken oder T drücken, mindestens 3-mal."
+msgid "Click the button (or press T) in time with the music – at least 2 times. The tempo sets itself."
+msgstr "Klicke den Button (oder drücke T) im Takt der Musik – mindestens 2-mal. Das Tempo stellt sich von selbst ein."
 
-msgid "Taps: %d – keep tapping…"
-msgstr "Taps: %d – weiter tippen…"
-
-msgid "Taps: %d – tempo set to %d BPM."
-msgstr "Taps: %d – Tempo auf %d BPM gesetzt."
+msgid "Space – start/stop · ↑/↓ – tempo ±1 · ←/→ – tempo ±5"
+msgstr "Leertaste – Start/Stopp · ↑/↓ – Tempo ±1 · ←/→ – Tempo ±5"
 
 msgid "beats per minute"
 msgstr "Schläge pro Minute"

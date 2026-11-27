@@ -912,13 +912,10 @@ msgstr ""
 msgid "Tap tempo"
 msgstr ""
 
-msgid "Tap the button or press T in time with the music – at least 3 times."
+msgid "Click the button (or press T) in time with the music – at least 2 times. The tempo sets itself."
 msgstr ""
 
-msgid "Taps: %d – keep tapping…"
-msgstr ""
-
-msgid "Taps: %d – tempo set to %d BPM."
+msgid "Space – start/stop · ↑/↓ – tempo ±1 · ←/→ – tempo ±5"
 msgstr ""
 
 msgid "beats per minute"
