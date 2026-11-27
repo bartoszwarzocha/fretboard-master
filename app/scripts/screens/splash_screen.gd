@@ -1,18 +1,22 @@
 # Fretboard Master – ekran startowy: całkowicie czarny, logo firmy, „przedstawia”, logo programu.
-# Bez klikania. Najpierw rozgrzewka (pasek postępu): modele 3D wczytywane w tle, otwarcie dźwięku
-# (z SoundFontem), gryf 3D zbudowany i narysowany raz (kompilacja shaderów) – dzięki temu ekrany
-# otwierają się potem bez czekania. Następnie logo programu nadlatuje z oddali i po 3 s przejście do menu.
+# Bez klikania; logo programu nadlatuje z oddali, pod nim krótki pasek postępu. Równocześnie w tle
+# rozgrzewka: modele 3D, otwarcie dźwięku (z SoundFontem), gryf 3D zbudowany i narysowany raz
+# (kompilacja shaderów) – ekrany otwierają się potem bez czekania. Przejście do menu po 3 s, a gdy
+# rozgrzewka trwa dłużej – zaraz po jej końcu.
 # Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends Control
 
 const DURATION := 3.0
 const LOGO_SIZE := Vector2(680, 320)
+const BAR_W := 140.0
 static var CACHE: Array = []     # wczytane z wyprzedzeniem modele 3D (trzymane w pamięci)
 
 var _company: Control
 var _logo: Control
-var _slot: Control
 var _bar: ProgressBar
+var _time_up := false
+var _warm_done := false
+var _left := false
 
 
 func _ready() -> void:
@@ -35,21 +39,29 @@ func _ready() -> void:
 	presents.add_theme_color_override("font_color", Color("8C96B3"))
 	presents.add_theme_font_size_override("font_size", 20)
 	col.add_child(presents)
-	# Miejsce na logo programu; do końca rozgrzewki – tylko cienki pasek postępu.
-	_slot = Control.new()
-	_slot.custom_minimum_size = LOGO_SIZE
-	_slot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	col.add_child(_slot)
+	var logo := Logo3D.create(LOGO_SIZE, true, 0.0 if App.animations() == "off" else DURATION - 0.4)
+	_logo = logo
+	logo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	col.add_child(logo)
 	_bar = ProgressBar.new()
 	_bar.show_percentage = false
 	_bar.max_value = 1.0
-	_bar.custom_minimum_size = Vector2(260, 3)
+	_bar.custom_minimum_size = Vector2(BAR_W, 3)
+	_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_bar.add_theme_stylebox_override("background", _bar_box(Color(1, 1, 1, 0.08)))
 	_bar.add_theme_stylebox_override("fill", _bar_box(Color("8C96B3")))
-	_bar.position = Vector2((LOGO_SIZE.x - 260.0) * 0.5, LOGO_SIZE.y * 0.5)
-	_bar.size = Vector2(260, 3)
-	_slot.add_child(_bar)
+	col.add_child(_bar)
 	_warm_up.call_deferred()
+	if not "--perf-audit" in OS.get_cmdline_user_args():
+		get_tree().create_timer(DURATION).timeout.connect(func() -> void:
+			_time_up = true
+			_finish())
+
+
+func _finish() -> void:
+	if _time_up and _warm_done and not _left:
+		_left = true
+		App.go(App.start_screen())
 
 
 func _bar_box(c: Color) -> StyleBoxFlat:
@@ -65,7 +77,7 @@ func _warm_up() -> void:
 	var t0 := Time.get_ticks_msec()
 	await get_tree().process_frame
 	# 1) Modele 3D – wczytywanie w tle; zostają w pamięci (CACHE) do końca działania programu.
-	var paths: Array = [Logo3D.MODEL_PATH, ModuleIcon3D.MODEL_PATH]
+	var paths: Array = [ModuleIcon3D.MODEL_PATH]   # logo wczytuje się samo (jest już na ekranie)
 	for k in GuitarModel3D.KINDS:
 		if ResourceLoader.exists(GuitarModel3D.MODEL_DIR % k):
 			paths.append(GuitarModel3D.MODEL_DIR % k)
@@ -93,14 +105,8 @@ func _warm_up() -> void:
 	await FretboardView.warm_up(self)
 	_bar.value = 1.0
 	print("[ekran] rozgrzewka: %d ms" % (Time.get_ticks_msec() - t0))
-	await get_tree().process_frame
-	_bar.queue_free()
-	var logo := Logo3D.create(LOGO_SIZE, true, 0.0 if App.animations() == "off" else DURATION - 0.4)
-	_logo = logo
-	_slot.add_child(logo)
-	logo.size = LOGO_SIZE
-	if not "--perf-audit" in OS.get_cmdline_user_args():
-		get_tree().create_timer(DURATION).timeout.connect(func() -> void: App.go(App.start_screen()))
+	_warm_done = true
+	_finish()
 
 
 # Położenie obu logo – menu główne zaczyna od nich przejście (logo odjeżdżają na swoje miejsca).
