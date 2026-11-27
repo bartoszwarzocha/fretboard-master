@@ -151,6 +151,9 @@ msgstr "1800 × 1200 px (3:2), PNG"
 msgid "presents"
 msgstr "presenta"
 
+msgid "Loading..."
+msgstr "Cargando..."
+
 msgid "fretboard · theory · training"
 msgstr "mástil · teoría · práctica"
 

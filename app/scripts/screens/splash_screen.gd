@@ -1,5 +1,5 @@
 # Fretboard Master – ekran startowy: całkowicie czarny, logo firmy, „przedstawia”, logo programu.
-# Bez klikania; logo programu nadlatuje z oddali, pod nim krótki pasek postępu. Równocześnie w tle
+# Bez klikania; logo programu nadlatuje z oddali, pod nim napis „Wczytywanie...”. Równocześnie w tle
 # rozgrzewka: modele 3D, otwarcie dźwięku (z SoundFontem), gryf 3D zbudowany i narysowany raz
 # (kompilacja shaderów) – ekrany otwierają się potem bez czekania. Przejście do menu po 3 s, a gdy
 # rozgrzewka trwa dłużej – zaraz po jej końcu.
@@ -8,12 +8,10 @@ extends Control
 
 const DURATION := 3.0
 const LOGO_SIZE := Vector2(680, 320)
-const BAR_W := 140.0
 static var CACHE: Array = []     # wczytane z wyprzedzeniem modele 3D (trzymane w pamięci)
 
 var _company: Control
 var _logo: Control
-var _bar: ProgressBar
 var _time_up := false
 var _warm_done := false
 var _left := false
@@ -43,14 +41,12 @@ func _ready() -> void:
 	_logo = logo
 	logo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(logo)
-	_bar = ProgressBar.new()
-	_bar.show_percentage = false
-	_bar.max_value = 1.0
-	_bar.custom_minimum_size = Vector2(BAR_W, 3)
-	_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	_bar.add_theme_stylebox_override("background", _bar_box(Color(1, 1, 1, 0.08)))
-	_bar.add_theme_stylebox_override("fill", _bar_box(Color("8C96B3")))
-	col.add_child(_bar)
+	var loading := Label.new()
+	loading.text = "Loading..."
+	loading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	loading.add_theme_color_override("font_color", Color("8C96B3"))
+	loading.add_theme_font_size_override("font_size", 16)
+	col.add_child(loading)
 	_warm_up.call_deferred()
 	if not "--perf-audit" in OS.get_cmdline_user_args():
 		get_tree().create_timer(DURATION).timeout.connect(func() -> void:
@@ -62,15 +58,6 @@ func _finish() -> void:
 	if _time_up and _warm_done and not _left:
 		_left = true
 		App.go(App.start_screen())
-
-
-func _bar_box(c: Color) -> StyleBoxFlat:
-	var b := StyleBoxFlat.new()
-	b.bg_color = c
-	b.set_corner_radius_all(2)
-	b.content_margin_top = 0
-	b.content_margin_bottom = 0
-	return b
 
 
 func _warm_up() -> void:
@@ -85,25 +72,19 @@ func _warm_up() -> void:
 		ResourceLoader.load_threaded_request(p)
 	var pending := paths.duplicate()
 	while not pending.is_empty():
-		var sum := 0.0
 		for p in paths:
-			var prog := []
-			var st := ResourceLoader.load_threaded_get_status(p, prog)
-			sum += 1.0 if st != ResourceLoader.THREAD_LOAD_IN_PROGRESS else float(prog[0])
+			var st := ResourceLoader.load_threaded_get_status(p)
 			if st != ResourceLoader.THREAD_LOAD_IN_PROGRESS and p in pending:
 				pending.erase(p)
 				var res := ResourceLoader.load_threaded_get(p)
 				if res:
 					CACHE.append(res)
-		_bar.value = 0.6 * sum / paths.size()
 		await get_tree().process_frame
 	# 2) Dźwięk: otwarcie urządzeń i wczytanie SoundFontu (pierwsze otwarcie Tunera/Metronomu).
 	AudioEngine.ensure_open()
-	_bar.value = 0.75
 	await get_tree().process_frame
 	# 3) Gryf 3D wg ustawień – budowa siatek i kompilacja shaderów.
 	await FretboardView.warm_up(self)
-	_bar.value = 1.0
 	print("[ekran] rozgrzewka: %d ms" % (Time.get_ticks_msec() - t0))
 	_warm_done = true
 	_finish()
