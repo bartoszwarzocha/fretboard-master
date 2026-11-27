@@ -309,7 +309,7 @@ static func _build_mesh() -> void:
 	_text.font = load(VERSION_FONT)
 	_text.font_size = 64
 	_text.pixel_size = 0.001
-	_text.depth = box.size.z * 0.2
+	_text.depth = 0.0001   # praktycznie płaskie – czytelne przy każdym pochyleniu
 	_text.curve_step = 1.0
 	var h0 := _text.get_aabb().size.y
 	_text.pixel_size = 0.001 * master.size.y * VERSION_HEIGHT / maxf(h0, 0.000001)
