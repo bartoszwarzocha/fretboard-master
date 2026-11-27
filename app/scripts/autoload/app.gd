@@ -88,6 +88,9 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_process(false)
 	_config.load(SETTINGS_PATH)
+	# Dane wydajności (F3) nie są pamiętane między uruchomieniami – program startuje zawsze bez nich.
+	if _config.has_section_key("settings", "perf_info"):
+		_config.erase_section_key("settings", "perf_info")
 	_apply_language()
 	get_window().min_size = Vector2i(1280, 720)
 	for key in [&"audio_input", &"audio_output", &"output_volume"]:
