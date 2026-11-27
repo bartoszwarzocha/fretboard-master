@@ -304,8 +304,8 @@ msgstr "Szybkość"
 msgid "Played note effect"
 msgstr "Efekt zagranego dźwięku"
 
-msgid "Particles when a note is hit"
-msgstr "Cząsteczki po trafieniu dźwięku"
+msgid "Effect when you hit the note"
+msgstr "Efekt po trafionym dźwięku"
 
 msgid "Effect"
 msgstr "Efekt"
@@ -350,16 +350,16 @@ msgid "Instrument"
 msgstr "Instrument"
 
 msgid "Standard (E A D G B E)"
-msgstr "Standardowy (E A D G B E)"
+msgstr "Standard (E A D G B E)"
 
 msgid "Drop D (D A D G B E)"
 msgstr "Drop D (D A D G B E)"
 
 msgid "Half step down (E♭ A♭ D♭ G♭ B♭ E♭)"
-msgstr "Obniżony o pół tonu (E♭ A♭ D♭ G♭ B♭ E♭)"
+msgstr "Pół tonu w dół (E♭ A♭ D♭ G♭ B♭ E♭)"
 
 msgid "Whole step down (D G C F A D)"
-msgstr "Obniżony o cały ton (D G C F A D)"
+msgstr "Cały ton w dół (D G C F A D)"
 
 msgid "Drop C (C G C F A D)"
 msgstr "Drop C (C G C F A D)"
@@ -368,13 +368,13 @@ msgid "DADGAD"
 msgstr "DADGAD"
 
 msgid "Open G (D G D G B D)"
-msgstr "Otwarty G (D G D G B D)"
+msgstr "Open G (D G D G B D)"
 
 msgid "Open D (D A D F♯ A D)"
-msgstr "Otwarty D (D A D F♯ A D)"
+msgstr "Open D (D A D F♯ A D)"
 
 msgid "Open E (E B E G♯ B E)"
-msgstr "Otwarty E (E B E G♯ B E)"
+msgstr "Open E (E B E G♯ B E)"
 
 msgid "Strings"
 msgstr "Struny"
@@ -383,10 +383,10 @@ msgid "Frets"
 msgstr "Progi"
 
 msgid "Left-handed"
-msgstr "Leworęczny"
+msgstr "Dla leworęcznych"
 
-msgid "Reference pitch A4"
-msgstr "Strój odniesienia A4"
+msgid "Concert pitch (A4)"
+msgstr "Kamerton (A4)"
 
 msgid "Fretboard look"
 msgstr "Wygląd gryfu"
@@ -401,7 +401,7 @@ msgid "Classical"
 msgstr "Klasyczna"
 
 msgid "Fretboard wood"
-msgstr "Drewno podstrunnicy"
+msgstr "Podstrunnica"
 
 msgid "Rosewood"
 msgstr "Palisander"
@@ -413,22 +413,22 @@ msgid "Ebony"
 msgstr "Heban"
 
 msgid "Nickel"
-msgstr "Nikiel"
+msgstr "Niklowane"
 
 msgid "Stainless steel"
-msgstr "Stal nierdzewna"
+msgstr "Stalowe (nierdzewne)"
 
 msgid "Gold"
-msgstr "Złoto"
+msgstr "Złote"
 
 msgid "Inlays"
-msgstr "Znaczniki"
+msgstr "Markery"
 
 msgid "Dots"
 msgstr "Kropki"
 
 msgid "Blocks"
-msgstr "Prostokąty"
+msgstr "Bloki"
 
 msgid "Trapezoids"
 msgstr "Trapezy"
@@ -437,7 +437,7 @@ msgid "None"
 msgstr "Brak"
 
 msgid "Bronze"
-msgstr "Brąz"
+msgstr "Brązowe"
 
 msgid "Black"
 msgstr "Czarne"
@@ -482,10 +482,10 @@ msgid "Sensitivity"
 msgstr "Czułość"
 
 msgid "Noise gate"
-msgstr "Bramka szumów"
+msgstr "Noise gate"
 
-msgid "Hear the input in the headphones"
-msgstr "Odsłuch wejścia w słuchawkach"
+msgid "Input monitoring (headphones)"
+msgstr "Odsłuch w słuchawkach"
 
 msgid "Program volume"
 msgstr "Głośność programu"
@@ -506,7 +506,7 @@ msgid "Reverb"
 msgstr "Pogłos"
 
 msgid "Velocity"
-msgstr "Siła uderzenia"
+msgstr "Dynamika (velocity)"
 
 msgid "Window"
 msgstr "Okno"

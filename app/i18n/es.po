@@ -304,8 +304,8 @@ msgstr "Velocidad"
 msgid "Played note effect"
 msgstr "Efecto de la nota tocada"
 
-msgid "Particles when a note is hit"
-msgstr "Partículas al acertar una nota"
+msgid "Effect when you hit the note"
+msgstr "Efecto al acertar la nota"
 
 msgid "Effect"
 msgstr "Efecto"
@@ -385,8 +385,8 @@ msgstr "Trastes"
 msgid "Left-handed"
 msgstr "Zurdo"
 
-msgid "Reference pitch A4"
-msgstr "Tono de referencia A4"
+msgid "Concert pitch (A4)"
+msgstr "Afinación de referencia (A4)"
 
 msgid "Fretboard look"
 msgstr "Aspecto del mástil"
@@ -419,10 +419,10 @@ msgid "Stainless steel"
 msgstr "Acero inoxidable"
 
 msgid "Gold"
-msgstr "Oro"
+msgstr "Dorados"
 
 msgid "Inlays"
-msgstr "Incrustaciones"
+msgstr "Marcadores"
 
 msgid "Dots"
 msgstr "Puntos"
@@ -440,7 +440,7 @@ msgid "Bronze"
 msgstr "Bronce"
 
 msgid "Black"
-msgstr "Negro"
+msgstr "Negras"
 
 msgid "Devices"
 msgstr "Dispositivos"
@@ -482,10 +482,10 @@ msgid "Sensitivity"
 msgstr "Sensibilidad"
 
 msgid "Noise gate"
-msgstr "Puerta de ruido"
+msgstr "Noise gate"
 
-msgid "Hear the input in the headphones"
-msgstr "Escuchar la entrada en los auriculares"
+msgid "Input monitoring (headphones)"
+msgstr "Monitorización por auriculares"
 
 msgid "Program volume"
 msgstr "Volumen del programa"
@@ -506,7 +506,7 @@ msgid "Reverb"
 msgstr "Reverberación"
 
 msgid "Velocity"
-msgstr "Velocidad de pulsación"
+msgstr "Velocity (dinámica)"
 
 msgid "Window"
 msgstr "Ventana"

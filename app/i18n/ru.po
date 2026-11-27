@@ -304,8 +304,8 @@ msgstr "Скорость"
 msgid "Played note effect"
 msgstr "Эффект сыгранной ноты"
 
-msgid "Particles when a note is hit"
-msgstr "Частицы при попадании в ноту"
+msgid "Effect when you hit the note"
+msgstr "Эффект при попадании в ноту"
 
 msgid "Effect"
 msgstr "Эффект"
@@ -356,10 +356,10 @@ msgid "Drop D (D A D G B E)"
 msgstr "Drop D (D A D G B E)"
 
 msgid "Half step down (E♭ A♭ D♭ G♭ B♭ E♭)"
-msgstr "На полтона ниже (E♭ A♭ D♭ G♭ B♭ E♭)"
+msgstr "Полтона вниз (E♭ A♭ D♭ G♭ B♭ E♭)"
 
 msgid "Whole step down (D G C F A D)"
-msgstr "На тон ниже (D G C F A D)"
+msgstr "Тон вниз (D G C F A D)"
 
 msgid "Drop C (C G C F A D)"
 msgstr "Drop C (C G C F A D)"
@@ -368,13 +368,13 @@ msgid "DADGAD"
 msgstr "DADGAD"
 
 msgid "Open G (D G D G B D)"
-msgstr "Открытый G (D G D G B D)"
+msgstr "Open G (D G D G B D)"
 
 msgid "Open D (D A D F♯ A D)"
-msgstr "Открытый D (D A D F♯ A D)"
+msgstr "Open D (D A D F♯ A D)"
 
 msgid "Open E (E B E G♯ B E)"
-msgstr "Открытый E (E B E G♯ B E)"
+msgstr "Open E (E B E G♯ B E)"
 
 msgid "Strings"
 msgstr "Струны"
@@ -385,8 +385,8 @@ msgstr "Лады"
 msgid "Left-handed"
 msgstr "Для левши"
 
-msgid "Reference pitch A4"
-msgstr "Эталонная частота A4"
+msgid "Concert pitch (A4)"
+msgstr "Строй (частота A4)"
 
 msgid "Fretboard look"
 msgstr "Внешний вид грифа"
@@ -401,7 +401,7 @@ msgid "Classical"
 msgstr "Классическая"
 
 msgid "Fretboard wood"
-msgstr "Дерево накладки"
+msgstr "Накладка грифа"
 
 msgid "Rosewood"
 msgstr "Палисандр"
@@ -413,13 +413,13 @@ msgid "Ebony"
 msgstr "Эбен"
 
 msgid "Nickel"
-msgstr "Никель"
+msgstr "Никелевые"
 
 msgid "Stainless steel"
 msgstr "Нержавеющая сталь"
 
 msgid "Gold"
-msgstr "Золото"
+msgstr "Золотые"
 
 msgid "Inlays"
 msgstr "Маркеры"
@@ -437,7 +437,7 @@ msgid "None"
 msgstr "Нет"
 
 msgid "Bronze"
-msgstr "Бронза"
+msgstr "Бронзовые"
 
 msgid "Black"
 msgstr "Чёрные"
@@ -482,10 +482,10 @@ msgid "Sensitivity"
 msgstr "Чувствительность"
 
 msgid "Noise gate"
-msgstr "Шумовой гейт"
+msgstr "Нойз-гейт"
 
-msgid "Hear the input in the headphones"
-msgstr "Слышать вход в наушниках"
+msgid "Input monitoring (headphones)"
+msgstr "Мониторинг в наушниках"
 
 msgid "Program volume"
 msgstr "Громкость программы"
@@ -506,7 +506,7 @@ msgid "Reverb"
 msgstr "Реверберация"
 
 msgid "Velocity"
-msgstr "Сила нажатия"
+msgstr "Velocity (сила нажатия)"
 
 msgid "Window"
 msgstr "Окно"

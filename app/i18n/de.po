@@ -304,8 +304,8 @@ msgstr "Geschwindigkeit"
 msgid "Played note effect"
 msgstr "Effekt beim gespielten Ton"
 
-msgid "Particles when a note is hit"
-msgstr "Partikel bei getroffenem Ton"
+msgid "Effect when you hit the note"
+msgstr "Effekt bei getroffenem Ton"
 
 msgid "Effect"
 msgstr "Effekt"
@@ -385,8 +385,8 @@ msgstr "Bünde"
 msgid "Left-handed"
 msgstr "Linkshänder"
 
-msgid "Reference pitch A4"
-msgstr "Kammerton A4"
+msgid "Concert pitch (A4)"
+msgstr "Kammerton (A4)"
 
 msgid "Fretboard look"
 msgstr "Aussehen des Griffbretts"
@@ -395,7 +395,7 @@ msgid "Electric"
 msgstr "E-Gitarre"
 
 msgid "Acoustic"
-msgstr "Akustikgitarre"
+msgstr "Westerngitarre"
 
 msgid "Classical"
 msgstr "Klassische Gitarre"
@@ -422,7 +422,7 @@ msgid "Gold"
 msgstr "Gold"
 
 msgid "Inlays"
-msgstr "Einlagen"
+msgstr "Inlays"
 
 msgid "Dots"
 msgstr "Punkte"
@@ -484,8 +484,8 @@ msgstr "Empfindlichkeit"
 msgid "Noise gate"
 msgstr "Noise Gate"
 
-msgid "Hear the input in the headphones"
-msgstr "Eingang im Kopfhörer hören"
+msgid "Input monitoring (headphones)"
+msgstr "Mithören über Kopfhörer"
 
 msgid "Program volume"
 msgstr "Lautstärke des Programms"
@@ -506,7 +506,7 @@ msgid "Reverb"
 msgstr "Hall"
 
 msgid "Velocity"
-msgstr "Anschlagstärke"
+msgstr "Anschlagdynamik (Velocity)"
 
 msgid "Window"
 msgstr "Fenster"

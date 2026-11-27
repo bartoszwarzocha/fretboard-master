@@ -231,7 +231,7 @@ func _build_look() -> void:
 		_colors(&"particles_color", "Colour", "Accent colour")
 
 	_section("Played note effect")
-	_toggle(&"hit_particles", "Particles when a note is hit")
+	_toggle(&"hit_particles", "Effect when you hit the note")
 	if bool(App.setting(&"hit_particles")):
 		_select(&"hit_style", "Effect", [["sparks", "Sparks"], ["notes", "Notes"], ["glow", "Glow"]])
 		var test := Button.new()
@@ -254,7 +254,7 @@ func _build_guitar() -> void:
 	_select(&"strings", "Strings", [[6, "6"], [7, "7"], [8, "8"]], false)
 	_select(&"frets", "Frets", [[19, "19"], [20, "20"], [21, "21"], [22, "22"], [24, "24"]], false)
 	_toggle(&"left_handed", "Left-handed")
-	_slider(&"a4", "Reference pitch A4", 415, 466, 1, "%d Hz")
+	_slider(&"a4", "Concert pitch (A4)", 415, 466, 1, "%d Hz")
 
 	_section("Fretboard look")
 	_select(&"guitar_model", "Guitar", [["electric", "Electric"], ["acoustic", "Acoustic"],
@@ -280,7 +280,7 @@ func _build_audio() -> void:
 	_section("Recognition")
 	_slider(&"sensitivity", "Sensitivity", 0, 1, 0.05, "%")
 	_slider(&"noise_gate_db", "Noise gate", -90, -20, 1, "%d dB")
-	_toggle(&"input_monitor", "Hear the input in the headphones")
+	_toggle(&"input_monitor", "Input monitoring (headphones)")
 	_slider(&"master_volume", "Program volume", 0, 1, 0.05, "%")
 
 

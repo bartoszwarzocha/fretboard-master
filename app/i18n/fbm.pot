@@ -303,7 +303,7 @@ msgstr ""
 msgid "Played note effect"
 msgstr ""
 
-msgid "Particles when a note is hit"
+msgid "Effect when you hit the note"
 msgstr ""
 
 msgid "Effect"
@@ -384,7 +384,7 @@ msgstr ""
 msgid "Left-handed"
 msgstr ""
 
-msgid "Reference pitch A4"
+msgid "Concert pitch (A4)"
 msgstr ""
 
 msgid "Fretboard look"
@@ -483,7 +483,7 @@ msgstr ""
 msgid "Noise gate"
 msgstr ""
 
-msgid "Hear the input in the headphones"
+msgid "Input monitoring (headphones)"
 msgstr ""
 
 msgid "Program volume"
