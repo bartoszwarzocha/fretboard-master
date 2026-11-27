@@ -391,6 +391,15 @@ msgstr "Wypróbuj"
 msgid "Panels and tiles"
 msgstr "Panele i kafelki"
 
+msgid "Encyclopedia tile"
+msgstr "Kafel Encyklopedii"
+
+msgid "Guitar model"
+msgstr "Model gitary"
+
+msgid "Icon"
+msgstr "Ikona"
+
 msgid "Opacity"
 msgstr "Krycie"
 

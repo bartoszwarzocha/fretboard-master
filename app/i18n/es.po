@@ -391,6 +391,15 @@ msgstr "Probar"
 msgid "Panels and tiles"
 msgstr "Paneles y mosaicos"
 
+msgid "Encyclopedia tile"
+msgstr "Mosaico de la Enciclopedia"
+
+msgid "Guitar model"
+msgstr "Modelo de guitarra"
+
+msgid "Icon"
+msgstr "Icono"
+
 msgid "Opacity"
 msgstr "Opacidad"
 

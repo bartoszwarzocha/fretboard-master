@@ -29,6 +29,7 @@ const DEFAULTS := {
 		&"particles": "off", &"particles_density": 0.5, &"particles_speed": 1.0, &"particles_color": "",
 		&"hit_particles": true, &"hit_style": "sparks",
 		&"panel_opacity": 1.0, &"panel_radius": 20, &"panel_shadow": 0, &"font_scale": 1.0,
+		&"menu_encyclopedia_art": "guitar",
 		&"ui_font": "manrope", &"start_screen": "menu",
 		&"window_mode": "maximized", &"resolution": "1600x900", &"monitor": -1, &"ui_scale": 1.0,
 		&"vsync": "on", &"max_fps": 0, &"quality": "high", &"msaa": 4, &"render_scale": 1.0,

@@ -280,6 +280,9 @@ func _build_look() -> void:
 	_slider(&"panel_shadow", "Shadow", 0, 24, 1, "%d px")
 	_slider(&"font_scale", "Text size", 0.85, 1.3, 0.05, "%")
 
+	_section("Main menu")
+	_select(&"menu_encyclopedia_art", "Encyclopedia tile", [["guitar", "Guitar model"], ["icon", "Icon"]])
+
 
 func _build_guitar() -> void:
 	_section("Instrument")

@@ -391,6 +391,15 @@ msgstr "Ausprobieren"
 msgid "Panels and tiles"
 msgstr "Felder und Kacheln"
 
+msgid "Encyclopedia tile"
+msgstr "Kachel „Enzyklopädie”"
+
+msgid "Guitar model"
+msgstr "Gitarrenmodell"
+
+msgid "Icon"
+msgstr "Symbol"
+
 msgid "Opacity"
 msgstr "Deckkraft"
 

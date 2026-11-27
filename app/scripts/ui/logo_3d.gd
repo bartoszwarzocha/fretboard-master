@@ -91,19 +91,7 @@ func _ready() -> void:
 	_vp.gui_disable_input = true
 	add_child(_vp)
 
-	var env := Environment.new()
-	env.background_mode = Environment.BG_CLEAR_COLOR
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color.WHITE
-	env.ambient_light_energy = 0.38
-	var we := WorldEnvironment.new()
-	we.environment = env
-	_vp.add_child(we)
-	var light := DirectionalLight3D.new()
-	light.shadow_enabled = false
-	light.light_energy = 0.95
-	light.rotation_degrees = Vector3(-28, -32, 0)
-	_vp.add_child(light)
+	add_lighting(_vp)
 
 	_pivot = Node3D.new()
 	_vp.add_child(_pivot)
@@ -289,19 +277,7 @@ static func _build_mesh() -> void:
 			verts[i] -= center
 		arrays[Mesh.ARRAY_VERTEX] = verts
 		_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-		var mat := StandardMaterial3D.new()
-		mat.albedo_color = COLORS[part]
-		# Połysk: gładka powierzchnia z lakierem (clearcoat) – wyraźne odblaski przy kołysaniu.
-		# Elementy pomarańczowe: gładsze i z mocniejszym odbiciem – ostrzejsze, ale wąskie odblaski,
-		# więc kolor powierzchni się nie rozjaśnia.
-		var glossy: bool = part == &"frame" or part == &"orange"
-		mat.roughness = 0.45 if part == &"panel" else (0.14 if glossy else 0.28)
-		mat.metallic_specular = 1.0 if glossy else 0.7
-		mat.clearcoat_enabled = true
-		mat.clearcoat = 0.6
-		mat.clearcoat_roughness = 0.12
-		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-		_mesh.surface_set_material(_mesh.get_surface_count() - 1, mat)
+		_mesh.surface_set_material(_mesh.get_surface_count() - 1, material(part))
 	# Numer wersji „2.0” – tekst 3D z czcionki Anton, jasnoszary, poza taflą: tuż przy jej prawej
 	# krawędzi na wysokości „Master”, nieco poniżej jego linii bazowej, wyraźnie mniejszy (wzór autora).
 	_text = TextMesh.new()
@@ -334,6 +310,45 @@ static func _build_mesh() -> void:
 	_logo_pos = shift
 	_text_pos = tpos + shift
 	_size = group.size
+
+
+# Materiał części logo (wspólny – używają go też ikony 3D modułów w menu).
+static var _materials := {}
+
+static func material(part: StringName) -> StandardMaterial3D:
+	if _materials.has(part):
+		return _materials[part]
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = COLORS[part]
+	# Połysk: gładka powierzchnia z lakierem (clearcoat) – wyraźne odblaski przy kołysaniu.
+	# Elementy pomarańczowe: gładsze i z mocniejszym odbiciem – ostrzejsze, ale wąskie odblaski,
+	# więc kolor powierzchni się nie rozjaśnia.
+	var glossy: bool = part == &"frame" or part == &"orange"
+	mat.roughness = 0.45 if part == &"panel" else (0.14 if glossy else 0.28)
+	mat.metallic_specular = 1.0 if glossy else 0.7
+	mat.clearcoat_enabled = true
+	mat.clearcoat = 0.6
+	mat.clearcoat_roughness = 0.12
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_materials[part] = mat
+	return mat
+
+
+# Otoczenie i światło logo (te same dla ikon 3D modułów).
+static func add_lighting(vp: SubViewport) -> void:
+	var env := Environment.new()
+	env.background_mode = Environment.BG_CLEAR_COLOR
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color.WHITE
+	env.ambient_light_energy = 0.38
+	var we := WorldEnvironment.new()
+	we.environment = env
+	vp.add_child(we)
+	var light := DirectionalLight3D.new()
+	light.shadow_enabled = false
+	light.light_energy = 0.95
+	light.rotation_degrees = Vector3(-28, -32, 0)
+	vp.add_child(light)
 
 
 # „2.0” z numeru wersji „2.0.0” w ustawieniach projektu (główny.podrzędny).

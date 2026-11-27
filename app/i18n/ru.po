@@ -391,6 +391,15 @@ msgstr "Попробовать"
 msgid "Panels and tiles"
 msgstr "Панели и плитки"
 
+msgid "Encyclopedia tile"
+msgstr "Плитка «Энциклопедия»"
+
+msgid "Guitar model"
+msgstr "Модель гитары"
+
+msgid "Icon"
+msgstr "Значок"
+
 msgid "Opacity"
 msgstr "Непрозрачность"
 

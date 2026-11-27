@@ -1,4 +1,4 @@
-# Fretboard Master – model 3D gitary w kafelku menu (assets/models/guitar-classical.glb od autora).
+# Fretboard Master – model 3D gitary w kafelku menu (assets/models/guitar-*.glb od autora).
 # Gitara stoi pod ukosem i powoli obraca się wokół własnej osi (od główki do korpusu). Materiały
 # takie jak w pliku; światło bez odblasków (specular 0), bez cieni. Gdy animacje są wyłączone,
 # model jest rysowany raz, w ujęciu trzy czwarte.
@@ -6,10 +6,12 @@
 class_name GuitarModel3D
 extends SubViewportContainer
 
-const MODEL_PATH := "res://assets/models/guitar-classical.glb"
+# Modele gitar: res://assets/models/guitar-<rodzaj>.glb. Kolejny model wystarczy dodać jako plik.
+const MODEL_DIR := "res://assets/models/guitar-%s.glb"
+const KINDS := ["classical", "acoustic", "electric"]
 const TILT_DEG := -37.0       # pochylenie osi gitary względem pionu (główka w prawo u góry)
 const LEAN_DEG := 12.0        # lekkie odchylenie w stronę widza
-const TURN_TIME := 20.0       # s na pełny obrót
+const TURN_TIME := 16.7       # s na pełny obrót
 const STILL_DEG := 35.0       # ujęcie przy wyłączonych animacjach
 const FOV := 22.0
 const MARGIN := 1.08          # zapas wokół bryły
@@ -23,7 +25,21 @@ var _width := 0.4             # największa szerokość w poprzek osi
 
 
 static func available() -> bool:
-	return ResourceLoader.exists(MODEL_PATH)
+	return not _existing().is_empty()
+
+
+static func _existing() -> Array:
+	return KINDS.filter(func(k: String) -> bool: return ResourceLoader.exists(MODEL_DIR % k))
+
+
+# Gitara zgodna z widokiem gryfu (classical_3d / acoustic_3d / electric_3d); przy widoku
+# schematycznym albo braku pliku danego rodzaju – losowa z dostępnych (losowana przy wejściu do menu).
+static func model_path() -> String:
+	var kind := str(App.setting(&"neck_view")).trim_suffix("_3d")
+	if kind in KINDS and ResourceLoader.exists(MODEL_DIR % kind):
+		return MODEL_DIR % kind
+	var have := _existing()
+	return MODEL_DIR % have.pick_random() if not have.is_empty() else ""
 
 
 static func create(p_min: Vector2) -> GuitarModel3D:
@@ -65,7 +81,7 @@ func _ready() -> void:
 	_vp.add_child(tilt)
 	_spin = Node3D.new()
 	tilt.add_child(_spin)
-	var model := (load(MODEL_PATH) as PackedScene).instantiate() as Node3D
+	var model := (load(model_path()) as PackedScene).instantiate() as Node3D
 	_spin.add_child(model)
 	_center(model)
 
