@@ -125,24 +125,43 @@ func build(neck: NeckSpec) -> void:
 
 # --- Kamera -------------------------------------------------------------------
 
-# Dopasowanie: cały gryf (od pustych strun do końca podstrunnicy) w prostokącie `region`
-# obrazu o rozmiarze `size` (piksele), przy danym pochyleniu i kącie widzenia (poziomym).
-func fit_camera(size: Vector2, region: Rect2, tilt_deg: float, fov_deg: float) -> void:
+const BASE_TILT := 14.0        # pochylenie kamery w widoku domyślnym (jak w makiecie), °
+
+# Dopasowanie: cały gryf (od pustych strun do końca podstrunnicy) w prostokącie `region` obrazu
+# o rozmiarze `size` (piksele). Widok sterowany myszą: zoom (1 = cały gryf), pitch – dodatkowe
+# pochylenie na boki (obrót wokół osi gryfu), yaw – nachylenie wzdłuż osi gryfu, pan – przesunięcie
+# środka widoku (x wzdłuż gryfu, y w poprzek), w mm.
+func fit_camera(size: Vector2, region: Rect2, fov_deg: float, zoom := 1.0, pitch := 0.0, yaw := 0.0,
+		pan := Vector2.ZERO) -> void:
 	var x_min := spec.marker_x(0) - spec.marker_r - 1.0
 	var span_x := spec.x_end - x_min
-	var t := deg_to_rad(clampf(tilt_deg, 0.0, 70.0))
+	var t := deg_to_rad(clampf(BASE_TILT + pitch, 0.0, 70.0))
 	var depth := spec.half_w(spec.x_end) * 2.0 * cos(t) + 22.0 * sin(t) + 6.0
-	var upp := maxf(span_x / maxf(region.size.x, 1.0), depth / maxf(region.size.y, 1.0))
+	var upp := maxf(span_x / maxf(region.size.x, 1.0), depth / maxf(region.size.y, 1.0)) / maxf(zoom, 0.1)
 	cam.fov = clampf(fov_deg, 5.0, 120.0)
 	var dist := upp * size.x * 0.5 / tan(deg_to_rad(cam.fov * 0.5))
-	var target := Vector3(x_min + span_x * 0.5, 0, 0)
-	if t < 0.001:
-		cam.look_at_from_position(target + Vector3(0, dist, 0), target, Vector3.FORWARD)
-	else:
-		cam.look_at_from_position(target + Vector3(0, dist * cos(t), dist * sin(t)), target)
+	var target := Vector3(x_min + span_x * 0.5 + pan.x, 0, pan.y)
+	var dir := Basis(Vector3.BACK, deg_to_rad(yaw)) * Vector3(0, cos(t), sin(t))
+	cam.look_at_from_position(target + dir * dist, target, Vector3.FORWARD)
 	var c := region.get_center()
 	cam.h_offset = -(c.x - size.x * 0.5) * upp
 	cam.v_offset = (c.y - size.y * 0.5) * upp
+
+
+# Granice przesunięcia przy danym zoomie (żeby gryf nie uciekł z widoku).
+func pan_limit(zoom: float) -> Vector2:
+	var span_x := spec.x_end - (spec.marker_x(0) - spec.marker_r - 1.0)
+	var k := maxf(1.0 - 1.0 / maxf(zoom, 1.0), 0.0)
+	return Vector2(span_x * 0.5 * k, spec.half_w(spec.x_end) * k)
+
+
+# Punkt płaszczyzny podstrunnicy (y = 0) pod pikselem obrazu 3D.
+func board_point(px: Vector2) -> Vector3:
+	var o := cam.project_ray_origin(px)
+	var n := cam.project_ray_normal(px)
+	if absf(n.y) < 0.0001:
+		return o
+	return o + n * (-o.y / n.y)
 
 
 func project(p: Vector3) -> Vector2:

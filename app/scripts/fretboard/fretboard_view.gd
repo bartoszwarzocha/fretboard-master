@@ -5,13 +5,19 @@
 #    rysuje ten węzeł – jedno _draw, bez węzłów tekstu w scenie 3D.
 #  • Schematy: rysowana tabela, kąty proste, kształt gryfu – w całości w _draw.
 # Dźwięki: set_notes([{s, f, text, root, dim}]) – s: struna (0 = najwyższa), f: próg (0 = pusta).
+# Sterowanie myszą (interactive = true – Encyklopedia, Ćwiczenia; podgląd w ustawieniach zawsze pokazuje
+# cały gryf): LPM – kliknięcie zaznacza dźwięk (sygnał note_picked), przeciągnięcie przesuwa
+# przybliżony gryf; kółko – zoom do kursora; PPM – nachylenie na boki i wzdłuż osi gryfu (w zakresie
+# z ustawień); dwuklik – widok domyślny. Zoom, nachylenie i przesuwanie dotyczą widoku 3D.
 # Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name FretboardView
 extends Control
 
+signal note_picked(string_index: int, fret: int)
+
 # Ustawienia, których zmiana przebudowuje gryf.
 const KEYS := [&"neck_view", &"fretboard_wood", &"fret_metal", &"string_color", &"inlays", &"strings",
-		&"frets", &"tuning", &"left_handed", &"neck_tilt", &"neck_fov", &"shadows", &"msaa", &"notation",
+		&"frets", &"tuning", &"left_handed", &"neck_tilt_range", &"neck_zoom_max", &"neck_fov", &"shadows", &"msaa", &"notation",
 		&"marker_color", &"marker_root_color", &"marker_text_color"]
 const GUTTER := 56.0        # kolumna nazw strun
 const TOP := 30.0           # wiersz numerów progów
@@ -20,6 +26,8 @@ const SS := 2               # nadpróbkowanie obrazu 3D (2× w każdą stronę) 
 const THICK := [1.0, 1.3, 1.7, 2.2, 2.7, 3.2, 3.7, 4.2]
 
 var spec: NeckSpec
+var interactive := false    # sterowanie myszą (Encyklopedia, Ćwiczenia)
+var selected := Vector2i(-1, -1)   # zaznaczony dźwięk: (struna, próg)
 var demo := false           # przykładowa skala (podgląd w ustawieniach) – odtwarzana po każdej zmianie
 var _notes: Array = []
 var _view := ""
@@ -27,7 +35,13 @@ var _lefty := false
 var _vp: SubViewport
 var _tex: TextureRect
 var _neck: Neck3D
-var _dirty := true
+var _zoom := 1.0
+var _pitch := 0.0
+var _yaw := 0.0
+var _pan := Vector2.ZERO
+var _press := Vector2.ZERO
+var _dragging := false
+var _cells := {}            # Vector2i(struna, próg) → środek pola na ekranie (do zaznaczania)
 
 
 func _ready() -> void:
@@ -146,6 +160,13 @@ static func _release_neck(n: Neck3D) -> void:
 		_cached_neck = null
 
 
+# Zwolnienie przechowywanej sceny przy zamykaniu programu (bez wycieków zasobów renderera).
+static func free_cache() -> void:
+	if is_instance_valid(_cached_neck) and _cached_neck.get_parent() == null:
+		_cached_neck.free()
+	_cached_neck = null
+
+
 # Rozgrzewka (ekran startowy): budowa gryfu wg bieżących ustawień i jedno narysowanie poza ekranem.
 static func warm_up(host: Node) -> void:
 	var neck_spec := NeckSpec.from_settings()
@@ -161,7 +182,7 @@ static func warm_up(host: Node) -> void:
 	var n := _take_neck(neck_spec)
 	vp.add_child(n)
 	n.set_notes(demo_notes(neck_spec))
-	n.fit_camera(Vector2(vp.size), Rect2(40, 20, 590, 130), float(App.setting(&"neck_tilt")), float(App.setting(&"neck_fov")))
+	n.fit_camera(Vector2(vp.size), Rect2(40, 20, 590, 130), float(App.setting(&"neck_fov")))
 	await RenderingServer.frame_post_draw
 	await RenderingServer.frame_post_draw
 	vp.remove_child(n)
@@ -171,11 +192,107 @@ static func warm_up(host: Node) -> void:
 func _on_resized() -> void:
 	if _vp and size.x > 1 and size.y > 1:
 		_vp.size = Vector2i(size * SS)
-		var r := _region_3d()
-		_neck.fit_camera(size * SS, Rect2(r.position * SS, r.size * SS), float(App.setting(&"neck_tilt")),
-				float(App.setting(&"neck_fov")))
-		_render()
+		_apply_camera()
 	queue_redraw()
+
+
+func _apply_camera() -> void:
+	var r := _region_3d()
+	var lim := _neck.pan_limit(_zoom)
+	_pan = _pan.clamp(-lim, lim)
+	_neck.fit_camera(size * SS, Rect2(r.position * SS, r.size * SS), float(App.setting(&"neck_fov")),
+			_zoom, _pitch, _yaw, _pan)
+	_render()
+	queue_redraw()
+
+
+func reset_view() -> void:
+	_zoom = 1.0
+	_pitch = 0.0
+	_yaw = 0.0
+	_pan = Vector2.ZERO
+	if _neck:
+		_apply_camera()
+
+
+# --- Mysz ------------------------------------------------------------------------
+
+# Piksel obrazu 3D pod punktem widoku (nadpróbkowanie, odbicie dla leworęcznych).
+func _vp_px(p: Vector2) -> Vector2:
+	return Vector2(_mx(p.x), p.y) * SS
+
+
+func _gui_input(event: InputEvent) -> void:
+	if not interactive:
+		return
+	var mb := event as InputEventMouseButton
+	if mb:
+		if mb.double_click and mb.button_index == MOUSE_BUTTON_LEFT:
+			reset_view()
+			accept_event()
+			return
+		if _neck and mb.pressed and mb.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+			var before := _neck.board_point(_vp_px(mb.position))
+			var f := 1.15 if mb.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0 / 1.15
+			_zoom = clampf(_zoom * f, 1.0, float(App.setting(&"neck_zoom_max")))
+			_apply_camera()
+			var after := _neck.board_point(_vp_px(mb.position))
+			_pan += Vector2(before.x - after.x, before.z - after.z)
+			_apply_camera()
+			accept_event()
+			return
+		if mb.button_index == MOUSE_BUTTON_LEFT:
+			if mb.pressed:
+				_press = mb.position
+				_dragging = false
+			elif not _dragging:
+				_pick(mb.position)
+			accept_event()
+		return
+	var mm := event as InputEventMouseMotion
+	if mm and _neck:
+		if mm.button_mask & MOUSE_BUTTON_MASK_LEFT:
+			if not _dragging and mm.position.distance_to(_press) > 4.0:
+				_dragging = true
+			if _dragging and _zoom > 1.0:
+				var a := _neck.board_point(_vp_px(mm.position - mm.relative))
+				var b := _neck.board_point(_vp_px(mm.position))
+				_pan += Vector2(a.x - b.x, a.z - b.z)
+				_apply_camera()
+			accept_event()
+		elif mm.button_mask & MOUSE_BUTTON_MASK_RIGHT:
+			var lim := float(App.setting(&"neck_tilt_range"))
+			_yaw = clampf(_yaw + mm.relative.x * 0.2 * (-1.0 if _lefty else 1.0), -lim, lim)
+			_pitch = clampf(_pitch + mm.relative.y * 0.2, -lim, lim)
+			_apply_camera()
+			accept_event()
+
+
+# Kliknięcie: najbliższe pole (struna, próg) – zaznaczenie albo odznaczenie.
+func _pick(p: Vector2) -> void:
+	var best := Vector2i(-1, -1)
+	var best_d := INF
+	for k in _cells:
+		var d: float = (_cells[k] as Vector2).distance_to(p)
+		if d < best_d:
+			best_d = d
+			best = k
+	if best.x < 0 or best_d > 40.0:
+		return
+	selected = Vector2i(-1, -1) if selected == best else best
+	queue_redraw()
+	if selected.x >= 0:
+		note_picked.emit(selected.x, selected.y)
+
+
+# Pola wszystkich strun i progów na ekranie (pos_fn jak dla znaczników) + obwódka zaznaczenia.
+func _store_cells(pos_fn: Callable, r: float) -> void:
+	_cells.clear()
+	for s in spec.strings:
+		for f in spec.frets + 1:
+			_cells[Vector2i(s, f)] = pos_fn.call(s, f)
+	if selected.x >= 0 and _cells.has(selected):
+		draw_arc(_cells[selected], r + 4.0, 0, TAU, 40, ThemeManager.color("text"), 2.5, true)
 
 
 func _render() -> void:
@@ -247,6 +364,11 @@ func _draw_3d() -> void:
 		if m.note.get("dim", false):
 			col.a = 0.5
 		_text_c(c, str(m.note.get("text", "")), maxi(int(r_px * 1.3), 6), col)
+	var r0 := absf(_p3(Vector3(spec.marker_x(1) + spec.marker_r, 0, 0)).x - _p3(Vector3(spec.marker_x(1), 0, 0)).x)
+	_store_cells(func(s, f):
+		var x := spec.marker_x(f)
+		var xs := maxf(x, 0.0)
+		return _p3(Vector3(x, spec.string_y(s, xs), spec.string_z(s, xs))), r0)
 
 
 # Znacznik w schematach: płaski krążek z ciemną obwódką.
@@ -266,6 +388,7 @@ func _schema_notes(pos_fn: Callable, r_fn: Callable) -> void:
 	for n in _notes:
 		if n.s >= 0 and n.s < spec.strings and n.f >= 0 and n.f <= spec.frets:
 			_marker(pos_fn.call(n.s, n.f), r_fn.call(n.f), n)
+	_store_cells(pos_fn, r_fn.call(1))
 
 
 func _inlay_cells() -> Array:

@@ -372,7 +372,9 @@ func _build_graphics() -> void:
 			_select(&"logo_spin_rate", "Spin frequency", [["rare", "Rarely"], ["normal", "Normally"], ["often", "Often"]])
 
 	_section("3D fretboard")
-	_slider(&"neck_tilt", "Camera tilt", 0, 60, 1, "%d°")
+	# Gryf w Encyklopedii i Ćwiczeniach: kółko myszy – zoom, PPM – nachylenie (w tych zakresach).
+	_slider(&"neck_tilt_range", "Tilt range (right mouse button)", 0, 30, 1, "±%d°")
+	_slider(&"neck_zoom_max", "Maximum zoom (mouse wheel)", 1.5, 5, 0.5, "×")
 	_slider(&"neck_fov", "Perspective (field of view)", 20, 70, 1, "%d°")
 
 

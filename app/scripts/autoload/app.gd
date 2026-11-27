@@ -36,7 +36,7 @@ const DEFAULTS := {
 		&"vsync": "on", &"max_fps": 60, &"quality": "high", &"msaa": 4, &"render_scale": 1.0,
 		&"anisotropy": 4, &"shadows": "medium", &"reflections": false,
 		&"brightness": 1.0, &"contrast": 1.0, &"gamma": 1.0, &"animations": "full", &"anim_speed": 1.0,
-		&"logo_spin": true, &"logo_spin_rate": "normal", &"neck_tilt": 14.0, &"neck_fov": 22.0,
+		&"logo_spin": true, &"logo_spin_rate": "normal", &"neck_tilt_range": 15.0, &"neck_zoom_max": 3.0, &"neck_fov": 22.0,
 		&"perf_info": false, &"power_saving": true, &"background_fps": 10,
 	},
 	&"language": {

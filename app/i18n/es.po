@@ -730,8 +730,11 @@ msgstr "A menudo"
 msgid "3D fretboard"
 msgstr "Mástil 3D"
 
-msgid "Camera tilt"
-msgstr "Inclinación de la cámara"
+msgid "Tilt range (right mouse button)"
+msgstr "Rango de inclinación (botón derecho del ratón)"
+
+msgid "Maximum zoom (mouse wheel)"
+msgstr "Zoom máximo (rueda del ratón)"
 
 msgid "Perspective (field of view)"
 msgstr "Perspectiva (campo de visión)"

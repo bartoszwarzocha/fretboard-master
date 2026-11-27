@@ -730,8 +730,11 @@ msgstr "Często"
 msgid "3D fretboard"
 msgstr "Gryf 3D"
 
-msgid "Camera tilt"
-msgstr "Pochylenie kamery"
+msgid "Tilt range (right mouse button)"
+msgstr "Zakres nachylenia (prawy przycisk myszy)"
+
+msgid "Maximum zoom (mouse wheel)"
+msgstr "Największe przybliżenie (kółko myszy)"
 
 msgid "Perspective (field of view)"
 msgstr "Perspektywa (pole widzenia)"

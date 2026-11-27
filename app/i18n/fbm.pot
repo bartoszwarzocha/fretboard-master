@@ -729,7 +729,10 @@ msgstr ""
 msgid "3D fretboard"
 msgstr ""
 
-msgid "Camera tilt"
+msgid "Tilt range (right mouse button)"
+msgstr ""
+
+msgid "Maximum zoom (mouse wheel)"
 msgstr ""
 
 msgid "Perspective (field of view)"

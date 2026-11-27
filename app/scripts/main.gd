@@ -23,6 +23,10 @@ func _ready() -> void:
 		_measure_screens()
 
 
+func _exit_tree() -> void:
+	FretboardView.free_cache()
+
+
 func _show(screen_id: StringName) -> void:
 	var t0 := Time.get_ticks_usec()
 	# Przejście ze startu do menu: menu dostaje położenie logo, a tło płynnie zmienia kolor.

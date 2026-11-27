@@ -730,8 +730,11 @@ msgstr "Oft"
 msgid "3D fretboard"
 msgstr "3D-Griffbrett"
 
-msgid "Camera tilt"
-msgstr "Kameraneigung"
+msgid "Tilt range (right mouse button)"
+msgstr "Neigungsbereich (rechte Maustaste)"
+
+msgid "Maximum zoom (mouse wheel)"
+msgstr "Maximaler Zoom (Mausrad)"
 
 msgid "Perspective (field of view)"
 msgstr "Perspektive (Sichtfeld)"
