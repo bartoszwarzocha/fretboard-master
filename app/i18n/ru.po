@@ -391,8 +391,8 @@ msgstr "Попробовать"
 msgid "Panels and tiles"
 msgstr "Панели и плитки"
 
-msgid "Start or plan your practice to get to know the fretboard step by step."
-msgstr "Начни или запланируй занятия, чтобы шаг за шагом осваивать гриф."
+msgid "Start or plan your practice to see your exercise queue here."
+msgstr "Начни или запланируй занятия, чтобы увидеть здесь очередь своих упражнений."
 
 msgid "Encyclopedia tile"
 msgstr "Плитка «Энциклопедия»"

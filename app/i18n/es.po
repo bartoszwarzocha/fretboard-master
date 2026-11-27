@@ -391,8 +391,8 @@ msgstr "Probar"
 msgid "Panels and tiles"
 msgstr "Paneles y mosaicos"
 
-msgid "Start or plan your practice to get to know the fretboard step by step."
-msgstr "Empieza o planifica tus ejercicios para conocer el mástil paso a paso."
+msgid "Start or plan your practice to see your exercise queue here."
+msgstr "Empieza o planifica tus ejercicios para ver aquí tu cola de ejercicios."
 
 msgid "Encyclopedia tile"
 msgstr "Mosaico de la Enciclopedia"

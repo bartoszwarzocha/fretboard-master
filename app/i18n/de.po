@@ -391,8 +391,8 @@ msgstr "Ausprobieren"
 msgid "Panels and tiles"
 msgstr "Felder und Kacheln"
 
-msgid "Start or plan your practice to get to know the fretboard step by step."
-msgstr "Starte oder plane deine Übungen, um das Griffbrett Schritt für Schritt besser kennenzulernen."
+msgid "Start or plan your practice to see your exercise queue here."
+msgstr "Starte oder plane deine Übungen, um hier deine Übungswarteschlange zu sehen."
 
 msgid "Encyclopedia tile"
 msgstr "Kachel „Enzyklopädie”"

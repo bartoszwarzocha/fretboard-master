@@ -390,7 +390,7 @@ msgstr ""
 msgid "Panels and tiles"
 msgstr ""
 
-msgid "Start or plan your practice to get to know the fretboard step by step."
+msgid "Start or plan your practice to see your exercise queue here."
 msgstr ""
 
 msgid "Encyclopedia tile"

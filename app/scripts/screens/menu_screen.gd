@@ -93,7 +93,7 @@ func _ready() -> void:
 	_fade.append(question)
 	# Zachęta; docelowo w tym miejscu dzisiejszy plan ćwiczeń / ostatnie ćwiczenie (gdy powstaną moduły).
 	var cheer := Label.new()
-	cheer.text = "Start or plan your practice to get to know the fretboard step by step."
+	cheer.text = "Start or plan your practice to see your exercise queue here."
 	cheer.theme_type_variation = &"Muted"
 	cheer.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	left.add_child(cheer)
