@@ -20,7 +20,7 @@ const VERSION_FONT := "res://assets/fonts/Anton.ttf"
 const VERSION_HEIGHT := 0.72   # wysokość „2.0” względem wysokości napisu „Master”
 const VERSION_DROP := 0.2      # obniżenie „2.0” poniżej linii bazowej „Master” (jak we wzorze autora)
 const VERSION_GAP := 0.012     # odstęp od krawędzi tafli względem szerokości logo
-const VERSION_COLOR := Color("D9DADF")   # jasnoszare, srebrzyste
+const VERSION_COLOR := Color("D9DADF")   # jasnoszare, srebrzyste (ekran startowy – zawsze czarne tło)
 const MASTER_PARTS := [&"path3", &"path5", &"path6", &"path8", &"path9", &"path10"]
 
 # Kolory części modelu (nazwy węzłów z pliku .glb – kontury wektorowe z Inkscape).
@@ -102,6 +102,12 @@ func _ready() -> void:
 	_pivot.add_child(logo)
 	var ver := MeshInstance3D.new()
 	ver.mesh = _text
+	# Kolor „2.0” wg motywu (w jasnym ciemniejszy); ekran startowy zawsze czarny – kolor bazowy.
+	var vcol := ThemeManager.color("version")
+	if App.current_screen != &"splash" and vcol != VERSION_COLOR:
+		var m := (_text.material as StandardMaterial3D).duplicate() as StandardMaterial3D
+		m.albedo_color = vcol
+		ver.material_override = m
 	ver.position = _text_pos
 	ver.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_pivot.add_child(ver)

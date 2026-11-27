@@ -508,7 +508,7 @@ func _build_strings() -> void:
 		col.add_child(_gap(7))
 		var sc: Variant = _string_cents[i]
 		var state := _label("–" if sc == null else tr("in tune") if absf(sc) <= IN_TUNE else tr("too low") if sc < 0 else tr("too high"),
-				14, ThemeManager.color("hint") if sc == null else GREEN if absf(sc) <= IN_TUNE else YELLOW, ThemeManager.font_body_bold)
+				14, ThemeManager.color("hint") if sc == null else GREEN if absf(sc) <= IN_TUNE else ThemeManager.color("warn"), ThemeManager.font_body_bold)
 		state.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		state.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		col.add_child(state)
