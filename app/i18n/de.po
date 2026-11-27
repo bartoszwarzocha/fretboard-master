@@ -1108,3 +1108,132 @@ msgstr "Starten"
 msgid "Not available on this computer"
 msgstr "Auf diesem Computer nicht verfügbar"
 
+msgid "Metronome, drum machine and looper."
+msgstr "Metronom, Drumcomputer und Looper."
+
+msgid "Looper"
+msgstr "Looper"
+
+msgid "tempo of a new recording"
+msgstr "Tempo einer neuen Aufnahme"
+
+msgid "Recorded tracks"
+msgstr "Aufgenommene Spuren"
+
+msgid "ticked tracks play together · drag across the wave to choose a range"
+msgstr "ausgewählte Spuren spielen zusammen · über die Welle ziehen, um einen Bereich zu wählen"
+
+msgid "No recordings yet. Press „Record new” (R) – you always record along with the drum machine or the metronome."
+msgstr "Noch keine Aufnahmen. Drücke „Neu aufnehmen” (R) – du nimmst immer zum Drumcomputer oder Metronom auf."
+
+msgid "start and end (trim)"
+msgstr "Anfang und Ende (Zuschnitt)"
+
+msgid "playback range"
+msgstr "Wiedergabebereich"
+
+msgid "A track remembers the tempo, metre and backing of its recording."
+msgstr "Eine Spur merkt sich Tempo, Takt und Begleitung der Aufnahme."
+
+msgid "Backing:"
+msgstr "Begleitung:"
+
+msgid "drums"
+msgstr "Schlagzeug"
+
+msgid "metronome"
+msgstr "Metronom"
+
+msgid "Recording"
+msgstr "Aufnahme"
+
+msgid "%s pattern, %s kit – set in the „Drum machine” tab."
+msgstr "Pattern %s, Set %s – einstellbar im Tab „Drumcomputer”."
+
+msgid "Sound and subdivision – set in the „Classic metronome” tab."
+msgstr "Klang und Unterteilung – einstellbar im Tab „Klassisches Metronom”."
+
+msgid "You play along with"
+msgstr "Du spielst zu"
+
+msgid "the drum machine"
+msgstr "Drumcomputer"
+
+msgid "the metronome"
+msgstr "Metronom"
+
+msgid "Count-in before recording"
+msgstr "Einzählen vor der Aufnahme"
+
+msgid "1 bar"
+msgstr "1 Takt"
+
+msgid "2 bars"
+msgstr "2 Takte"
+
+msgid "default device"
+msgstr "Standardgerät"
+
+msgid "Input: %s, channel %d"
+msgstr "Eingang: %s, Kanal %d"
+
+msgid "Audio input unavailable – check the Sound and MIDI settings."
+msgstr "Audioeingang nicht verfügbar – prüfe die Einstellungen für Sound und MIDI."
+
+msgid "Space – playback · R – recording"
+msgstr "Leertaste – Wiedergabe · R – Aufnahme"
+
+msgid "Play"
+msgstr "Abspielen"
+
+msgid "Finish recording"
+msgstr "Aufnahme beenden"
+
+msgid "Record new"
+msgstr "Neu aufnehmen"
+
+msgid "Tick the tracks to play."
+msgstr "Wähle die Spuren zum Abspielen aus."
+
+msgid "Recording interrupted – the input was not read in time."
+msgstr "Aufnahme abgebrochen – der Eingang wurde nicht rechtzeitig gelesen."
+
+msgid "count-in: %d"
+msgstr "Einzählen: %d"
+
+msgid "recording · bar %d"
+msgstr "Aufnahme · Takt %d"
+
+msgid "The recording is too short – it was not saved."
+msgstr "Die Aufnahme ist zu kurz – sie wurde nicht gespeichert."
+
+msgid "Could not save the recording."
+msgstr "Die Aufnahme konnte nicht gespeichert werden."
+
+msgid "Recording %d"
+msgstr "Aufnahme %d"
+
+msgid "New recording"
+msgstr "Neue Aufnahme"
+
+msgid "own"
+msgstr "eigenes"
+
+msgid "drums %s"
+msgstr "Schlagzeug %s"
+
+msgid "range %s–%s"
+msgstr "Bereich %s–%s"
+
+msgid "Trim silence"
+msgstr "Stille kürzen"
+
+msgid "Cuts the silence at the start and the end."
+msgstr "Entfernt die Stille am Anfang und am Ende."
+
+msgid "Delete the track"
+msgstr "Spur löschen"
+
+msgid "Delete?"
+msgstr "Löschen?"
+

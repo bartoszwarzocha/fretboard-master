@@ -5,6 +5,8 @@
 // Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #pragma once
 
+#include "looper.h"
+
 #include <array>
 #include <atomic>
 #include <cstdint>
@@ -37,6 +39,7 @@ struct MetronomeConfig {
     double ramp_to = 120.0;
     double ramp_step = 4.0;
     int ramp_bars = 8;
+    bool silent = false;           // zegar bez dźwięku (looper bez podkładu)
 };
 
 // Ostatni krok widoczny w interfejsie (z numerem próbki, od której brzmi).
@@ -73,6 +76,13 @@ public:
     }
     // Krok brzmiący w próbce `frame` (do animacji wskaźnika w interfejsie).
     TickInfo tick_at(int64_t frame) const;
+
+    // Pierwsze uderzenie po starcie (numer próbki; −1 – zatrzymany albo jeszcze nie ruszył) i długość
+    // taktu w próbkach – zegar loopera.
+    int64_t clock_start() const { return clock_start_.load(); }
+    double bar_frames() const { return bar_frames_.load(); }
+    Looper &looper() { return looper_; }
+    const Looper &looper() const { return looper_; }
 
     // --- wątek dźwięku ---
     void render(float *stereo, int frames);
@@ -123,6 +133,9 @@ private:
     int64_t bar_ = 0;
     std::atomic<int64_t> frame_{0};
     std::atomic<double> current_bpm_{96.0};
+    std::atomic<int64_t> clock_start_{-1};
+    std::atomic<double> bar_frames_{0.0};
+    Looper looper_;
     std::atomic<float> volume_{0.7f};
     std::array<Voice, 16> voices_{};
     std::vector<PendingOff> offs_;

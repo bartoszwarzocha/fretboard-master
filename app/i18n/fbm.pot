@@ -1107,3 +1107,132 @@ msgstr ""
 msgid "Not available on this computer"
 msgstr ""
 
+msgid "Metronome, drum machine and looper."
+msgstr ""
+
+msgid "Looper"
+msgstr ""
+
+msgid "tempo of a new recording"
+msgstr ""
+
+msgid "Recorded tracks"
+msgstr ""
+
+msgid "ticked tracks play together · drag across the wave to choose a range"
+msgstr ""
+
+msgid "No recordings yet. Press „Record new” (R) – you always record along with the drum machine or the metronome."
+msgstr ""
+
+msgid "start and end (trim)"
+msgstr ""
+
+msgid "playback range"
+msgstr ""
+
+msgid "A track remembers the tempo, metre and backing of its recording."
+msgstr ""
+
+msgid "Backing:"
+msgstr ""
+
+msgid "drums"
+msgstr ""
+
+msgid "metronome"
+msgstr ""
+
+msgid "Recording"
+msgstr ""
+
+msgid "%s pattern, %s kit – set in the „Drum machine” tab."
+msgstr ""
+
+msgid "Sound and subdivision – set in the „Classic metronome” tab."
+msgstr ""
+
+msgid "You play along with"
+msgstr ""
+
+msgid "the drum machine"
+msgstr ""
+
+msgid "the metronome"
+msgstr ""
+
+msgid "Count-in before recording"
+msgstr ""
+
+msgid "1 bar"
+msgstr ""
+
+msgid "2 bars"
+msgstr ""
+
+msgid "default device"
+msgstr ""
+
+msgid "Input: %s, channel %d"
+msgstr ""
+
+msgid "Audio input unavailable – check the Sound and MIDI settings."
+msgstr ""
+
+msgid "Space – playback · R – recording"
+msgstr ""
+
+msgid "Play"
+msgstr ""
+
+msgid "Finish recording"
+msgstr ""
+
+msgid "Record new"
+msgstr ""
+
+msgid "Tick the tracks to play."
+msgstr ""
+
+msgid "Recording interrupted – the input was not read in time."
+msgstr ""
+
+msgid "count-in: %d"
+msgstr ""
+
+msgid "recording · bar %d"
+msgstr ""
+
+msgid "The recording is too short – it was not saved."
+msgstr ""
+
+msgid "Could not save the recording."
+msgstr ""
+
+msgid "Recording %d"
+msgstr ""
+
+msgid "New recording"
+msgstr ""
+
+msgid "own"
+msgstr ""
+
+msgid "drums %s"
+msgstr ""
+
+msgid "range %s–%s"
+msgstr ""
+
+msgid "Trim silence"
+msgstr ""
+
+msgid "Cuts the silence at the start and the end."
+msgstr ""
+
+msgid "Delete the track"
+msgstr ""
+
+msgid "Delete?"
+msgstr ""
+

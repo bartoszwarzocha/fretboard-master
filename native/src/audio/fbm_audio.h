@@ -14,6 +14,8 @@
 #include <godot_cpp/variant/packed_float32_array.hpp>
 #include <godot_cpp/variant/packed_string_array.hpp>
 #include <godot_cpp/variant/string.hpp>
+#include <godot_cpp/variant/variant.hpp>
+#include <godot_cpp/variant/vector2i.hpp>
 
 #include <memory>
 #include <vector>
@@ -57,6 +59,25 @@ public:
     Dictionary pitch();
     // Liczba próbek wejścia od otwarcia (numeracja wspólna z wyjściem przy strumieniu dwukierunkowym).
     int64_t input_frames() const;
+    // Próbki wejścia od numeru `from` (do `max_count`, tyle, ile już jest); pusta tablica, gdy nie ma
+    // nowych, a null zamiast tablicy (Variant) – gdy `from` jest już nadpisany.
+    Variant input_read(int64_t from, int max_count);
+    // Opóźnienie wejście + wyjście w próbkach: dźwięk zagrany do próbki wyjścia f pojawia się na wejściu
+    // jako próbka f + latency_frames().
+    int64_t latency_frames() const;
+
+    // --- looper (zob. looper.h) ---
+    void looper_clear();
+    void looper_add(const PackedFloat32Array &samples, int64_t from, int64_t to, double gain);
+    void looper_play(int64_t offset, int64_t length, int64_t delay);
+    void looper_stop();
+    // Pozycja słyszana właśnie teraz, w próbkach ścieżek (−1 – nie gra).
+    int64_t looper_position() const;
+    // Szczyty w `buckets` równych przedziałach (do rysowania fali).
+    PackedFloat32Array waveform(const PackedFloat32Array &samples, int buckets) const;
+    // Pierwsza i ostatnia próbka głośniejsza niż `threshold_db` (z zapasem `margin` próbek); x = y = 0 – cisza.
+    Vector2i sound_bounds(const PackedFloat32Array &samples, double threshold_db, int margin) const;
+
     // Dla testów: rozpoznanie wysokości w podanych próbkach.
     Dictionary detect_pitch(const PackedFloat32Array &samples, double rate);
 
@@ -81,6 +102,7 @@ public:
     struct Stream;
 
 private:
+    int64_t heard_frame() const;
     fbm::Sequencer sequencer_;
     fbm::InputRing ring_;
     fbm::PitchDetector detector_;

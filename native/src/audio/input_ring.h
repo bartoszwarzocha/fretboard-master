@@ -53,6 +53,19 @@ public:
         }
         return start;
     }
+    // Próbki od numeru `from` (najwyżej `n`, tylko już zapisane i jeszcze nie nadpisane); zwraca ich liczbę.
+    int read(int64_t from, float *dst, int n) const {
+        const int64_t end = written();
+        const int64_t lo = std::max<int64_t>(from, end - kSize / 2);
+        if (lo != from) {
+            return -1;   // za stare – nadpisane (wątek główny nie nadążył)
+        }
+        const int count = static_cast<int>(std::clamp<int64_t>(end - from, 0, n));
+        for (int i = 0; i < count; ++i) {
+            dst[i] = data_[static_cast<size_t>((from + i) & kMask)];
+        }
+        return count;
+    }
     float take_peak() { return peak_.exchange(0.0f, std::memory_order_relaxed); }
 
 private:

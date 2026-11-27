@@ -1108,3 +1108,132 @@ msgstr "Uruchom"
 msgid "Not available on this computer"
 msgstr "Niedostępny na tym komputerze"
 
+msgid "Metronome, drum machine and looper."
+msgstr "Metronom, automat perkusyjny i looper."
+
+msgid "Looper"
+msgstr "Looper"
+
+msgid "tempo of a new recording"
+msgstr "tempo nowego nagrania"
+
+msgid "Recorded tracks"
+msgstr "Nagrane ścieżki"
+
+msgid "ticked tracks play together · drag across the wave to choose a range"
+msgstr "zaznaczone zagrają razem · przeciągnij po fali, aby wybrać zakres"
+
+msgid "No recordings yet. Press „Record new” (R) – you always record along with the drum machine or the metronome."
+msgstr "Nie masz jeszcze nagrań. Naciśnij „Nagraj nową” (R) – nagrywasz zawsze do automatu perkusyjnego albo metronomu."
+
+msgid "start and end (trim)"
+msgstr "początek i koniec (przycięcie)"
+
+msgid "playback range"
+msgstr "zakres odtwarzania"
+
+msgid "A track remembers the tempo, metre and backing of its recording."
+msgstr "Ścieżka pamięta tempo, metrum i podkład nagrania."
+
+msgid "Backing:"
+msgstr "Podkład:"
+
+msgid "drums"
+msgstr "perkusja"
+
+msgid "metronome"
+msgstr "metronom"
+
+msgid "Recording"
+msgstr "Nagrywanie"
+
+msgid "%s pattern, %s kit – set in the „Drum machine” tab."
+msgstr "Wzorzec %s, zestaw %s – ustawiasz w zakładce „Automat perkusyjny”."
+
+msgid "Sound and subdivision – set in the „Classic metronome” tab."
+msgstr "Brzmienie i podział – ustawiasz w zakładce „Metronom klasyczny”."
+
+msgid "You play along with"
+msgstr "Grasz do"
+
+msgid "the drum machine"
+msgstr "automatu perkusyjnego"
+
+msgid "the metronome"
+msgstr "metronomu"
+
+msgid "Count-in before recording"
+msgstr "Odliczanie przed nagraniem"
+
+msgid "1 bar"
+msgstr "1 takt"
+
+msgid "2 bars"
+msgstr "2 takty"
+
+msgid "default device"
+msgstr "urządzenie domyślne"
+
+msgid "Input: %s, channel %d"
+msgstr "Wejście: %s, kanał %d"
+
+msgid "Audio input unavailable – check the Sound and MIDI settings."
+msgstr "Wejście audio niedostępne – sprawdź ustawienia dźwięku i MIDI."
+
+msgid "Space – playback · R – recording"
+msgstr "Spacja – odtwarzanie · R – nagrywanie"
+
+msgid "Play"
+msgstr "Odtwarzaj"
+
+msgid "Finish recording"
+msgstr "Zakończ nagranie"
+
+msgid "Record new"
+msgstr "Nagraj nową"
+
+msgid "Tick the tracks to play."
+msgstr "Zaznacz ścieżki do odtwarzania."
+
+msgid "Recording interrupted – the input was not read in time."
+msgstr "Nagrywanie przerwane – program nie nadążył z odczytem wejścia."
+
+msgid "count-in: %d"
+msgstr "odliczanie: %d"
+
+msgid "recording · bar %d"
+msgstr "nagrywanie · takt %d"
+
+msgid "The recording is too short – it was not saved."
+msgstr "Nagranie jest za krótkie – nie zostało zapisane."
+
+msgid "Could not save the recording."
+msgstr "Nie udało się zapisać nagrania."
+
+msgid "Recording %d"
+msgstr "Nagranie %d"
+
+msgid "New recording"
+msgstr "Nowe nagranie"
+
+msgid "own"
+msgstr "własny"
+
+msgid "drums %s"
+msgstr "perkusja %s"
+
+msgid "range %s–%s"
+msgstr "zakres %s–%s"
+
+msgid "Trim silence"
+msgstr "Utnij ciszę"
+
+msgid "Cuts the silence at the start and the end."
+msgstr "Usuwa ciszę na początku i na końcu."
+
+msgid "Delete the track"
+msgstr "Usuń ścieżkę"
+
+msgid "Delete?"
+msgstr "Usunąć?"
+

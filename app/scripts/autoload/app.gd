@@ -48,7 +48,7 @@ const DEFAULTS := {
 	&"metronome": {
 		&"met_mode": 0, &"met_bpm": 96, &"met_metre": 2, &"met_sub": 0, &"met_sound": 0, &"met_grid": 0,
 		&"met_kit": 0, &"met_pattern": "", &"met_preset": 0, &"met_ramp": true, &"met_ramp_to": 120,
-		&"met_ramp_step": 4, &"met_ramp_bars": 8,
+		&"met_ramp_step": 4, &"met_ramp_bars": 8, &"lp_bed": 1, &"lp_rec_with": 0, &"lp_countin": 1,
 	},
 	# Tuner – widok, tryb i wybrana struna (0 = 6. struna).
 	&"tuner": {
@@ -71,7 +71,7 @@ const MODULES: Array[Dictionary] = [
 	{"id": &"tuning", "name": "Tuner", "icon": "◐", "color": Color("7BD88F"),
 		"desc": "Chromatic tuner and alternate tunings."},
 	{"id": &"metronome", "name": "Metronome", "icon": "♩", "color": Color("FF7A59"),
-		"desc": "Tempo, metre, accents and gradual speed-up."},
+		"desc": "Metronome, drum machine and looper."},
 	{"id": &"plan", "name": "Practice plan", "icon": "☰", "color": Color("5AA9FF"),
 		"desc": "Your set of exercises for today and for the week."},
 	{"id": &"progress", "name": "Progress", "icon": "↗", "color": Color("F2D15C"),

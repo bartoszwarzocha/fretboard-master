@@ -37,6 +37,7 @@ var _beats: BeatLights
 var _grid: DrumGrid
 var _play: Button
 var _error: Label
+var _looper: LooperTab     # zakładka „Looper” (gdy wybrana)
 
 
 func _init() -> void:
@@ -70,6 +71,8 @@ func _build_content() -> void:
 func _exit_tree() -> void:
 	if _playing and _core:
 		_core.stop()
+	if _looper:
+		_looper.stop_all()
 
 
 # Klawisze ekranu (przed obsługą przycisków, żeby spacja nie „klikała” przycisku z fokusem):
@@ -80,7 +83,12 @@ func _input(event: InputEvent) -> void:
 		return
 	if get_viewport().gui_get_focus_owner() is LineEdit:
 		return
-	if k.keycode == KEY_SPACE and not k.echo:
+	if _looper and k.keycode in [KEY_SPACE, KEY_R] and not k.echo:
+		if k.keycode == KEY_SPACE:
+			_looper.toggle_play()
+		else:
+			_looper.toggle_record()
+	elif k.keycode == KEY_SPACE and not k.echo:
 		_toggle()
 	elif k.keycode == KEY_T and not k.echo:
 		_tap()
@@ -100,6 +108,10 @@ func _rebuild() -> void:
 		c.queue_free()
 	_beats = null
 	_grid = null
+	if _looper:
+		_looper.stop_all()
+		_looper.queue_free()
+		_looper = null
 	var drums := _mode() == 1
 
 	var head := HBoxContainer.new()
@@ -112,10 +124,18 @@ func _rebuild() -> void:
 	_subtitle.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(_subtitle)
-	head.add_child(_segmented([[0, "Classic metronome"], [1, "Drum machine"]], _mode(), func(v: Variant) -> void:
+	head.add_child(_segmented([[0, "Classic metronome"], [1, "Drum machine"], [2, "Looper"]], _mode(), func(v: Variant) -> void:
 		_stop()
 		_store(&"met_mode", v)
 		_rebuild()))
+
+	if _mode() == 2:
+		_play = null
+		_looper = LooperTab.new(self)
+		add_child(_looper)
+		_looper.build(_main, _aside)
+		_update_texts()
+		return
 
 	if drums:
 		_build_drums()
@@ -364,6 +384,8 @@ func _start() -> void:
 
 
 func _stop() -> void:
+	if _looper:
+		_looper.stop_all()
 	if _playing and _core:
 		_core.stop()
 	_playing = false
@@ -391,8 +413,8 @@ func _process(_delta: float) -> void:
 
 
 # Parametry do rdzenia. starting – przy starcie z przyspieszaniem tempo zaczyna się od „Od”.
-func _apply(starting := false) -> void:
-	if _core == null:
+func _apply(starting := false, overrides := {}) -> void:
+	if _core == null or (_mode() == 2 and overrides.is_empty()):
 		return
 	var bpm := _bpm()
 	# Z przyspieszaniem „Od” to tempo z regulatora: start od niego, dalej tempo prowadzi rdzeń.
@@ -415,7 +437,7 @@ func _apply(starting := false) -> void:
 		"steps": steps, "steps_per_beat": _spq(m, g), "kit": KITS[int(App.setting(&"met_kit"))][1],
 		"ramp": bool(App.setting(&"met_ramp")), "ramp_to": float(App.setting(&"met_ramp_to")),
 		"ramp_step": float(App.setting(&"met_ramp_step")), "ramp_bars": int(App.setting(&"met_ramp_bars")),
-	}, flat)
+	}.merged(overrides, true), flat)
 
 
 func _set_bpm(bpm: int) -> void:
@@ -487,7 +509,9 @@ func _update_texts() -> void:
 	if _subtitle == null:
 		return
 	var second: String
-	if _mode() == 1:
+	if _looper:
+		second = _looper.summary()
+	elif _mode() == 1:
 		second = tr("%s kit, MIDI") % KITS[int(App.setting(&"met_kit"))][0]
 	else:
 		second = tr(SUBS[int(App.setting(&"met_sub"))][0])

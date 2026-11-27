@@ -80,6 +80,7 @@ void Sequencer::start() {
 
 void Sequencer::stop() {
     playing_.store(false);
+    clock_start_.store(-1);
 }
 
 void Sequencer::play_note(int program, int key, float velocity, double seconds) {
@@ -136,11 +137,13 @@ void Sequencer::pick_up_changes() {
         tick_ = 0;
         bar_ = 0;
         next_tick_ = static_cast<double>(now) + rate_ * 0.02;   // pierwsze uderzenie po 20 ms
+        clock_start_.store(static_cast<int64_t>(std::ceil(next_tick_)));
         std::lock_guard tl(ticks_mutex_);
         for (TickInfo &t : ticks_) {
             t = TickInfo{};
         }
     }
+    bar_frames_.store(tick_length() * ticks_per_bar(), std::memory_order_relaxed);
     if (sf_) {
         for (const NoteEvent &n : pending_notes_) {
             tsf_channel_set_presetnumber(sf_, kNoteChannel, std::clamp(n.program, 0, 127), 0);
@@ -158,7 +161,9 @@ void Sequencer::fire_tick() {
     if (tick_ >= per_bar) {
         tick_ = 0;
     }
-    if (config_.mode == MetronomeMode::Classic) {
+    if (config_.silent) {
+        // zegar bez dźwięku
+    } else if (config_.mode == MetronomeMode::Classic) {
         const int sub = std::max(config_.subdivision, 1);
         const int beat = tick_ / sub;
         const int sound = static_cast<int>(config_.sound) * 3;
@@ -275,6 +280,7 @@ void Sequencer::render(float *stereo, int frames) {
             next_tick_ += tick_length();
         }
     }
+    looper_.mix(stereo, frames, start, clock_start_.load(std::memory_order_relaxed));
     // Kamerton: sinus z odrobiną 2. i 3. harmonicznej (słyszalny także w małych głośnikach),
     // głośność zmienia się płynnie (ok. 20 ms) – bez trzasków przy włączaniu i zmianie struny.
     const float target = tone_target_.load(std::memory_order_relaxed);

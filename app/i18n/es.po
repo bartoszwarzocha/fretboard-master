@@ -1108,3 +1108,132 @@ msgstr "Iniciar"
 msgid "Not available on this computer"
 msgstr "No disponible en este equipo"
 
+msgid "Metronome, drum machine and looper."
+msgstr "Metrónomo, caja de ritmos y looper."
+
+msgid "Looper"
+msgstr "Looper"
+
+msgid "tempo of a new recording"
+msgstr "tempo de una nueva grabación"
+
+msgid "Recorded tracks"
+msgstr "Pistas grabadas"
+
+msgid "ticked tracks play together · drag across the wave to choose a range"
+msgstr "las pistas marcadas suenan juntas · arrastra sobre la onda para elegir un rango"
+
+msgid "No recordings yet. Press „Record new” (R) – you always record along with the drum machine or the metronome."
+msgstr "Aún no hay grabaciones. Pulsa „Grabar nueva” (R): siempre grabas con la caja de ritmos o el metrónomo."
+
+msgid "start and end (trim)"
+msgstr "inicio y fin (recorte)"
+
+msgid "playback range"
+msgstr "rango de reproducción"
+
+msgid "A track remembers the tempo, metre and backing of its recording."
+msgstr "Cada pista recuerda el tempo, el compás y el acompañamiento de su grabación."
+
+msgid "Backing:"
+msgstr "Acompañamiento:"
+
+msgid "drums"
+msgstr "batería"
+
+msgid "metronome"
+msgstr "metrónomo"
+
+msgid "Recording"
+msgstr "Grabación"
+
+msgid "%s pattern, %s kit – set in the „Drum machine” tab."
+msgstr "Patrón %s, kit %s: se ajusta en la pestaña „Caja de ritmos”."
+
+msgid "Sound and subdivision – set in the „Classic metronome” tab."
+msgstr "Sonido y subdivisión: se ajustan en la pestaña „Metrónomo clásico”."
+
+msgid "You play along with"
+msgstr "Tocas con"
+
+msgid "the drum machine"
+msgstr "la caja de ritmos"
+
+msgid "the metronome"
+msgstr "el metrónomo"
+
+msgid "Count-in before recording"
+msgstr "Cuenta previa antes de grabar"
+
+msgid "1 bar"
+msgstr "1 compás"
+
+msgid "2 bars"
+msgstr "2 compases"
+
+msgid "default device"
+msgstr "dispositivo predeterminado"
+
+msgid "Input: %s, channel %d"
+msgstr "Entrada: %s, canal %d"
+
+msgid "Audio input unavailable – check the Sound and MIDI settings."
+msgstr "Entrada de audio no disponible: revisa los ajustes de sonido y MIDI."
+
+msgid "Space – playback · R – recording"
+msgstr "Espacio – reproducción · R – grabación"
+
+msgid "Play"
+msgstr "Reproducir"
+
+msgid "Finish recording"
+msgstr "Terminar grabación"
+
+msgid "Record new"
+msgstr "Grabar nueva"
+
+msgid "Tick the tracks to play."
+msgstr "Marca las pistas que quieres reproducir."
+
+msgid "Recording interrupted – the input was not read in time."
+msgstr "Grabación interrumpida: la entrada no se leyó a tiempo."
+
+msgid "count-in: %d"
+msgstr "cuenta previa: %d"
+
+msgid "recording · bar %d"
+msgstr "grabando · compás %d"
+
+msgid "The recording is too short – it was not saved."
+msgstr "La grabación es demasiado corta: no se ha guardado."
+
+msgid "Could not save the recording."
+msgstr "No se pudo guardar la grabación."
+
+msgid "Recording %d"
+msgstr "Grabación %d"
+
+msgid "New recording"
+msgstr "Nueva grabación"
+
+msgid "own"
+msgstr "propio"
+
+msgid "drums %s"
+msgstr "batería %s"
+
+msgid "range %s–%s"
+msgstr "rango %s–%s"
+
+msgid "Trim silence"
+msgstr "Recortar silencio"
+
+msgid "Cuts the silence at the start and the end."
+msgstr "Quita el silencio del principio y del final."
+
+msgid "Delete the track"
+msgstr "Borrar la pista"
+
+msgid "Delete?"
+msgstr "¿Borrar?"
+

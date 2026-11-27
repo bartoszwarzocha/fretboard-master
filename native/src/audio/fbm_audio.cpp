@@ -116,6 +116,15 @@ void FbmAudio::_bind_methods() {
     ClassDB::bind_method(D_METHOD("visual_state"), &FbmAudio::visual_state);
     ClassDB::bind_method(D_METHOD("play_note", "program", "key", "velocity", "seconds"), &FbmAudio::play_note);
     ClassDB::bind_method(D_METHOD("render_offline", "frames"), &FbmAudio::render_offline);
+    ClassDB::bind_method(D_METHOD("input_read", "from", "max_count"), &FbmAudio::input_read);
+    ClassDB::bind_method(D_METHOD("latency_frames"), &FbmAudio::latency_frames);
+    ClassDB::bind_method(D_METHOD("looper_clear"), &FbmAudio::looper_clear);
+    ClassDB::bind_method(D_METHOD("looper_add", "samples", "from", "to", "gain"), &FbmAudio::looper_add);
+    ClassDB::bind_method(D_METHOD("looper_play", "offset", "length", "delay"), &FbmAudio::looper_play);
+    ClassDB::bind_method(D_METHOD("looper_stop"), &FbmAudio::looper_stop);
+    ClassDB::bind_method(D_METHOD("looper_position"), &FbmAudio::looper_position);
+    ClassDB::bind_method(D_METHOD("waveform", "samples", "buckets"), &FbmAudio::waveform);
+    ClassDB::bind_method(D_METHOD("sound_bounds", "samples", "threshold_db", "margin"), &FbmAudio::sound_bounds);
 }
 
 PackedStringArray FbmAudio::host_apis() const {
@@ -402,6 +411,7 @@ void FbmAudio::configure(const Dictionary &d, const PackedByteArray &pattern) {
     c.ramp_to = d.get("ramp_to", 120.0);
     c.ramp_step = d.get("ramp_step", 4.0);
     c.ramp_bars = std::max(static_cast<int>(d.get("ramp_bars", 8)), 1);
+    c.silent = d.get("silent", false);
     for (int r = 0; r < fbm::kDrumRows; ++r) {
         for (int s = 0; s < c.steps; ++s) {
             const int64_t i = static_cast<int64_t>(r) * c.steps + s;
@@ -423,10 +433,8 @@ bool FbmAudio::is_playing() const {
     return sequencer_.playing();
 }
 
-Dictionary FbmAudio::visual_state() const {
-    Dictionary d;
-    d["playing"] = sequencer_.playing();
-    d["bpm"] = sequencer_.current_bpm();
+// Próbka wyjścia słyszana właśnie teraz (z uwzględnieniem opóźnienia wyjścia).
+int64_t FbmAudio::heard_frame() const {
     int64_t frame = sequencer_.frames_rendered();
     if (stream_) {
         const double dac = stream_->base_dac.load(std::memory_order_relaxed);
@@ -438,6 +446,17 @@ Dictionary FbmAudio::visual_state() const {
             frame -= static_cast<int64_t>(stream_->latency * stream_->rate);
         }
     }
+    return frame;
+}
+
+Dictionary FbmAudio::visual_state() const {
+    Dictionary d;
+    d["playing"] = sequencer_.playing();
+    d["bpm"] = sequencer_.current_bpm();
+    const int64_t frame = heard_frame();
+    d["frame"] = frame;
+    d["clock_start"] = sequencer_.clock_start();
+    d["bar_frames"] = sequencer_.bar_frames();
     const fbm::TickInfo t = sequencer_.tick_at(frame);
     d["step"] = t.step;
     d["bar"] = t.bar;
@@ -459,6 +478,86 @@ double FbmAudio::render_offline(int frames) {
         peak = std::max(peak, std::abs(v));
     }
     return peak;
+}
+
+Variant FbmAudio::input_read(int64_t from, int max_count) {
+    PackedFloat32Array out;
+    if (!input_ok()) {
+        return out;
+    }
+    out.resize(std::clamp(max_count, 0, fbm::InputRing::kSize / 2));
+    const int n = ring_.read(from, out.ptrw(), static_cast<int>(out.size()));
+    if (n < 0) {
+        return Variant();
+    }
+    out.resize(n);
+    return out;
+}
+
+int64_t FbmAudio::latency_frames() const {
+    return stream_ ? static_cast<int64_t>(std::llround((stream_->latency + stream_->in_latency) * stream_->rate)) : 0;
+}
+
+void FbmAudio::looper_clear() {
+    sequencer_.looper().clear();
+}
+
+void FbmAudio::looper_add(const PackedFloat32Array &samples, int64_t from, int64_t to, double gain) {
+    std::vector<float> v(samples.ptr(), samples.ptr() + samples.size());
+    sequencer_.looper().add(std::move(v), from, to, static_cast<float>(gain));
+}
+
+void FbmAudio::looper_play(int64_t offset, int64_t length, int64_t delay) {
+    sequencer_.looper().play(offset, length, delay);
+}
+
+void FbmAudio::looper_stop() {
+    sequencer_.looper().stop();
+}
+
+int64_t FbmAudio::looper_position() const {
+    return sequencer_.looper().position(heard_frame(), sequencer_.clock_start());
+}
+
+PackedFloat32Array FbmAudio::waveform(const PackedFloat32Array &samples, int buckets) const {
+    PackedFloat32Array out;
+    const int64_t n = samples.size();
+    if (buckets <= 0 || n == 0) {
+        return out;
+    }
+    out.resize(buckets);
+    const float *src = samples.ptr();
+    for (int b = 0; b < buckets; ++b) {
+        const int64_t lo = n * b / buckets;
+        const int64_t hi = std::max(lo + 1, n * (b + 1) / buckets);
+        float peak = 0.0f;
+        for (int64_t i = lo; i < hi && i < n; ++i) {
+            peak = std::max(peak, std::abs(src[i]));
+        }
+        out.set(b, peak);
+    }
+    return out;
+}
+
+Vector2i FbmAudio::sound_bounds(const PackedFloat32Array &samples, double threshold_db, int margin) const {
+    const auto th = static_cast<float>(std::pow(10.0, threshold_db / 20.0));
+    const int64_t n = samples.size();
+    const float *src = samples.ptr();
+    int64_t first = -1;
+    int64_t last = -1;
+    for (int64_t i = 0; i < n; ++i) {
+        if (std::abs(src[i]) >= th) {
+            if (first < 0) {
+                first = i;
+            }
+            last = i;
+        }
+    }
+    if (first < 0) {
+        return Vector2i(0, 0);
+    }
+    return Vector2i(static_cast<int32_t>(std::max<int64_t>(0, first - margin)),
+            static_cast<int32_t>(std::min<int64_t>(n, last + 1 + margin)));
 }
 
 } // namespace godot
