@@ -68,6 +68,13 @@ func _ready() -> void:
 	apply(palette_id())
 
 
+# Callable zapisany w DisplayServer trzeba zwolnić przed nim – DisplayServer jest niszczony dopiero
+# po drzewie sceny, a sprzątanie wiszącej lambdy kończyło program awarią (0xC0000005).
+func _exit_tree() -> void:
+	if DisplayServer.has_method(&"set_system_theme_change_callback"):
+		DisplayServer.set_system_theme_change_callback(Callable())
+
+
 # Motyw „auto” wybiera nocny albo jasny według ustawienia systemu.
 func palette_id() -> StringName:
 	var id := StringName(App.setting(&"theme"))
