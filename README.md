@@ -50,4 +50,3 @@ F3 – nakładka z pomiarami. Audyt wszystkich ekranów: `godot --path app -- --
 ## Pola zastępcze
 Na razie bez grafik – w ich miejscu przerywane ramki z nazwą i ścieżką pliku:
 - `app/assets/graphics/menu-guitar.png` – grafika gitary w menu (1800 × 1200 px),
-- `app/icon.svg` – ikona programu (tymczasowa).
