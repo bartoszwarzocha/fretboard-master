@@ -391,6 +391,9 @@ msgstr "Wypróbuj"
 msgid "Panels and tiles"
 msgstr "Panele i kafelki"
 
+msgid "Start or plan your practice to get to know the fretboard step by step."
+msgstr "Rozpocznij lub zaplanuj ćwiczenia, aby krok po kroku coraz lepiej poznawać gryf."
+
 msgid "Encyclopedia tile"
 msgstr "Kafel Encyklopedii"
 

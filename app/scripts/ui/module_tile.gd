@@ -10,6 +10,7 @@ var _icon_box: PanelContainer
 var _icon: IconGlyph
 ## Miejsce na ilustrację 3D (rysowaną we wspólnej scenie menu) albo null.
 var art: MenuArt
+var _desc: Label
 
 
 static func create(p_module: Dictionary, p_big := false) -> ModuleTile:
@@ -76,9 +77,12 @@ func _ready() -> void:
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	desc.custom_minimum_size.x = 120
 	box.add_child(desc)
+	_desc = desc
+	_reserve_desc_lines()
 
 	pressed.connect(func(): App.go(module.id))
 	ThemeManager.theme_changed.connect(_apply_styles)
+	ThemeManager.theme_changed.connect(_reserve_desc_lines)
 	_apply_styles()
 
 
@@ -93,3 +97,12 @@ func _apply_styles() -> void:
 	get_theme_stylebox("focus").draw_center = false
 	_icon_box.add_theme_stylebox_override("panel", ThemeManager.box(Color(c, 0.12), Color.TRANSPARENT, 16, 0, 0, 0))
 
+
+
+# Opis zajmuje zawsze co najmniej dwa wiersze – tytuły kafli w jednym rzędzie leżą w jednej linii,
+# niezależnie od długości opisu.
+func _reserve_desc_lines() -> void:
+	var font := _desc.get_theme_font("font")
+	var fs := _desc.get_theme_font_size("font_size")
+	var line := font.get_height(fs) + _desc.get_theme_constant("line_spacing")
+	_desc.custom_minimum_size.y = line * 2.0

@@ -170,6 +170,7 @@ T = {
  "Glow": ("Poświata", "Leuchten", "Resplandor", "Свечение"),
  "Try it": ("Wypróbuj", "Ausprobieren", "Probar", "Попробовать"),
  "Panels and tiles": ("Panele i kafelki", "Felder und Kacheln", "Paneles y mosaicos", "Панели и плитки"),
+ "Start or plan your practice to get to know the fretboard step by step.": ("Rozpocznij lub zaplanuj ćwiczenia, aby krok po kroku coraz lepiej poznawać gryf.", "Starte oder plane deine Übungen, um das Griffbrett Schritt für Schritt besser kennenzulernen.", "Empieza o planifica tus ejercicios para conocer el mástil paso a paso.", "Начни или запланируй занятия, чтобы шаг за шагом осваивать гриф."),
  "Encyclopedia tile": ("Kafel Encyklopedii", "Kachel „Enzyklopädie”", "Mosaico de la Enciclopedia", "Плитка «Энциклопедия»"),
  "Guitar model": ("Model gitary", "Gitarrenmodell", "Modelo de guitarra", "Модель гитары"),
  "Icon": ("Ikona", "Symbol", "Icono", "Значок"),

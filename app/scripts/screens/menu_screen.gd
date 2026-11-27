@@ -91,6 +91,13 @@ func _ready() -> void:
 	question.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	left.add_child(question)
 	_fade.append(question)
+	# Zachęta; docelowo w tym miejscu dzisiejszy plan ćwiczeń / ostatnie ćwiczenie (gdy powstaną moduły).
+	var cheer := Label.new()
+	cheer.text = "Start or plan your practice to get to know the fretboard step by step."
+	cheer.theme_type_variation = &"Muted"
+	cheer.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	left.add_child(cheer)
+	_fade.append(cheer)
 
 	var grid := TileGrid.new()
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
