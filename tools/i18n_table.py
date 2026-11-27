@@ -246,7 +246,6 @@ T = {
  "On": ("Włączona", "An", "Activada", "Вкл."),
  "Adaptive": ("Adaptacyjna", "Adaptiv", "Adaptativa", "Адаптивная"),
  "Frame limit": ("Limit klatek", "Bildratenbegrenzung", "Límite de fotogramas", "Ограничение кадров"),
- "No limit": ("Bez limitu", "Unbegrenzt", "Sin límite", "Без ограничения"),
  "Power saving (redraw only on change)": ("Oszczędzanie energii (odświeżanie tylko przy zmianie)", "Energiesparen (nur bei Änderung neu zeichnen)", "Ahorro de energía (redibujar solo al cambiar)", "Энергосбережение (перерисовка только при изменении)"),
  "Frames in the background": ("Klatki w tle", "Bilder im Hintergrund", "Fotogramas en segundo plano", "Кадров в фоне"),
  "3D quality": ("Jakość 3D", "3D-Qualität", "Calidad 3D", "Качество 3D"),

@@ -619,9 +619,6 @@ msgstr "Adaptativa"
 msgid "Frame limit"
 msgstr "Límite de fotogramas"
 
-msgid "No limit"
-msgstr "Sin límite"
-
 msgid "Power saving (redraw only on change)"
 msgstr "Ahorro de energía (redibujar solo al cambiar)"
 

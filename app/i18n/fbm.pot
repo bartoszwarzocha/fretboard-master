@@ -618,9 +618,6 @@ msgstr ""
 msgid "Frame limit"
 msgstr ""
 
-msgid "No limit"
-msgstr ""
-
 msgid "Power saving (redraw only on change)"
 msgstr ""
 

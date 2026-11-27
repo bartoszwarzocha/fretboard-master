@@ -327,8 +327,7 @@ func _build_graphics() -> void:
 
 	_section("Frame rate")
 	_select(&"vsync", "V-Sync", [["on", "On"], ["adaptive", "Adaptive"], ["off", "Off"]])
-	_select(&"max_fps", "Frame limit", [[0, "No limit"], [30, "30"], [60, "60"], [75, "75"], [120, "120"],
-			[144, "144"], [165, "165"], [240, "240"]])
+	_select(&"max_fps", "Frame limit", [[60, "60"], [30, "30"]], false)
 	_toggle(&"power_saving", "Power saving (redraw only on change)")
 	if bool(App.setting(&"power_saving")):
 		_select(&"background_fps", "Frames in the background", [[5, "5"], [10, "10"], [15, "15"], [30, "30"]], false)

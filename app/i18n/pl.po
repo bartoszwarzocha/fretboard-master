@@ -619,9 +619,6 @@ msgstr "Adaptacyjna"
 msgid "Frame limit"
 msgstr "Limit klatek"
 
-msgid "No limit"
-msgstr "Bez limitu"
-
 msgid "Power saving (redraw only on change)"
 msgstr "Oszczędzanie energii (odświeżanie tylko przy zmianie)"
 

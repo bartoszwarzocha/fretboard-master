@@ -619,9 +619,6 @@ msgstr "Adaptiv"
 msgid "Frame limit"
 msgstr "Bildratenbegrenzung"
 
-msgid "No limit"
-msgstr "Unbegrenzt"
-
 msgid "Power saving (redraw only on change)"
 msgstr "Energiesparen (nur bei Änderung neu zeichnen)"
 

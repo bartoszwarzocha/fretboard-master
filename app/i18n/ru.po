@@ -619,9 +619,6 @@ msgstr "Адаптивная"
 msgid "Frame limit"
 msgstr "Ограничение кадров"
 
-msgid "No limit"
-msgstr "Без ограничения"
-
 msgid "Power saving (redraw only on change)"
 msgstr "Энергосбережение (перерисовка только при изменении)"
 

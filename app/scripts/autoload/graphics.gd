@@ -149,7 +149,7 @@ func _apply_fps() -> void:
 	# odświeża się stale.
 	OS.low_processor_usage_mode = saving and not bool(App.setting(&"perf_info")) and not Backdrop.is_live()
 	if _focused or not saving:
-		Engine.max_fps = int(App.setting(&"max_fps"))
+		Engine.max_fps = 30 if int(App.setting(&"max_fps")) == 30 else 60   # do wyboru tylko 60 albo 30
 	else:
 		Engine.max_fps = int(App.setting(&"background_fps"))
 
