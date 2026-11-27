@@ -76,6 +76,15 @@ msgstr "Dźwięk za niski – podciągnij strunę."
 msgid "Too high – loosen the string."
 msgstr "Dźwięk za wysoki – poluzuj strunę."
 
+msgid "Any"
+msgstr "Dowolny"
+
+msgid "chromatic"
+msgstr "chromatyczny"
+
+msgid "Play any note."
+msgstr "Zagraj dowolny dźwięk."
+
 msgid "Play an open string."
 msgstr "Zagraj pustą strunę."
 

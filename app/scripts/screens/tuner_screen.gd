@@ -105,6 +105,7 @@ func _rebuild() -> void:
 
 	var head := HBoxContainer.new()
 	head.add_theme_constant_override("separation", 17)
+	head.custom_minimum_size.y = 46   # tyle co z przełącznikiem trybu – bez przeskoku przy „Dowolnym”
 	_main.add_child(head)
 	var title := _label("Tuner", 31, ThemeManager.color("text"), ThemeManager.font_heading)
 	head.add_child(title)
@@ -115,10 +116,11 @@ func _rebuild() -> void:
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(spacer)
-	head.add_child(_segmented([[0, "String detection"], [1, "Selected string"]], _mode(), func(v: Variant) -> void:
-		App.set_setting(&"tun_mode", v)
-		_reset_reading()
-		_rebuild()))
+	if not _chromatic():
+		head.add_child(_segmented([[0, "String detection"], [1, "Selected string"]], _mode(), func(v: Variant) -> void:
+			App.set_setting(&"tun_mode", v)
+			_reset_reading()
+			_rebuild()))
 
 	match _view():
 		0: _build_linear()
@@ -146,7 +148,7 @@ func _rebuild() -> void:
 func _build_linear() -> void:
 	_main.add_child(_gap(43))
 	_note = _big_note(180)
-	_main.add_child(_tight(_note, 180))
+	_main.add_child(_note_row(180))
 	_main.add_child(_gap(7))
 	_freq = _freq_line(22)
 	_main.add_child(_freq)
@@ -161,7 +163,7 @@ func _build_linear() -> void:
 func _build_analog() -> void:
 	_main.add_child(_gap(26))
 	_note = _big_note(132)
-	_main.add_child(_tight(_note, 132))
+	_main.add_child(_note_row(132))
 	_main.add_child(_gap(5))
 	_freq = _freq_line(22)
 	_main.add_child(_freq)
@@ -264,6 +266,7 @@ func _build_aside() -> void:
 	tc.add_child(list)
 	for i in TUNINGS.size():
 		list.add_child(_tuning_row(i))
+	list.add_child(_tuning_row(-1))
 
 	# Strój odniesienia i kamerton
 	var rcard := _aside_card()
@@ -325,7 +328,9 @@ func _feed(hz: float) -> void:
 	_has_reading = true
 	var notes: Array = _tuning()[2]
 	var a4 := _a4()
-	if _mode() == 1:
+	if _chromatic():
+		_target_string = -1
+	elif _mode() == 1:
 		_target_string = clampi(int(App.setting(&"tun_string")), 0, 5)
 	else:
 		# Najbliższa struna stroju; dźwięk dalej niż 2,5 półtonu od każdej – zwykły stroik chromatyczny.
@@ -391,6 +396,7 @@ func _refresh() -> void:
 		_arrow_on(_sharp, _has_reading and c > IN_TUNE)
 	else:
 		_note.add_theme_color_override("font_color", col)
+		_octave.text = str(_target / 12 - 1) if _has_reading and _chromatic() else ""
 		var cents_txt := _cents_text(c) if _has_reading else ""
 		_freq.text = _freq_text() + ((" · [b][color=#%s]%s[/color][/b]" % [col.to_html(false), cents_txt]) if _has_reading else "")
 	if _core == null:
@@ -399,7 +405,8 @@ func _refresh() -> void:
 		_advice.text = tr("No sound input – check the Sound and MIDI settings.") + \
 				("" if _core.input_error() == "" else "  (" + _core.input_error() + ")")
 	elif not _has_reading:
-		_advice.text = tr("Play an open string.") if _mode() == 0 else tr("Play the selected string.")
+		_advice.text = tr("Play any note.") if _chromatic() else tr("Play an open string.") if _mode() == 0 \
+				else tr("Play the selected string.")
 	elif ok:
 		_advice.text = tr("String in tune.")
 	elif c < 0:
@@ -451,10 +458,26 @@ func _cents_text(c: int) -> String:
 	return "%s%d %s" % [sign, n, word]
 
 
+var _strings_sig := ""
+
+
 func _build_strings() -> void:
+	# Przebudowa tylko po zmianie tego, co pokazują przyciski (odczyt przychodzi ok. 30 razy na sekundę).
+	var states := []
+	for v in _string_cents:
+		states.append(-9 if v == null else 0 if absf(v) <= IN_TUNE else signi(roundi(v)))
+	var sig := str([_chromatic(), _has_reading, _target_string, posmod(_target, 12) if _chromatic() else 0,
+			absf(_cents) <= IN_TUNE, states, App.setting(&"tun_string"), App.setting(&"tun_note"), App.setting(&"tuning"),
+			_strings_row.get_child_count()])
+	if sig == _strings_sig:
+		return
+	_strings_sig = sig
 	for c in _strings_row.get_children():
 		_strings_row.remove_child(c)
 		c.queue_free()
+	if _chromatic():
+		_build_notes()
+		return
 	var notes: Array = _tuning()[2]
 	var sel := int(App.setting(&"tun_string"))
 	if _mode() == 0 and _has_reading:
@@ -501,6 +524,34 @@ func _build_strings() -> void:
 		_strings_row.add_child(b)
 
 
+## Tryb „Dowolny”: 12 dźwięków – podświetlony rozpoznany, kliknięcie wybiera dźwięk kamertonu.
+func _build_notes() -> void:
+	_strings_row.add_theme_constant_override("separation", 8)
+	var sel := posmod(_target, 12) if _has_reading else int(App.setting(&"tun_note"))
+	for pc in 12:
+		var b := Button.new()
+		b.custom_minimum_size = Vector2(64, 90)
+		b.focus_mode = Control.FOCUS_NONE
+		b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		b.text = NoteNames.note_name(60 + pc, App.notation())
+		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		b.add_theme_font_override("font", ThemeManager.font_heading)
+		b.add_theme_font_size_override("font_size", ThemeManager.fs(22 if b.text.length() <= 2 else 17))
+		var on := pc == sel
+		var bg := Color("1B2440") if on else ThemeManager.color("surface_2")
+		var border: Color = ThemeManager.color("accent") if on else ThemeManager.color("border_strong")
+		for st in ["normal", "hover", "pressed"]:
+			b.add_theme_stylebox_override(st, ThemeManager.box(bg if st == "normal" else bg.lightened(0.05), border, 14, 1, 0, 0))
+		var tc: Color = (GREEN if absf(_cents) <= IN_TUNE else ThemeManager.color("accent")) if on and _has_reading else ThemeManager.color("text")
+		for c in ["font_color", "font_hover_color", "font_pressed_color"]:
+			b.add_theme_color_override(c, tc)
+		b.pressed.connect(func() -> void:
+			App.set_setting(&"tun_note", pc)
+			_update_tone()
+			_refresh())
+		_strings_row.add_child(b)
+
+
 # --- Kamerton -----------------------------------------------------------------------
 
 ## Dźwięk wzorcowy: przy rozpoznawaniu struny – A4, przy wybranej strunie – dźwięk tej struny.
@@ -514,7 +565,9 @@ func _update_tone() -> void:
 		_core.set_tone(440.0, 0.0)
 		return
 	var midi := 69
-	if _mode() == 1:
+	if _chromatic():
+		midi = 60 + clampi(int(App.setting(&"tun_note")), 0, 11)   # oktawa razkreślna, A = A4
+	elif _mode() == 1:
 		midi = int(_tuning()[2][clampi(int(App.setting(&"tun_string")), 0, 5)])
 	_core.set_tone(_a4() * pow(2.0, (midi - 69) / 12.0), 0.5)
 
@@ -544,7 +597,13 @@ func _a4() -> float:
 	return clampf(float(App.setting(&"a4")), A4_MIN, A4_MAX)
 
 
+func _chromatic() -> bool:
+	return bool(App.setting(&"tun_chromatic"))
+
+
 func _tuning_index() -> int:
+	if _chromatic():
+		return -1
 	var id := str(App.setting(&"tuning"))
 	for i in TUNINGS.size():
 		if TUNINGS[i][0] == id:
@@ -570,8 +629,9 @@ func _note_name(midi: int, string_index: int) -> String:
 
 # --- Kontrolki ------------------------------------------------------------------------
 
+## Wiersz stroju; i = −1 – „Dowolny” (stroik chromatyczny, bez przypinania do strun).
 func _tuning_row(i: int) -> Button:
-	var on := i == _tuning_index()
+	var on := _chromatic() if i < 0 else i == _tuning_index()
 	var b := Button.new()
 	b.custom_minimum_size.y = 48
 	b.focus_mode = Control.FOCUS_NONE
@@ -587,22 +647,25 @@ func _tuning_row(i: int) -> Button:
 	row.offset_right = -17
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_child(row)
-	var name := _label(TUNINGS[i][1], 17, ThemeManager.color("text"), ThemeManager.font_body_bold)
+	var name := _label("Any" if i < 0 else TUNINGS[i][1], 17, ThemeManager.color("text"), ThemeManager.font_body_bold)
 	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	name.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(name)
 	var parts := PackedStringArray()
-	for m in TUNINGS[i][2]:
+	for m in ([] if i < 0 else TUNINGS[i][2]):
 		parts.append(FLATS[clampi(App.notation(), 0, 2)][posmod(m, 12)] if TUNINGS[i][0] == "half_down" else NoteNames.note_name(m, App.notation()))
-	var notes := _label(" ".join(parts), 14, FAINT)
+	var notes := _label(tr("chromatic") if i < 0 else " ".join(parts), 14, FAINT)
 	notes.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	notes.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	notes.add_theme_constant_override("letter_spacing", 1)
 	notes.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(notes)
 	b.pressed.connect(func() -> void:
-		App.set_setting(&"tuning", TUNINGS[i][0])
+		if i < 0:
+			App.set_setting(&"tun_chromatic", true)
+		else:
+			App.set_settings({&"tun_chromatic": false, &"tuning": TUNINGS[i][0]})
 		_string_cents = [null, null, null, null, null, null]
 		_reset_reading()
 		_update_tone()
@@ -639,6 +702,20 @@ func _view_button(icon: String, text: String, on: bool) -> Button:
 	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	col.add_child(t)
 	return b
+
+
+## Nazwa dźwięku z cyfrą oktawy (oktawa – tylko w trybie „Dowolny”).
+func _note_row(px: int) -> Control:
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 0)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(_tight(_note, px))
+	_octave = _label("", roundi(px * 0.31), ThemeManager.color("muted"), ThemeManager.font_heading)
+	_octave.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	row.add_child(_tight(_octave, px, 0.31))
+	return row
 
 
 ## Napis w pudełku o wysokości równej wielkości czcionki (jak line-height: 1 w makiecie); `drop` przesuwa

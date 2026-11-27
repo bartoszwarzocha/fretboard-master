@@ -76,6 +76,15 @@ msgstr "Низко – подтяните струну."
 msgid "Too high – loosen the string."
 msgstr "Высоко – ослабьте струну."
 
+msgid "Any"
+msgstr "Любой"
+
+msgid "chromatic"
+msgstr "хроматический"
+
+msgid "Play any note."
+msgstr "Сыграйте любую ноту."
+
 msgid "Play an open string."
 msgstr "Сыграйте открытую струну."
 

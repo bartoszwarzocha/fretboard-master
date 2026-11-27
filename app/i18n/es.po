@@ -76,6 +76,15 @@ msgstr "Está baja – tensa la cuerda."
 msgid "Too high – loosen the string."
 msgstr "Está alta – afloja la cuerda."
 
+msgid "Any"
+msgstr "Cualquiera"
+
+msgid "chromatic"
+msgstr "cromático"
+
+msgid "Play any note."
+msgstr "Toca cualquier nota."
+
 msgid "Play an open string."
 msgstr "Toca una cuerda al aire."
 

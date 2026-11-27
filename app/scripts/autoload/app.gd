@@ -51,7 +51,7 @@ const DEFAULTS := {
 	},
 	# Tuner – widok, tryb i wybrana struna (0 = 6. struna).
 	&"tuner": {
-		&"tun_view": 0, &"tun_mode": 0, &"tun_string": 1,
+		&"tun_view": 0, &"tun_mode": 0, &"tun_string": 1, &"tun_chromatic": false, &"tun_note": 9,
 	},
 	# Stan programu zapamiętywany między uruchomieniami – bez zakładki, nie jest przywracany.
 	&"state": {

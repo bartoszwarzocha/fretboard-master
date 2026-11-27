@@ -75,6 +75,15 @@ msgstr ""
 msgid "Too high – loosen the string."
 msgstr ""
 
+msgid "Any"
+msgstr ""
+
+msgid "chromatic"
+msgstr ""
+
+msgid "Play any note."
+msgstr ""
+
 msgid "Play an open string."
 msgstr ""
 

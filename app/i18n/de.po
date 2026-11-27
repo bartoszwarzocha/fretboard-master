@@ -76,6 +76,15 @@ msgstr "Zu tief – Saite spannen."
 msgid "Too high – loosen the string."
 msgstr "Zu hoch – Saite entspannen."
 
+msgid "Any"
+msgstr "Beliebig"
+
+msgid "chromatic"
+msgstr "chromatisch"
+
+msgid "Play any note."
+msgstr "Spiel einen beliebigen Ton."
+
 msgid "Play an open string."
 msgstr "Spiel eine Leersaite."
 
