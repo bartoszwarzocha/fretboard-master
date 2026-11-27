@@ -39,7 +39,12 @@ func _ready() -> void:
 	_icon.color = module.color
 	_icon_box.add_child(_icon)
 
-	if big:
+	if big and GuitarModel3D.available():
+		# Model 3D gitary (pod ukosem, powoli obracany) w miejscu przewidzianym na grafikę gitary.
+		var guitar := GuitarModel3D.create(Vector2(0, 220))
+		guitar.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		box.add_child(guitar)
+	elif big:
 		var art := Placeholder.create("Guitar artwork", "assets/graphics/menu-guitar.png",
 				"1800 × 1200 px (3:2), PNG", Vector2(0, 220))
 		art.size_flags_vertical = Control.SIZE_EXPAND_FILL
