@@ -115,7 +115,6 @@ T = {
  "Own image": ("Własny obraz", "Eigenes Bild", "Imagen propia", "Своё изображение"),
  "Colour": ("Kolor", "Farbe", "Color", "Цвет"),
  "First colour": ("Pierwszy kolor", "Erste Farbe", "Primer color", "Первый цвет"),
- "Second colour": ("Drugi kolor", "Zweite Farbe", "Segundo color", "Второй цвет"),
  "Direction": ("Kierunek", "Richtung", "Dirección", "Направление"),
  "Wood": ("Drewno", "Holz", "Madera", "Дерево"),
  "Carbon": ("Karbon", "Carbon", "Carbono", "Карбон"),
@@ -259,6 +258,14 @@ T = {
  "Diagram – drawn table": ("Schemat – rysowana tabela", "Diagramm – gezeichnete Tabelle", "Diagrama – tabla dibujada", "Схема – нарисованная таблица"),
  "Diagram – right angles": ("Schemat – kąty proste", "Diagramm – rechtwinklig", "Diagrama – ángulos rectos", "Схема – прямые углы"),
  "Diagram – neck shape": ("Schemat – kształt gryfu", "Diagramm – Halsform", "Diagrama – forma del mástil", "Схема – форма грифа"),
+ "Gradient type": ("Rodzaj gradientu", "Verlaufsart", "Tipo de degradado", "Тип градиента"),
+ "Linear": ("Liniowy", "Linear", "Lineal", "Линейный"),
+ "Radial": ("Promieniowy", "Radial", "Radial", "Радиальный"),
+ "Angular": ("Kątowy", "Winkel", "Angular", "Угловой"),
+ "Middle colour": ("Kolor środkowy", "Mittlere Farbe", "Color intermedio", "Средний цвет"),
+ "Last colour": ("Ostatni kolor", "Letzte Farbe", "Último color", "Последний цвет"),
+ "Centre – horizontally": ("Środek – w poziomie", "Mitte – horizontal", "Centro – horizontal", "Центр – по горизонтали"),
+ "Centre – vertically": ("Środek – w pionie", "Mitte – vertikal", "Centro – vertical", "Центр – по вертикали"),
 }
 
 def esc(s): return s.replace("\\", "\\\\").replace('"', '\\"')

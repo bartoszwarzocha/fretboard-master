@@ -9,7 +9,8 @@ Wszystkie na licencji SIL Open Font License 1.1 (pliki OFL-*.txt).
 | Anton.ttf | numer wersji „2.0” przy logo (tekst 3D) | brak |
 | NotoSansSymbols.ttf | symbole ←↗♩♭♮♯⚙ | podzbiór, ustalona grubość 400, zmienione metryki pionowe |
 | NotoSansSymbols2.ttf | pozostałe symbole interfejsu | podzbiór, zmienione metryki pionowe |
-| NotoMusic.ttf | klucz wiolinowy 𝄞 | podzbiór, zmienione metryki pionowe |
+| NotoMusic.ttf | klucz wiolinowy 𝄞 w tekście | podzbiór, zmienione metryki pionowe |
+| Bravura.otf | symbole muzyczne (SMuFL): ikony modułów ♮ 𝄞 ♩, deseń i cząsteczki „nuty”, w przyszłości zapis nutowy | brak (wersja 1.482; nazwa „Bravura” zastrzeżona w OFL – pliku nie modyfikujemy) |
 
 Metryki pionowe czcionek z symbolami ustawiono na ascent 0,968 em i descent 0,241 em (jak w Inter),
 żeby czcionki zastępcze nie powiększały wysokości wiersza. Są to wersje zmodyfikowane w rozumieniu

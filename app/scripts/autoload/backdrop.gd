@@ -13,7 +13,9 @@ const MODES := ["solid", "gradient", "pattern", "image"]
 const PATTERNS := ["wood", "carbon", "leather", "felt", "notes", "hex"]
 const PARTICLES := ["off", "dust", "sparks", "notes", "bokeh"]
 const HIT_STYLES := ["sparks", "notes", "glow"]
-const BG_KEYS := [&"bg_mode", &"bg_color", &"bg_color2", &"bg_gradient_angle", &"bg_pattern",
+const GRADIENTS := ["linear", "radial", "conic"]
+const BG_KEYS := [&"bg_mode", &"bg_color", &"bg_color2", &"bg_color3", &"bg_gradient_type",
+		&"bg_gradient_x", &"bg_gradient_y", &"bg_gradient_angle", &"bg_pattern",
 		&"bg_intensity", &"bg_scale", &"bg_dim", &"bg_blur", &"bg_image", &"bg_animated", &"bg_anim_speed"]
 const PARTICLE_KEYS := [&"particles", &"particles_density", &"particles_speed", &"particles_color"]
 
@@ -24,6 +26,9 @@ var _particles: GPUParticles2D
 var _fx: CanvasLayer
 var _fade := 1.0
 var _textures := {}
+var _music_tile: Texture2D   # deseń „nuty” – glify Bravury, kafel 512 × 512 powtarzany w shaderze
+var _music_note: Texture2D   # ósemka ♪ do cząsteczek
+var _music_busy := false
 
 
 func _ready() -> void:
@@ -86,9 +91,21 @@ func _update_background() -> void:
 		mode = 0
 	_mat.set_shader_parameter(&"mode", mode)
 	_mat.set_shader_parameter(&"pattern", maxi(PATTERNS.find(str(App.setting(&"bg_pattern"))), 0))
+	if mode == 2 and str(App.setting(&"bg_pattern")) == "notes":
+		if _music_tile:
+			_mat.set_shader_parameter(&"notes_tex", _music_tile)
+		else:
+			_render_music()
 	_mat.set_shader_parameter(&"color1", _color_or(str(App.setting(&"bg_color")), ThemeManager.color("bg")))
 	_mat.set_shader_parameter(&"color2", Color(str(App.setting(&"bg_color2"))))
 	_mat.set_shader_parameter(&"angle", float(App.setting(&"bg_gradient_angle")))
+	_mat.set_shader_parameter(&"gradient_type", maxi(GRADIENTS.find(str(App.setting(&"bg_gradient_type"))), 0))
+	_mat.set_shader_parameter(&"gradient_center", Vector2(float(App.setting(&"bg_gradient_x")),
+			float(App.setting(&"bg_gradient_y"))))
+	var c3 := str(App.setting(&"bg_color3"))
+	_mat.set_shader_parameter(&"use_color3", not c3.is_empty())
+	if not c3.is_empty():
+		_mat.set_shader_parameter(&"color3", Color(c3))
 	_mat.set_shader_parameter(&"intensity", float(App.setting(&"bg_intensity")))
 	_mat.set_shader_parameter(&"pattern_scale", float(App.setting(&"bg_scale")))
 	_mat.set_shader_parameter(&"dim", float(App.setting(&"bg_dim")))
@@ -171,7 +188,9 @@ func _update_particles() -> void:
 		"notes":
 			_particles.amount = int(lerpf(8, 60, density))
 			_particles.lifetime = 16.0
-			_particles.texture = _texture("note")
+			_particles.texture = _music_note if _music_note else _texture("dot")
+			if _music_note == null:
+				_render_music()
 			pm.spread = 20.0
 			pm.initial_velocity_min = 12.0
 			pm.initial_velocity_max = 30.0
@@ -245,7 +264,7 @@ func burst(at: Vector2, color := Color.TRANSPARENT) -> void:
 	match style:
 		"notes":
 			p.amount = 14
-			p.texture = _texture("note")
+			p.texture = _music_note if _music_note else _texture("dot")
 			pm.initial_velocity_min = 90.0
 			pm.initial_velocity_max = 200.0
 			pm.angle_min = -30.0
@@ -305,8 +324,6 @@ func _texture(kind: String) -> Texture2D:
 				"bokeh":
 					var d := p.distance_to(c) / (n * 0.5)
 					a = (1.0 - smoothstep(0.82, 0.95, d)) * (0.45 + 0.55 * smoothstep(0.55, 0.9, d))
-				"note":
-					a = _note_alpha(p / n)
 			img.set_pixel(x, y, Color(1, 1, 1, a))
 	img.generate_mipmaps()
 	var tex := ImageTexture.create_from_image(img)
@@ -314,14 +331,61 @@ func _texture(kind: String) -> Texture2D:
 	return tex
 
 
-# Ósemka: pochylona owalna główka, laska i chorągiewka (współrzędne 0–1).
-static func _note_alpha(uv: Vector2) -> float:
-	var head := (uv - Vector2(0.38, 0.76)).rotated(0.45)
-	var e := Vector2(head.x / 0.17, head.y / 0.115).length()
-	var a := 1.0 - smoothstep(0.85, 1.0, e)
-	var stem := 1.0 - smoothstep(0.02, 0.04, absf(uv.x - 0.535))
-	stem *= float(uv.y > 0.12 and uv.y < 0.74)
-	var fx := uv.x - 0.535
-	var flag_y := 0.12 + fx * 0.9 + fx * fx * 2.0
-	var flag := (1.0 - smoothstep(0.03, 0.06, absf(uv.y - flag_y))) * float(fx > 0.0 and fx < 0.22)
-	return clampf(maxf(a, maxf(stem, flag)), 0.0, 1.0)
+# --- Nuty z czcionki Bravura (SMuFL) -------------------------------------------
+# Glify są raz rysowane w SubViewporcie, kopiowane do zwykłych tekstur, a viewport jest usuwany.
+
+const MUSIC_GLYPHS := ["♩", "♪", "♫", "♬", "♩", "♪", "♫", "𝄞", "♯", "♭"]
+const MUSIC_TILE := 512
+const MUSIC_CELL := 128
+
+
+func _render_music() -> void:
+	if _music_busy or _music_tile:
+		return
+	_music_busy = true
+	var vp := SubViewport.new()
+	vp.size = Vector2i(MUSIC_TILE, MUSIC_TILE + 64)
+	vp.transparent_bg = true
+	vp.disable_3d = true
+	vp.render_target_update_mode = SubViewport.UPDATE_ONCE
+	var canvas := Control.new()
+	canvas.size = Vector2(vp.size)
+	canvas.draw.connect(_draw_music.bind(canvas))
+	vp.add_child(canvas)
+	add_child(vp)
+	for i in 2:
+		await RenderingServer.frame_post_draw
+	var img := vp.get_texture().get_image()
+	vp.queue_free()
+	var tile := img.get_region(Rect2i(0, 0, MUSIC_TILE, MUSIC_TILE))
+	tile.generate_mipmaps()
+	_music_tile = ImageTexture.create_from_image(tile)
+	var note := img.get_region(Rect2i(0, MUSIC_TILE, 64, 64))
+	note.generate_mipmaps()
+	_music_note = ImageTexture.create_from_image(note)
+	_music_busy = false
+	_update_background()
+	if str(App.setting(&"particles")) == "notes":
+		_update_particles()
+
+
+# Kafel deseniu: w każdej komórce 128 × 128 jeden znak nutowy, losowo obrócony i przesunięty
+# (stałe ziarno – deseń zawsze taki sam). Pod kafelkiem: ósemka do cząsteczek.
+func _draw_music(c: Control) -> void:
+	var font := ThemeManager.font_music
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2026
+	var n := MUSIC_TILE / MUSIC_CELL
+	for y in n:
+		for x in n:
+			var g: String = MUSIC_GLYPHS[rng.randi() % MUSIC_GLYPHS.size()]
+			var px := 40 if g == "𝄞" else 64
+			var ink := IconGlyph.glyph_ink(font, g, px)
+			var center := (Vector2(x, y) + Vector2(0.5, 0.5)) * MUSIC_CELL \
+					+ Vector2(rng.randf_range(-18, 18), rng.randf_range(-18, 18))
+			c.draw_set_transform(center, rng.randf_range(-0.35, 0.35))
+			c.draw_char(font, -ink.get_center(), g, px, Color.WHITE)
+	var ink8 := IconGlyph.glyph_ink(font, "♪", 48)
+	c.draw_set_transform(Vector2(32, MUSIC_TILE + 32))
+	c.draw_char(font, -ink8.get_center(), "♪", 48, Color.WHITE)
+	c.draw_set_transform_matrix(Transform2D.IDENTITY)

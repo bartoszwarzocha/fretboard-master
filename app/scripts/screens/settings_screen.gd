@@ -12,7 +12,7 @@ const TABS := [
 	[&"midi", "MIDI"], [&"graphics", "Graphics"],
 ]
 # Zmiana tych ustawień pokazuje lub ukrywa inne pola – zakładka jest wtedy budowana od nowa.
-const REBUILD_KEYS := [&"theme", &"accent", &"bg_mode", &"bg_animated", &"particles", &"hit_particles", &"window_mode", &"neck_view",
+const REBUILD_KEYS := [&"theme", &"accent", &"bg_mode", &"bg_gradient_type", &"bg_animated", &"particles", &"hit_particles", &"window_mode", &"neck_view",
 		&"quality", &"power_saving", &"logo_spin", &"animations", &"midi_output"]
 # Widoki gryfu: realistyczne 3D (trzy rodzaje gitar) i schematyczne (jak w pierwotnej makiecie).
 # Rysowanie powstanie razem z modułem gryfu; tu tylko wybór. Kolejne widoki – nowa pozycja listy.
@@ -209,9 +209,17 @@ func _build_look() -> void:
 		"solid":
 			_colors(&"bg_color", "Colour", "Theme colour", BG_PALETTE)
 		"gradient":
+			var kind := str(App.setting(&"bg_gradient_type"))
+			_select(&"bg_gradient_type", "Gradient type", [["linear", "Linear"], ["radial", "Radial"],
+					["conic", "Angular"]])
 			_colors(&"bg_color", "First colour", "Theme colour", BG_PALETTE)
-			_colors(&"bg_color2", "Second colour", "", BG_PALETTE)
-			_slider(&"bg_gradient_angle", "Direction", 0, 360, 5, "%d°")
+			_colors(&"bg_color3", "Middle colour", "None", BG_PALETTE)
+			_colors(&"bg_color2", "Last colour", "", BG_PALETTE)
+			if kind != "radial":
+				_slider(&"bg_gradient_angle", "Direction", 0, 360, 5, "%d°")
+			if kind != "linear":
+				_slider(&"bg_gradient_x", "Centre – horizontally", 0, 1, 0.05, "%")
+				_slider(&"bg_gradient_y", "Centre – vertically", 0, 1, 0.05, "%")
 		"pattern":
 			_select(&"bg_pattern", "Pattern", [["wood", "Wood"], ["carbon", "Carbon"], ["leather", "Leather"],
 					["felt", "Felt"], ["notes", "Notes"], ["hex", "Geometric"]])
@@ -494,7 +502,7 @@ func _colors(key: StringName, label_text: String, default_text: String,
 		b.add_theme_stylebox_override("pressed", ThemeManager.box(fill, ring, 17, 3, 0, 0))
 		b.add_theme_stylebox_override("hover_pressed", ThemeManager.box(fill, ring, 17, 3, 0, 0))
 		if hex.is_empty():
-			b.text = "A"
+			b.text = "–" if default_text == "None" else "A"   # brak koloru / kolor domyślny
 			b.tooltip_text = default_text
 			b.add_theme_font_size_override("font_size", 13)
 			b.add_theme_color_override("font_color", ThemeManager.color("muted"))

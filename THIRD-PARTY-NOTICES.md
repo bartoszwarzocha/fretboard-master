@@ -18,6 +18,7 @@ Fretboard Master is closed-source freeware covered by `LICENSE.md`. It uses the 
 | ONNX Runtime | uruchamianie modelu Basic Pitch – planowane / runs the Basic Pitch model – planned | MIT | https://onnxruntime.ai |
 | SQLite | profil i postępy / profile and progress | domena publiczna / public domain | https://sqlite.org |
 | Inter, Space Grotesk, Anton, Noto Music, Noto Sans Symbols, Noto Sans Symbols 2 | kroje pisma / fonts | SIL Open Font License 1.1 | https://fonts.google.com |
+| Bravura (Steinberg Media Technologies GmbH) | symbole muzyczne, nuty (SMuFL) / music symbols, notation (SMuFL) | SIL Open Font License 1.1 | https://github.com/steinbergmedia/bravura |
 
 ## Warunki szczególne / Specific obligations
 

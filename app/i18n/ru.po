@@ -226,9 +226,6 @@ msgstr "Цвет"
 msgid "First colour"
 msgstr "Первый цвет"
 
-msgid "Second colour"
-msgstr "Второй цвет"
-
 msgid "Direction"
 msgstr "Направление"
 
@@ -657,4 +654,28 @@ msgstr "Схема – прямые углы"
 
 msgid "Diagram – neck shape"
 msgstr "Схема – форма грифа"
+
+msgid "Gradient type"
+msgstr "Тип градиента"
+
+msgid "Linear"
+msgstr "Линейный"
+
+msgid "Radial"
+msgstr "Радиальный"
+
+msgid "Angular"
+msgstr "Угловой"
+
+msgid "Middle colour"
+msgstr "Средний цвет"
+
+msgid "Last colour"
+msgstr "Последний цвет"
+
+msgid "Centre – horizontally"
+msgstr "Центр – по горизонтали"
+
+msgid "Centre – vertically"
+msgstr "Центр – по вертикали"
 

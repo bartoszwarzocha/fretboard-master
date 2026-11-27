@@ -9,6 +9,10 @@ uniform int mode = 0;            // 0 jednolite, 1 gradient, 2 deseń, 3 obraz
 uniform int pattern = 0;         // 0 drewno, 1 karbon, 2 skóra, 3 filc, 4 nuty, 5 geometryczny
 uniform vec4 color1 : source_color = vec4(0.03, 0.04, 0.08, 1.0);
 uniform vec4 color2 : source_color = vec4(0.11, 0.16, 0.33, 1.0);
+uniform vec4 color3 : source_color = vec4(0.2, 0.1, 0.3, 1.0);
+uniform bool use_color3 = false;
+uniform int gradient_type = 0;   // 0 liniowy, 1 promieniowy, 2 kątowy
+uniform vec2 gradient_center = vec2(0.5, 0.5);
 uniform float angle = 135.0;     // kierunek gradientu (stopnie)
 uniform float intensity = 0.5;   // siła deseniu
 uniform float pattern_scale = 1.0;
@@ -19,6 +23,7 @@ uniform float fade = 1.0;        // 0 = czarne (ekran startowy), 1 = tło docelo
 uniform vec2 size = vec2(1920.0, 1080.0);
 uniform vec2 image_size = vec2(1.0, 1.0);
 uniform sampler2D image : source_color, filter_linear_mipmap, repeat_disable;
+uniform sampler2D notes_tex : filter_linear_mipmap, repeat_enable;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 vec2 hash2(vec2 p) { return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453); }
@@ -72,21 +77,9 @@ float felt(vec2 p) {
 	return clamp(fbm(p * 0.09) * 0.75 + hash(floor(p)) * 0.35, 0.0, 1.0);
 }
 
-// Ósemka: główka (elipsa) + laska + chorągiewka, w losowo obsadzonych komórkach siatki.
+// Nuty: kafel z glifami czcionki Bravura (rysowany raz w programie), powtarzany co 512 px.
 float notes(vec2 p) {
-	float cell = 110.0;
-	vec2 i = floor(p / cell);
-	if (hash(i) < 0.45) return 0.0;
-	vec2 f = (fract(p / cell) - 0.5) * cell;
-	float r = (hash(i + 3.1) - 0.5) * 0.6;
-	f = mat2(vec2(cos(r), sin(r)), vec2(-sin(r), cos(r))) * f;
-	f += (hash2(i) - 0.5) * 30.0;
-	vec2 h = f - vec2(-6.0, 16.0);
-	h = mat2(vec2(0.87, 0.5), vec2(-0.5, 0.87)) * h;
-	float head = length(h / vec2(11.0, 7.5)) < 1.0 ? 1.0 : 0.0;
-	float stem = (f.x > 3.0 && f.x < 6.0 && f.y > -26.0 && f.y < 16.0) ? 1.0 : 0.0;
-	float flag = (f.x > 5.0 && f.x < 5.0 + 13.0 * (1.0 - (f.y + 26.0) / 22.0) && f.y > -26.0 && f.y < -6.0) ? 1.0 : 0.0;
-	return max(head, max(stem, flag));
+	return texture(notes_tex, p / 512.0).a;
 }
 
 float hexgrid(vec2 p) {
@@ -105,11 +98,27 @@ void fragment() {
 	float t = TIME * time_speed;
 	vec3 col = color1.rgb;
 	if (mode == 1) {
-		float a = radians(angle + t * 6.0);
-		vec2 d = vec2(cos(a), sin(a));
-		vec2 c = (UV - 0.5) * vec2(size.x / size.y, 1.0);
-		float k = clamp(dot(c, d) / (0.5 * (abs(d.x) * size.x / size.y + abs(d.y))) * 0.5 + 0.5, 0.0, 1.0);
-		col = mix(color1.rgb, color2.rgb, k);
+		float aspect = size.x / size.y;
+		float k;
+		if (gradient_type == 1) {
+			// Promieniowy: od środka (gradient_center) do najdalszego narożnika okna.
+			vec2 c = (UV - gradient_center) * vec2(aspect, 1.0);
+			vec2 far = max(gradient_center, 1.0 - gradient_center) * vec2(aspect, 1.0);
+			k = clamp(length(c) / length(far) + sin(t * 0.5) * 0.08, 0.0, 1.0);
+		} else if (gradient_type == 2) {
+			// Kątowy (stożkowy): kolory dookoła środka, zamknięty w pętlę (bez szwu).
+			vec2 c = (UV - gradient_center) * vec2(aspect, 1.0);
+			float a = fract((atan(c.y, c.x) - radians(angle + t * 6.0)) / 6.2831853);
+			k = 1.0 - abs(a * 2.0 - 1.0);
+		} else {
+			float a = radians(angle + t * 6.0);
+			vec2 d = vec2(cos(a), sin(a));
+			vec2 c = (UV - 0.5) * vec2(aspect, 1.0);
+			k = clamp(dot(c, d) / (0.5 * (abs(d.x) * aspect + abs(d.y))) * 0.5 + 0.5, 0.0, 1.0);
+		}
+		// Dwa kolory albo trzy (środkowy w połowie przejścia).
+		col = use_color3 ? (k < 0.5 ? mix(color1.rgb, color3.rgb, k * 2.0) : mix(color3.rgb, color2.rgb, k * 2.0 - 1.0))
+				: mix(color1.rgb, color2.rgb, k);
 	} else if (mode == 2) {
 		vec2 p = px / pattern_scale + vec2(t * 14.0, t * 5.0);
 		float v = 0.0;

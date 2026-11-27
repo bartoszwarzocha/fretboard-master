@@ -226,9 +226,6 @@ msgstr "Kolor"
 msgid "First colour"
 msgstr "Pierwszy kolor"
 
-msgid "Second colour"
-msgstr "Drugi kolor"
-
 msgid "Direction"
 msgstr "Kierunek"
 
@@ -657,4 +654,28 @@ msgstr "Schemat – kąty proste"
 
 msgid "Diagram – neck shape"
 msgstr "Schemat – kształt gryfu"
+
+msgid "Gradient type"
+msgstr "Rodzaj gradientu"
+
+msgid "Linear"
+msgstr "Liniowy"
+
+msgid "Radial"
+msgstr "Promieniowy"
+
+msgid "Angular"
+msgstr "Kątowy"
+
+msgid "Middle colour"
+msgstr "Kolor środkowy"
+
+msgid "Last colour"
+msgstr "Ostatni kolor"
+
+msgid "Centre – horizontally"
+msgstr "Środek – w poziomie"
+
+msgid "Centre – vertically"
+msgstr "Środek – w pionie"
 

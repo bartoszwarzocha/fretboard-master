@@ -225,9 +225,6 @@ msgstr ""
 msgid "First colour"
 msgstr ""
 
-msgid "Second colour"
-msgstr ""
-
 msgid "Direction"
 msgstr ""
 
@@ -655,5 +652,29 @@ msgid "Diagram – right angles"
 msgstr ""
 
 msgid "Diagram – neck shape"
+msgstr ""
+
+msgid "Gradient type"
+msgstr ""
+
+msgid "Linear"
+msgstr ""
+
+msgid "Radial"
+msgstr ""
+
+msgid "Angular"
+msgstr ""
+
+msgid "Middle colour"
+msgstr ""
+
+msgid "Last colour"
+msgstr ""
+
+msgid "Centre – horizontally"
+msgstr ""
+
+msgid "Centre – vertically"
 msgstr ""
 

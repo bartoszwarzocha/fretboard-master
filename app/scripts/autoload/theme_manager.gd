@@ -49,6 +49,7 @@ var font_body_medium: FontVariation
 var font_body_bold: FontVariation
 var font_heading: FontVariation
 var font_symbols: FontFile
+var font_music: FontFile   # Bravura (SMuFL) – symbole muzyczne w ikonach, tle i (później) w nutach
 
 
 func _ready() -> void:
@@ -106,6 +107,7 @@ func _load_fonts() -> void:
 	]
 	font_symbols = symbols[0]
 	font_symbols.fallbacks = [symbols[1], symbols[2]]
+	font_music = load("res://assets/fonts/Bravura.otf")
 	var inter: FontFile = load("res://assets/fonts/Inter.ttf")
 	inter.fallbacks = symbols
 	font_body = _variation(inter, 400)
