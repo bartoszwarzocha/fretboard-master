@@ -156,3 +156,489 @@ msgstr ""
 msgid "Public domain"
 msgstr ""
 
+msgid "General"
+msgstr ""
+
+msgid "Appearance"
+msgstr ""
+
+msgid "Guitar"
+msgstr ""
+
+msgid "Audio"
+msgstr ""
+
+msgid "MIDI"
+msgstr ""
+
+msgid "Graphics"
+msgstr ""
+
+msgid "Restore defaults"
+msgstr ""
+
+msgid "Interface language"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Show the start screen"
+msgstr ""
+
+msgid "Last opened screen"
+msgstr ""
+
+msgid "After start-up open"
+msgstr ""
+
+msgid "Theme"
+msgstr ""
+
+msgid "Automatic (as in the system)"
+msgstr ""
+
+msgid "Accent colour"
+msgstr ""
+
+msgid "Theme colour"
+msgstr ""
+
+msgid "Background"
+msgstr ""
+
+msgid "Solid colour"
+msgstr ""
+
+msgid "Gradient"
+msgstr ""
+
+msgid "Pattern"
+msgstr ""
+
+msgid "Own image"
+msgstr ""
+
+msgid "Colour"
+msgstr ""
+
+msgid "First colour"
+msgstr ""
+
+msgid "Second colour"
+msgstr ""
+
+msgid "Direction"
+msgstr ""
+
+msgid "Wood"
+msgstr ""
+
+msgid "Carbon"
+msgstr ""
+
+msgid "Leather"
+msgstr ""
+
+msgid "Felt"
+msgstr ""
+
+msgid "Notes"
+msgstr ""
+
+msgid "Geometric"
+msgstr ""
+
+msgid "Base colour"
+msgstr ""
+
+msgid "Pattern colour"
+msgstr ""
+
+msgid "Pattern intensity"
+msgstr ""
+
+msgid "Pattern scale"
+msgstr ""
+
+msgid "Blur"
+msgstr ""
+
+msgid "Dim"
+msgstr ""
+
+msgid "Animated background"
+msgstr ""
+
+msgid "Animation speed"
+msgstr ""
+
+msgid "Background particles"
+msgstr ""
+
+msgid "Particles"
+msgstr ""
+
+msgid "Off"
+msgstr ""
+
+msgid "Dust"
+msgstr ""
+
+msgid "Sparks"
+msgstr ""
+
+msgid "Floating notes"
+msgstr ""
+
+msgid "Bokeh"
+msgstr ""
+
+msgid "Density"
+msgstr ""
+
+msgid "Speed"
+msgstr ""
+
+msgid "Played note effect"
+msgstr ""
+
+msgid "Particles when a note is hit"
+msgstr ""
+
+msgid "Effect"
+msgstr ""
+
+msgid "Glow"
+msgstr ""
+
+msgid "Try it"
+msgstr ""
+
+msgid "Panels and tiles"
+msgstr ""
+
+msgid "Opacity"
+msgstr ""
+
+msgid "Corner rounding"
+msgstr ""
+
+msgid "Shadow"
+msgstr ""
+
+msgid "Text size"
+msgstr ""
+
+msgid "Choose an image…"
+msgstr ""
+
+msgid "Background image"
+msgstr ""
+
+msgid "No image selected"
+msgstr ""
+
+msgid "Image"
+msgstr ""
+
+msgid "Any colour"
+msgstr ""
+
+msgid "Instrument"
+msgstr ""
+
+msgid "Standard (E A D G B E)"
+msgstr ""
+
+msgid "Drop D (D A D G B E)"
+msgstr ""
+
+msgid "Half step down (E♭ A♭ D♭ G♭ B♭ E♭)"
+msgstr ""
+
+msgid "Whole step down (D G C F A D)"
+msgstr ""
+
+msgid "Drop C (C G C F A D)"
+msgstr ""
+
+msgid "DADGAD"
+msgstr ""
+
+msgid "Open G (D G D G B D)"
+msgstr ""
+
+msgid "Open D (D A D F♯ A D)"
+msgstr ""
+
+msgid "Open E (E B E G♯ B E)"
+msgstr ""
+
+msgid "Strings"
+msgstr ""
+
+msgid "Frets"
+msgstr ""
+
+msgid "Left-handed"
+msgstr ""
+
+msgid "Reference pitch A4"
+msgstr ""
+
+msgid "Fretboard look"
+msgstr ""
+
+msgid "Electric"
+msgstr ""
+
+msgid "Acoustic"
+msgstr ""
+
+msgid "Classical"
+msgstr ""
+
+msgid "Fretboard wood"
+msgstr ""
+
+msgid "Rosewood"
+msgstr ""
+
+msgid "Maple"
+msgstr ""
+
+msgid "Ebony"
+msgstr ""
+
+msgid "Nickel"
+msgstr ""
+
+msgid "Stainless steel"
+msgstr ""
+
+msgid "Gold"
+msgstr ""
+
+msgid "Inlays"
+msgstr ""
+
+msgid "Dots"
+msgstr ""
+
+msgid "Blocks"
+msgstr ""
+
+msgid "Trapezoids"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Bronze"
+msgstr ""
+
+msgid "Black"
+msgstr ""
+
+msgid "Devices"
+msgstr ""
+
+msgid "Input (guitar)"
+msgstr ""
+
+msgid "Input channel"
+msgstr ""
+
+msgid "Left"
+msgstr ""
+
+msgid "Right"
+msgstr ""
+
+msgid "Both (mono)"
+msgstr ""
+
+msgid "Output"
+msgstr ""
+
+msgid "System default"
+msgstr ""
+
+msgid "Latency"
+msgstr ""
+
+msgid "Buffer"
+msgstr ""
+
+msgid "Latency compensation"
+msgstr ""
+
+msgid "Recognition"
+msgstr ""
+
+msgid "Sensitivity"
+msgstr ""
+
+msgid "Noise gate"
+msgstr ""
+
+msgid "Hear the input in the headphones"
+msgstr ""
+
+msgid "Program volume"
+msgstr ""
+
+msgid "Built-in synthesizer"
+msgstr ""
+
+msgid "Input (MIDI guitar, keyboard)"
+msgstr ""
+
+msgid "Sound"
+msgstr ""
+
+msgid "Volume"
+msgstr ""
+
+msgid "Reverb"
+msgstr ""
+
+msgid "Velocity"
+msgstr ""
+
+msgid "Window"
+msgstr ""
+
+msgid "Display mode"
+msgstr ""
+
+msgid "Maximized window"
+msgstr ""
+
+msgid "Full screen"
+msgstr ""
+
+msgid "Exclusive full screen"
+msgstr ""
+
+msgid "Window size"
+msgstr ""
+
+msgid "Automatic"
+msgstr ""
+
+msgid "Monitor"
+msgstr ""
+
+msgid "Interface scale"
+msgstr ""
+
+msgid "Frame rate"
+msgstr ""
+
+msgid "V-Sync"
+msgstr ""
+
+msgid "On"
+msgstr ""
+
+msgid "Adaptive"
+msgstr ""
+
+msgid "Frame limit"
+msgstr ""
+
+msgid "No limit"
+msgstr ""
+
+msgid "Power saving (redraw only on change)"
+msgstr ""
+
+msgid "Frames in the background"
+msgstr ""
+
+msgid "3D quality"
+msgstr ""
+
+msgid "Quality profile"
+msgstr ""
+
+msgid "Low"
+msgstr ""
+
+msgid "Medium"
+msgstr ""
+
+msgid "High"
+msgstr ""
+
+msgid "Ultra"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "Anti-aliasing (MSAA)"
+msgstr ""
+
+msgid "3D render scale"
+msgstr ""
+
+msgid "Anisotropic filtering"
+msgstr ""
+
+msgid "Shadows"
+msgstr ""
+
+msgid "Reflections of the surroundings"
+msgstr ""
+
+msgid "Picture"
+msgstr ""
+
+msgid "Brightness"
+msgstr ""
+
+msgid "Contrast"
+msgstr ""
+
+msgid "Gamma"
+msgstr ""
+
+msgid "Animations"
+msgstr ""
+
+msgid "Interface animations"
+msgstr ""
+
+msgid "Full"
+msgstr ""
+
+msgid "Reduced"
+msgstr ""
+
+msgid "Random logo spin"
+msgstr ""
+
+msgid "Spin frequency"
+msgstr ""
+
+msgid "Rarely"
+msgstr ""
+
+msgid "Normally"
+msgstr ""
+
+msgid "Often"
+msgstr ""
+
+msgid "3D fretboard"
+msgstr ""
+
+msgid "Camera tilt"
+msgstr ""
+
+msgid "Perspective (field of view)"
+msgstr ""
+

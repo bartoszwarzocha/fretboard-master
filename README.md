@@ -9,7 +9,7 @@ zob. [LICENSE.md](LICENSE.md) i [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)
 | Katalog | Zawartość |
 |---|---|
 | `app/` | projekt Godota (otwierać w edytorze: `app/project.godot`) |
-| `app/scripts/autoload/` | `App` (nawigacja, ustawienia, język), `ThemeManager` (motywy, czcionki), `PerfAudit` |
+| `app/scripts/autoload/` | `App` (nawigacja, ustawienia, język), `ThemeManager` (motywy, czcionki), `Backdrop` (tło, cząsteczki, efekt trafienia), `Graphics` (okno, klatki, jakość, korekcja obrazu), `PerfAudit` |
 | `app/scripts/screens/` | ekrany: startowy, menu, moduły, ustawienia, „O programie” |
 | `app/scripts/ui/` | elementy interfejsu: kafelki, nagłówek, pola zastępcze grafik |
 | `app/i18n/` | tłumaczenia gettext (EN – źródłowy, PL, DE, ES, RU) |
@@ -44,7 +44,7 @@ Teksty źródłowe i przekłady: `tools/i18n_table.py`. Po zmianie: `python3 too
 (generuje `app/i18n/*.po` i `fbm.pot`).
 
 ## Wydajność
-F3 – nakładka z pomiarami. Audyt wszystkich ekranów: `godot --path app -- --perf-audit`
+F3 – dane wydajności jako tekst w stopce (to samo co „Pokaż dane wydajności” w ustawieniach). Audyt wszystkich ekranów: `godot --path app -- --perf-audit`
 (szczegóły: [docs/audyt-wydajnosci.md](docs/audyt-wydajnosci.md)).
 
 ## Pola zastępcze

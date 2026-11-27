@@ -1,5 +1,5 @@
 # Fretboard Master – audyt wydajności.
-#  • F3 – nakładka z liczbą wywołań rysowania, obiektów i prymitywów, czasem klatki i pamięcią wideo.
+#  • F3 – dane wydajności w stopce okna (FPS, wywołania rysowania, obiekty, prymitywy, pamięć wideo).
 #  • Uruchomienie z argumentem „-- --perf-audit” przechodzi przez wszystkie ekrany, mierzy je
 #    i porównuje z budżetami z res://perf/budgets.cfg. Przekroczenie = kod wyjścia 1 (do CI).
 # Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
@@ -9,9 +9,6 @@ const BUDGETS_PATH := "res://perf/budgets.cfg"
 const SETTLE_FRAMES := 12
 const SAMPLE_FRAMES := 30
 
-var _overlay: CanvasLayer
-var _label: Label
-var _timer: Timer
 
 
 func _ready() -> void:
@@ -21,21 +18,20 @@ func _ready() -> void:
 		_run_audit.call_deferred()
 
 
+# F3 włącza i wyłącza dane wydajności w stopce okna (to samo co opcja w ustawieniach grafiki).
 func _unhandled_key_input(event: InputEvent) -> void:
 	var key := event as InputEventKey
 	if key and key.pressed and not key.echo and key.keycode == KEY_F3:
-		toggle_overlay()
+		App.set_setting(&"perf_info", not bool(App.setting(&"perf_info")))
 		get_viewport().set_input_as_handled()
 
 
-func toggle_overlay() -> void:
-	if _overlay == null:
-		_create_overlay()
-	var show := not _overlay.visible
-	_overlay.visible = show
-	_timer.paused = not show
-	# Nakładka wymaga odświeżania ekranu – na czas jej działania wyłączamy tryb oszczędny.
-	OS.low_processor_usage_mode = not show
+# Jednowierszowy opis do stopki: FPS, ekran, wywołania rysowania, obiekty, prymitywy, węzły, VRAM.
+func summary() -> String:
+	var m := measure()
+	return "FPS %d · %s · draw calls %d (%d) · objects %d · primitives %d · processing %d/%d · VRAM %.1f MB" % [
+		Engine.get_frames_per_second(), App.current_screen, m.draw_calls, m.total_draw_calls,
+		m.objects, m.primitives, m.processing_nodes, m.nodes, m.video_mem_mb]
 
 
 # Pomiar jednej klatki: wartości z ostatniej narysowanej klatki głównego okna.
@@ -65,35 +61,6 @@ func count_processing_nodes(root: Node) -> int:
 	for child in root.get_children():
 		n += count_processing_nodes(child)
 	return n
-
-
-func _create_overlay() -> void:
-	_overlay = CanvasLayer.new()
-	_overlay.layer = 128
-	_overlay.visible = false
-	add_child(_overlay)
-	var panel := PanelContainer.new()
-	panel.position = Vector2(16, 16)
-	panel.add_theme_stylebox_override("panel", ThemeManager.box(Color(0, 0, 0, 0.78), Color.TRANSPARENT, 8, 0, 12, 8))
-	_overlay.add_child(panel)
-	_label = Label.new()
-	_label.add_theme_font_size_override("font_size", 14)
-	_label.add_theme_color_override("font_color", Color.WHITE)
-	_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	panel.add_child(_label)
-	_timer = Timer.new()
-	_timer.wait_time = 0.5
-	_timer.timeout.connect(_refresh_overlay)
-	add_child(_timer)
-	_timer.start()
-
-
-func _refresh_overlay() -> void:
-	var m := measure()
-	_label.text = "FPS %d · %s\ndraw calls %d (all viewports %d) · objects %d · primitives %d\nprocessing nodes %d / %d · VRAM %.1f MB" % [
-		Engine.get_frames_per_second(), App.current_screen,
-		m.draw_calls, m.total_draw_calls, m.objects, m.primitives,
-		m.processing_nodes, m.nodes, m.video_mem_mb]
 
 
 # --- Audyt wszystkich ekranów ------------------------------------------------------

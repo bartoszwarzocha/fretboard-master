@@ -21,12 +21,15 @@ run/low_processor_mode=true
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/show_image=false
 config/icon="res://icon.svg"
+config/website="https://bwdsp.com.pl"
 config/windows_native_icon="res://assets/branding/icon.ico"
 
 [autoload]
 
 App="*res://scripts/autoload/app.gd"
 ThemeManager="*res://scripts/autoload/theme_manager.gd"
+Backdrop="*res://scripts/autoload/backdrop.gd"
+Graphics="*res://scripts/autoload/graphics.gd"
 PerfAudit="*res://scripts/autoload/perf_audit.gd"
 
 [display]

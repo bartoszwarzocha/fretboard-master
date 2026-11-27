@@ -1,8 +1,10 @@
 # Audyt wydajności
 
-## Nakładka (F3)
-W działającym programie F3 pokazuje: FPS, bieżący ekran, wywołania rysowania, obiekty, prymitywy,
-węzły z włączonym przetwarzaniem i pamięć wideo. Na czas działania nakładki tryb oszczędny jest wyłączony.
+## Dane wydajności (F3)
+W działającym programie F3 (albo „Pokaż dane wydajności” w ustawieniach grafiki) pokazuje w stopce,
+jako zwykły tekst: FPS, bieżący ekran, wywołania rysowania, obiekty, prymitywy, węzły z włączonym
+przetwarzaniem i pamięć wideo. Na czas ich wyświetlania tryb oszczędny jest wyłączony.
+Tryb oszczędny wyłączają też ruchome tło i cząsteczki w tle – wymagają stałego odświeżania obrazu.
 
 ## Audyt wszystkich ekranów
 ```

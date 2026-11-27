@@ -37,13 +37,12 @@ func _build_content() -> void:
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
 	box.add_theme_constant_override("separation", 14)
 	center.add_child(box)
-	var icon := Label.new()
-	icon.text = m.get("icon", "")
-	icon.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icon.add_theme_font_override("font", ThemeManager.font_symbols)
-	icon.add_theme_font_size_override("font_size", 64)
-	icon.add_theme_color_override("font_color", m.get("color", Color.WHITE))
+	var icon := IconGlyph.new()
+	icon.glyph = m.get("icon", "")
+	icon.font_size = 64
+	icon.color = m.get("color", Color.WHITE)
+	icon.custom_minimum_size = Vector2(96, 96)
+	icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	box.add_child(icon)
 	var title := Label.new()
 	title.text = m.get("name", "")

@@ -46,6 +46,7 @@ const INTRO_FAR := 14.0                  # odległość startowa nadlotu (w szer
 const INTRO_TURNS := 1.5                 # liczba obrotów w czasie nadlotu
 const INTRO_GLIDE := 1.0                 # ostatnia sekunda: tylko zbliżanie, bez obrotu
 const SPIN_EVERY := Vector2(3.0, 10.0)   # losowy obrót o 360° co tyle sekund (od–do)
+const SPIN_RATES := {"rare": Vector2(8.0, 20.0), "normal": SPIN_EVERY, "often": Vector2(2.0, 5.0)}
 const SPIN_TIME := Vector2(0.5, 0.7)     # czas trwania obrotu (od–do)
 
 static var _mesh: ArrayMesh
@@ -65,6 +66,7 @@ var _rot := Vector2.ZERO
 var _spin := -1.0          # postęp obrotu 0–1; -1 = brak obrotu
 var _spin_len := 0.6
 var _spin_timer: Timer
+var _sway := true
 
 
 static func create(p_size: Vector2, p_animated := true, p_intro := 0.0) -> Logo3D:
@@ -83,7 +85,7 @@ func _ready() -> void:
 	_vp = SubViewport.new()
 	_vp.transparent_bg = true
 	_vp.own_world_3d = true
-	_vp.msaa_3d = Viewport.MSAA_4X
+	_vp.msaa_3d = Graphics.msaa_mode()
 	_vp.positional_shadow_atlas_size = 0
 	_vp.audio_listener_enable_3d = false
 	_vp.gui_disable_input = true
@@ -128,18 +130,22 @@ func _ready() -> void:
 	if intro > 0.0:
 		_amp = 0.0
 		_apply_intro()
-	var live := animated and not audit
+	# Animacje wyłączone – logo nieruchome; ograniczone – bez kołysania, tylko obroty.
+	var live := animated and not audit and App.animations() != "off"
+	_sway = App.animations() == "full"
+	if not _sway:
+		_amp = 0.0
 	# W audycie logo animowane jest rysowane w każdej klatce (najgorszy przypadek), ale bez ruchu.
-	_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if animated else SubViewport.UPDATE_ONCE
+	_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if live or (animated and audit) else SubViewport.UPDATE_ONCE
 	set_process(live)
 	set_process_input(live)
-	if live:
+	if live and bool(App.setting(&"logo_spin")):
 		# Losowe obroty odlicza Timer – między obrotami logo nie wymaga przetwarzania klatek.
 		_spin_timer = Timer.new()
 		_spin_timer.one_shot = true
 		_spin_timer.timeout.connect(_start_spin)
 		add_child(_spin_timer)
-		_spin_timer.start(intro + randf_range(SPIN_EVERY.x, SPIN_EVERY.y))
+		_spin_timer.start(intro + _spin_wait())
 
 
 func _process(delta: float) -> void:
@@ -148,7 +154,7 @@ func _process(delta: float) -> void:
 		_apply_intro()
 		return
 	_idle += delta
-	var active := _idle < IDLE_STOP
+	var active := _idle < IDLE_STOP and _sway
 	_amp = move_toward(_amp, 1.0 if active else 0.0, delta * 0.5)
 	var target := Vector2(
 			sin((_time - intro) * TAU / SWAY_PERIOD.x) * SWAY_DEG.x,
@@ -163,7 +169,7 @@ func _process(delta: float) -> void:
 		if _spin >= 1.0:
 			_spin = -1.0
 			spin_deg = 0.0
-			_spin_timer.start(randf_range(SPIN_EVERY.x, SPIN_EVERY.y))
+			_spin_timer.start(_spin_wait())
 	_pivot.position = Vector3.ZERO
 	_pivot.rotation_degrees = Vector3(_rot.x, _rot.y + spin_deg, 0)
 	if not active and _spin < 0.0 and _amp == 0.0 and _rot.length() < 0.02:
@@ -175,13 +181,19 @@ func _process(delta: float) -> void:
 # Obrót o 360° wokół osi pionowej – płynny start i zatrzymanie. Pomijany, gdy okno nie ma fokusu.
 func _start_spin() -> void:
 	if not get_window().has_focus():
-		_spin_timer.start(randf_range(SPIN_EVERY.x, SPIN_EVERY.y))
+		_spin_timer.start(_spin_wait())
 		return
 	_spin = 0.0
 	_spin_len = randf_range(SPIN_TIME.x, SPIN_TIME.y)
 	if not is_processing():
 		_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 		set_process(true)
+
+
+# Odstęp do następnego obrotu według ustawienia częstości (rzadko / normalnie / często).
+func _spin_wait() -> float:
+	var range_s: Vector2 = SPIN_RATES.get(str(App.setting(&"logo_spin_rate")), SPIN_EVERY)
+	return randf_range(range_s.x, range_s.y)
 
 
 static func _smooth(t: float) -> float:

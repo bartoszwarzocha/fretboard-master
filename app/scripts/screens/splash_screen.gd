@@ -29,13 +29,13 @@ func _ready() -> void:
 	presents.add_theme_color_override("font_color", Color("8C96B3"))
 	presents.add_theme_font_size_override("font_size", 20)
 	col.add_child(presents)
-	var logo := Logo3D.create(Vector2(680, 320), true, DURATION - 0.4)
+	var logo := Logo3D.create(Vector2(680, 320), true, 0.0 if App.animations() == "off" else DURATION - 0.4)
 	_logo = logo
 	logo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(logo)
 
 	if not "--perf-audit" in OS.get_cmdline_user_args():
-		get_tree().create_timer(DURATION).timeout.connect(App.go.bind(&"menu"))
+		get_tree().create_timer(DURATION).timeout.connect(func() -> void: App.go(App.start_screen()))
 
 
 # Położenie obu logo – menu główne zaczyna od nich przejście (logo odjeżdżają na swoje miejsca).

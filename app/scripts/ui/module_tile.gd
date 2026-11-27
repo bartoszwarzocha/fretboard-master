@@ -6,7 +6,7 @@ extends Button
 var module: Dictionary
 var big := false
 var _icon_box: PanelContainer
-var _icon: Label
+var _icon: IconGlyph
 
 
 static func create(p_module: Dictionary, p_big := false) -> ModuleTile:
@@ -33,14 +33,10 @@ func _ready() -> void:
 	var s := 72 if big else 52
 	_icon_box.custom_minimum_size = Vector2(s, s)
 	box.add_child(_icon_box)
-	_icon = Label.new()
-	_icon.text = module.icon
-	_icon.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	_icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_icon.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_icon.add_theme_font_override("font", ThemeManager.font_symbols)
-	_icon.add_theme_font_size_override("font_size", 40 if big else 28)
-	_icon.add_theme_color_override("font_color", module.color)
+	_icon = IconGlyph.new()
+	_icon.glyph = module.icon
+	_icon.font_size = 40 if big else 28
+	_icon.color = module.color
 	_icon_box.add_child(_icon)
 
 	if big:
@@ -72,11 +68,11 @@ func _ready() -> void:
 
 func _apply_styles() -> void:
 	var c: Color = module.color
-	var normal := ThemeManager.box(ThemeManager.color("surface"), ThemeManager.color("border"), ThemeManager.RADIUS_CARD, 1, 24, 24)
-	var hover := ThemeManager.box(ThemeManager.color("surface").lerp(c, 0.08), c, ThemeManager.RADIUS_CARD, 1, 24, 24)
+	var normal := ThemeManager.card_box(ThemeManager.color("surface"), ThemeManager.color("border"))
+	var hover := ThemeManager.card_box(ThemeManager.color("surface").lerp(c, 0.08), c)
 	add_theme_stylebox_override("normal", normal)
 	add_theme_stylebox_override("hover", hover)
 	add_theme_stylebox_override("pressed", hover)
-	add_theme_stylebox_override("focus", ThemeManager.box(Color.TRANSPARENT, ThemeManager.color("focus"), ThemeManager.RADIUS_CARD + 3, 2))
+	add_theme_stylebox_override("focus", ThemeManager.box(Color.TRANSPARENT, ThemeManager.color("focus"), ThemeManager.radius_card() + 3, 2))
 	get_theme_stylebox("focus").draw_center = false
 	_icon_box.add_theme_stylebox_override("panel", ThemeManager.box(Color(c, 0.12), Color.TRANSPARENT, 16, 0, 0, 0))

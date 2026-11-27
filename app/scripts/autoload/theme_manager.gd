@@ -32,6 +32,10 @@ const PALETTES := {
 	},
 }
 const DEFAULT_PALETTE := &"night"
+# Kolory akcentu do wyboru w ustawieniach ("" = akcent motywu).
+const ACCENTS := ["F5B544", "FF8A1F", "FF5C5C", "E85D9C", "B98CFF", "5AA9FF", "3FD0C9", "7BD88F"]
+# Ustawienia, po których zmianie motyw jest budowany od nowa.
+const THEME_KEYS := [&"theme", &"accent", &"panel_opacity", &"panel_radius", &"panel_shadow", &"font_scale"]
 
 const RADIUS_CARD := 20
 const RADIUS_CONTROL := 10
@@ -52,11 +56,19 @@ func _ready() -> void:
 	set_process(false)
 	_load_fonts()
 	App.settings_changed.connect(_on_settings_changed)
-	apply(StringName(App.get_setting(&"theme", DEFAULT_PALETTE)))
+	if DisplayServer.has_method(&"set_system_theme_change_callback"):
+		DisplayServer.set_system_theme_change_callback(func() -> void:
+			if str(App.setting(&"theme")) == "auto":
+				apply(palette_id()))
+	apply(palette_id())
 
 
+# Motyw „auto” wybiera nocny albo jasny według ustawienia systemu.
 func palette_id() -> StringName:
-	return StringName(App.get_setting(&"theme", DEFAULT_PALETTE))
+	var id := StringName(App.setting(&"theme"))
+	if id == &"auto":
+		return &"night" if DisplayServer.is_dark_mode() else &"light"
+	return id if PALETTES.has(id) else DEFAULT_PALETTE
 
 
 func color(key: String) -> Color:
@@ -64,7 +76,11 @@ func color(key: String) -> Color:
 
 
 func apply(id: StringName) -> void:
-	palette = PALETTES.get(id, PALETTES[DEFAULT_PALETTE])
+	palette = (PALETTES.get(id, PALETTES[DEFAULT_PALETTE]) as Dictionary).duplicate()
+	var accent := str(App.setting(&"accent"))
+	if not accent.is_empty():
+		palette.accent = Color(accent)
+		palette.accent_text = Color("1A1206") if palette.accent.get_luminance() > 0.55 else Color.WHITE
 	theme = _build_theme()
 	get_tree().root.theme = theme
 	RenderingServer.set_default_clear_color(palette.bg)
@@ -72,7 +88,7 @@ func apply(id: StringName) -> void:
 
 
 func _on_settings_changed(key: StringName) -> void:
-	if key == &"theme":
+	if key in THEME_KEYS:
 		apply(palette_id())
 	elif key == &"language":
 		# Space Grotesk nie ma cyrylicy – dla rosyjskiego nagłówki składa Inter.
@@ -135,45 +151,67 @@ func box(bg: Color, border := Color.TRANSPARENT, radius := RADIUS_CONTROL, borde
 	return s
 
 
+# Rozmiar czcionki przeliczony przez ustawienie „Wielkość czcionki”.
+func fs(px: int) -> int:
+	return roundi(px * float(App.setting(&"font_scale")))
+
+
+func radius_card() -> int:
+	return int(App.setting(&"panel_radius"))
+
+
+# Tło panelu lub kafelka z ustawień wyglądu: przezroczystość, zaokrąglenie, cień.
+func card_box(bg: Color, border: Color, pad := 24) -> StyleBoxFlat:
+	var opacity := float(App.setting(&"panel_opacity"))
+	var s := box(Color(bg, bg.a * opacity), Color(border, border.a * maxf(opacity, 0.35)), radius_card(), 1, pad, pad)
+	var shadow := int(App.setting(&"panel_shadow"))
+	if shadow > 0:
+		s.shadow_color = Color(0, 0, 0, 0.35)
+		s.shadow_size = shadow
+		s.shadow_offset = Vector2(0, shadow * 0.4)
+	return s
+
+
 func _build_theme() -> Theme:
 	var p := palette
 	var t := Theme.new()
 	t.default_font = font_body
-	t.default_font_size = 18
+	t.default_font_size = fs(18)
 
 	# Teksty
 	t.set_color("font_color", "Label", p.text)
 	t.add_type("Heading")
 	t.set_type_variation("Heading", "Label")
 	t.set_font("font", "Heading", font_heading)
-	t.set_font_size("font_size", "Heading", 34)
+	t.set_font_size("font_size", "Heading", fs(34))
 	t.add_type("Title")
 	t.set_type_variation("Title", "Label")
 	t.set_font("font", "Title", font_heading)
-	t.set_font_size("font_size", "Title", 26)
+	t.set_font_size("font_size", "Title", fs(26))
 	t.add_type("Muted")
 	t.set_type_variation("Muted", "Label")
 	t.set_color("font_color", "Muted", p.muted)
-	t.set_font_size("font_size", "Muted", 16)
+	t.set_font_size("font_size", "Muted", fs(16))
 	t.add_type("Caption")
 	t.set_type_variation("Caption", "Label")
 	t.set_color("font_color", "Caption", p.faint)
-	t.set_font_size("font_size", "Caption", 14)
+	t.set_font_size("font_size", "Caption", fs(14))
 	t.add_type("Strong")
 	t.set_type_variation("Strong", "Label")
 	t.set_font("font", "Strong", font_body_bold)
 
 	# Panele
-	t.set_stylebox("panel", "PanelContainer", box(p.surface, p.border, RADIUS_CARD, 1, 24, 24))
-	t.set_stylebox("panel", "Panel", box(p.surface, p.border, RADIUS_CARD, 1, 0, 0))
+	t.set_stylebox("panel", "PanelContainer", card_box(p.surface, p.border))
+	t.set_stylebox("panel", "Panel", card_box(p.surface, p.border, 0))
 	t.add_type("Bar")
 	t.set_type_variation("Bar", "PanelContainer")
-	t.set_stylebox("panel", "Bar", box(p.surface, p.border, 0, 0, 32, 12))
+	var bar := box(Color(p.surface, float(App.setting(&"panel_opacity"))), p.border, 0, 0, 32, 12)
+	t.set_stylebox("panel", "Bar", bar)
 
 	# Przyciski
 	for type in ["Button", "OptionButton", "CheckBox"]:
 		t.set_font("font", type, font_body_medium)
-		t.set_font_size("font_size", type, 17)
+		t.set_font_size("font_size", type, fs(17))
 		t.set_color("font_color", type, p.text)
 		t.set_color("font_hover_color", type, p.text)
 		t.set_color("font_pressed_color", type, p.text)
@@ -211,7 +249,7 @@ func _build_theme() -> Theme:
 	t.set_type_variation("TextLink", "Button")
 	t.set_color("font_color", "TextLink", p.muted)
 	t.set_color("font_hover_color", "TextLink", p.text)
-	t.set_font_size("font_size", "TextLink", 16)
+	t.set_font_size("font_size", "TextLink", fs(16))
 	for st in ["normal", "hover", "pressed"]:
 		t.set_stylebox(st, "TextLink", box(Color.TRANSPARENT, Color.TRANSPARENT, 6, 0, 4, 2))
 
@@ -222,7 +260,7 @@ func _build_theme() -> Theme:
 	t.set_stylebox("focus", "OptionButton", _focus_box())
 	t.set_color("font_color", "PopupMenu", p.text)
 	t.set_color("font_hover_color", "PopupMenu", p.text)
-	t.set_font_size("font_size", "PopupMenu", 17)
+	t.set_font_size("font_size", "PopupMenu", fs(17))
 	t.set_stylebox("panel", "PopupMenu", box(p.surface_2, p.border_strong, RADIUS_CONTROL, 1, 6, 6))
 	t.set_stylebox("hover", "PopupMenu", box(p.border, Color.TRANSPARENT, 6, 0, 8, 4))
 	t.set_constant("v_separation", "PopupMenu", 10)
@@ -254,6 +292,50 @@ func _build_theme() -> Theme:
 	t.set_stylebox("grabber_highlight", "VScrollBar", box(p.faint, Color.TRANSPARENT, 4, 0, 4, 0))
 	t.set_stylebox("panel", "TooltipPanel", box(p.surface_2, p.border_strong, 8, 1, 10, 6))
 	t.set_color("font_color", "TooltipLabel", p.text)
+
+	# Suwaki: tor, wypełnienie w kolorze akcentu, okrągły uchwyt
+	var track := box(p.border, Color.TRANSPARENT, 3, 0, 0, 3)
+	t.set_stylebox("slider", "HSlider", track)
+	t.set_stylebox("grabber_area", "HSlider", box(p.accent, Color.TRANSPARENT, 3, 0, 0, 3))
+	t.set_stylebox("grabber_area_highlight", "HSlider", box(p.accent.lightened(0.1), Color.TRANSPARENT, 3, 0, 0, 3))
+	var knob := '<circle cx="11" cy="11" r="8.5" fill="#%s" stroke="#%s" stroke-width="2.5"/>' % [p.text.to_html(false), p.accent.to_html(false)]
+	t.set_icon("grabber", "HSlider", _svg_icon(knob, 22))
+	t.set_icon("grabber_highlight", "HSlider", _svg_icon(knob, 22))
+	t.set_stylebox("focus", "HSlider", _focus_box())
+
+	# Pola tekstowe
+	t.set_stylebox("normal", "LineEdit", box(p.surface_2, p.border_strong))
+	t.set_stylebox("focus", "LineEdit", _focus_box())
+	t.set_color("font_color", "LineEdit", p.text)
+	t.set_font_size("font_size", "LineEdit", fs(16))
+
+	# Pasek przewijania: wąski, zaokrąglony, bez strzałek
+	t.set_stylebox("scroll", "VScrollBar", box(Color.TRANSPARENT, Color.TRANSPARENT, 4, 0, 4, 4))
+	t.set_stylebox("grabber", "VScrollBar", box(p.border_strong, Color.TRANSPARENT, 4, 0, 4, 4))
+	t.set_stylebox("grabber_highlight", "VScrollBar", box(p.faint, Color.TRANSPARENT, 4, 0, 4, 4))
+	t.set_stylebox("grabber_pressed", "VScrollBar", box(p.muted, Color.TRANSPARENT, 4, 0, 4, 4))
+
+	# Zakładki okna ustawień (pionowe)
+	t.add_type("SideTab")
+	t.set_type_variation("SideTab", "Button")
+	t.set_color("font_color", "SideTab", p.muted)
+	t.set_color("font_hover_color", "SideTab", p.text)
+	t.set_color("font_pressed_color", "SideTab", p.text)
+	t.set_color("font_hover_pressed_color", "SideTab", p.text)
+	t.set_constant("h_separation", "SideTab", 14)
+	t.set_stylebox("normal", "SideTab", box(Color.TRANSPARENT, Color.TRANSPARENT, RADIUS_CONTROL, 0, 18, 12))
+	t.set_stylebox("hover", "SideTab", box(p.surface_2, Color.TRANSPARENT, RADIUS_CONTROL, 0, 18, 12))
+	var sel := box(Color(p.accent, 0.16), Color.TRANSPARENT, RADIUS_CONTROL, 0, 18, 12)
+	t.set_stylebox("pressed", "SideTab", sel)
+	t.set_stylebox("hover_pressed", "SideTab", sel)
+	t.set_stylebox("focus", "SideTab", _focus_box())
+
+	# Nagłówek sekcji w ustawieniach
+	t.add_type("Section")
+	t.set_type_variation("Section", "Label")
+	t.set_font("font", "Section", font_body_bold)
+	t.set_font_size("font_size", "Section", fs(13))
+	t.set_color("font_color", "Section", p.accent)
 	return t
 
 

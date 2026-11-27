@@ -7,7 +7,45 @@ signal settings_changed(key: StringName)
 
 const SETTINGS_PATH := "user://settings.cfg"
 const LANGUAGES: Array[String] = ["", "en", "pl", "de", "es", "ru"]  # "" = język systemu
-const UNFOCUSED_MAX_FPS := 10
+
+# Wszystkie ustawienia z wartościami domyślnymi, pogrupowane jak zakładki okna konfiguracji
+# (przycisk „Przywróć domyślne” przywraca klucze jednej grupy).
+const DEFAULTS := {
+	&"general": {
+		&"language": "", &"notation": 0, &"show_splash": true, &"start_screen": "menu",
+		&"last_screen": "menu",
+	},
+	&"look": {
+		&"theme": "night", &"accent": "", &"bg_mode": "solid", &"bg_color": "", &"bg_color2": "1D2A55",
+		&"bg_gradient_angle": 135.0, &"bg_pattern": "carbon", &"bg_intensity": 0.5, &"bg_scale": 1.0,
+		&"bg_dim": 0.0, &"bg_blur": 0.0, &"bg_image": "", &"bg_animated": false, &"bg_anim_speed": 1.0,
+		&"particles": "off", &"particles_density": 0.5, &"particles_speed": 1.0, &"particles_color": "",
+		&"hit_particles": true, &"hit_style": "sparks",
+		&"panel_opacity": 1.0, &"panel_radius": 20, &"panel_shadow": 0, &"font_scale": 1.0,
+	},
+	&"guitar": {
+		&"tuning": "standard", &"strings": 6, &"frets": 22, &"left_handed": false, &"a4": 440.0,
+		&"guitar_model": "electric", &"fretboard_wood": "rosewood", &"fret_metal": "nickel",
+		&"inlays": "dots", &"string_color": "nickel",
+	},
+	&"audio": {
+		&"audio_input": "Default", &"audio_output": "Default", &"input_channel": 0,
+		&"buffer_ms": 10, &"latency_comp_ms": 0, &"sensitivity": 0.6, &"noise_gate_db": -50.0,
+		&"input_monitor": false, &"master_volume": 0.8,
+	},
+	&"midi": {
+		&"midi_output": "internal", &"midi_input": "", &"midi_instrument": 25, &"midi_volume": 0.8,
+		&"midi_reverb": 0.3, &"midi_velocity": 100,
+	},
+	&"graphics": {
+		&"window_mode": "maximized", &"resolution": "1600x900", &"window_rect": "", &"monitor": -1, &"ui_scale": 1.0,
+		&"vsync": "on", &"max_fps": 0, &"quality": "high", &"msaa": 4, &"render_scale": 1.0,
+		&"anisotropy": 4, &"shadows": "medium", &"reflections": false,
+		&"brightness": 1.0, &"contrast": 1.0, &"gamma": 1.0, &"animations": "full", &"anim_speed": 1.0,
+		&"logo_spin": true, &"logo_spin_rate": "normal", &"neck_tilt": 35.0, &"neck_fov": 40.0,
+		&"perf_info": false, &"power_saving": true, &"background_fps": 10,
+	},
+}
 
 # Moduły w kolejności z menu głównego. Nazwy i opisy to identyfikatory tłumaczeń (gettext).
 const MODULES: Array[Dictionary] = [
@@ -41,13 +79,9 @@ func _ready() -> void:
 	get_window().min_size = Vector2i(1280, 720)
 
 
-func _notification(what: int) -> void:
-	# Oszczędzanie energii: niski limit klatek, gdy okno nie ma fokusu.
-	match what:
-		NOTIFICATION_APPLICATION_FOCUS_OUT:
-			Engine.max_fps = UNFOCUSED_MAX_FPS
-		NOTIFICATION_APPLICATION_FOCUS_IN:
-			Engine.max_fps = 0
+# Strona programu – adres ustawiany w project.godot (application/config/website).
+func website() -> String:
+	return str(ProjectSettings.get_setting("application/config/website", "https://bwdsp.com.pl"))
 
 
 func version() -> String:
@@ -61,6 +95,16 @@ func module(id: StringName) -> Dictionary:
 	return {}
 
 
+# Ekran po starcie: menu, ostatnio otwarty albo wybrany moduł (ustawienie „start_screen”).
+func start_screen() -> StringName:
+	var id := str(App.setting(&"start_screen"))
+	if id == "last":
+		id = str(App.setting(&"last_screen"))
+	if id != "menu" and id != "settings" and App.module(StringName(id)).is_empty():
+		id = "menu"
+	return StringName(id)
+
+
 func go(screen_id: StringName) -> void:
 	screen_requested.emit(screen_id)
 
@@ -71,8 +115,48 @@ func get_setting(key: StringName, default_value: Variant) -> Variant:
 	return _config.get_value("settings", key, default_value)
 
 
+# Ustawienie z wartością domyślną z DEFAULTS.
+func setting(key: StringName) -> Variant:
+	return _config.get_value("settings", key, default_of(key))
+
+
+func default_of(key: StringName) -> Variant:
+	for group in DEFAULTS.values():
+		if group.has(key):
+			return group[key]
+	return null
+
+
+# Przywrócenie domyślnych wartości jednej grupy (zakładki).
+func reset_group(group: StringName) -> void:
+	for key in DEFAULTS[group]:
+		if _config.has_section_key("settings", key):
+			_config.erase_section_key("settings", key)
+	_config.save(SETTINGS_PATH)
+	if group == &"general":
+		_apply_language()
+	for key in DEFAULTS[group]:
+		settings_changed.emit(key)
+
+
+# Kilka ustawień naraz (np. profil jakości grafiki) – jeden zapis pliku.
+func set_settings(values: Dictionary) -> void:
+	var changed: Array = []
+	for key in values:
+		if setting(key) != values[key]:
+			_config.set_value("settings", key, values[key])
+			changed.append(key)
+	if changed.is_empty():
+		return
+	_config.save(SETTINGS_PATH)
+	if &"language" in changed:
+		_apply_language()
+	for key in changed:
+		settings_changed.emit(key)
+
+
 func set_setting(key: StringName, value: Variant) -> void:
-	if get_setting(key, null) == value:
+	if setting(key) == value and typeof(setting(key)) == typeof(value):
 		return
 	_config.set_value("settings", key, value)
 	_config.save(SETTINGS_PATH)
@@ -96,4 +180,13 @@ func _apply_language() -> void:
 
 # Zapis nazw dźwięków – osobne ustawienie, niezależne od języka.
 func notation() -> int:
-	return int(get_setting(&"notation", NoteNames.INTERNATIONAL))
+	return int(setting(&"notation"))
+
+
+# Animacje interfejsu: "full", "reduced", "off"; mnożnik czasu trwania (większa szybkość = krótszy czas).
+func animations() -> String:
+	return str(setting(&"animations"))
+
+
+func anim_time(seconds: float) -> float:
+	return seconds / maxf(float(setting(&"anim_speed")), 0.1)

@@ -59,6 +59,14 @@ func _ready() -> void:
 	_logo.size = SPLASH_LOGO
 	_logo.scale = Vector2.ONE * (MENU_LOGO.y / SPLASH_LOGO.y)
 	_logo_slot.add_child(_logo)
+	# Kliknięcie logo otwiera stronę programu w przeglądarce.
+	_logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_logo_slot.mouse_filter = Control.MOUSE_FILTER_STOP
+	_logo_slot.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_logo_slot.gui_input.connect(func(e: InputEvent) -> void:
+		var b := e as InputEventMouseButton
+		if b and b.button_index == MOUSE_BUTTON_LEFT and not b.pressed:
+			OS.shell_open(App.website()))
 
 	var tagline := Label.new()
 	tagline.text = "fretboard · theory · training"
@@ -141,7 +149,7 @@ func _ready() -> void:
 	if not intro_from.is_empty():
 		_prepare_intro()
 		_play_intro.call_deferred()
-	_tiles[0].grab_focus.call_deferred()
+	_tiles[0].grab_focus.call_deferred(true)   # bez ramki fokusu, dopóki nie użyje się klawiatury
 
 
 # Stan początkowy przejścia – ustawiany przed pierwszą klatką, żeby nic nie mignęło.
@@ -158,19 +166,22 @@ func _play_intro() -> void:
 	await get_tree().process_frame   # układ kontenerów jest już policzony
 	_fly(_logo, _logo_slot, intro_from.get("logo", Rect2()), MENU_LOGO.y / SPLASH_LOGO.y)
 	_fly(_company, _company_slot, intro_from.get("company", Rect2()), MENU_COMPANY.y / SPLASH_COMPANY.y)
+	# Animacje ograniczone: kafelki tylko się pojawiają, bez przybliżania.
+	var full := App.animations() == "full"
 	var order := _tiles.duplicate()
 	order.shuffle()
 	for i in order.size():
 		var tile: Control = order[i]
-		tile.pivot_offset = tile.size * 0.5
-		tile.scale = Vector2.ONE * 0.55
-		var delay := lerpf(TILE_DELAY.x, TILE_DELAY.y, float(i) / maxf(order.size() - 1, 1.0))
+		var delay := App.anim_time(lerpf(TILE_DELAY.x, TILE_DELAY.y, float(i) / maxf(order.size() - 1, 1.0)))
 		var tw := tile.create_tween().set_parallel()
-		tw.tween_property(tile, "scale", Vector2.ONE, TILE_TIME).set_delay(delay) \
-				.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		tw.tween_property(tile, "modulate:a", 1.0, TILE_TIME * 0.6).set_delay(delay)
+		if full:
+			tile.pivot_offset = tile.size * 0.5
+			tile.scale = Vector2.ONE * 0.55
+			tw.tween_property(tile, "scale", Vector2.ONE, App.anim_time(TILE_TIME)).set_delay(delay) \
+					.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.tween_property(tile, "modulate:a", 1.0, App.anim_time(TILE_TIME * 0.6)).set_delay(delay)
 	for c in _fade:
-		c.create_tween().tween_property(c, "modulate:a", 1.0, 0.4).set_delay(0.7)
+		c.create_tween().tween_property(c, "modulate:a", 1.0, App.anim_time(0.4)).set_delay(App.anim_time(0.7))
 
 
 # Przejazd logo z prostokąta na ekranie startowym do miejsca w menu (pozycja i skala).
@@ -182,8 +193,8 @@ func _fly(item: Control, slot: Control, from: Rect2, end_scale: float) -> void:
 	item.position = from.position - slot.global_position
 	item.scale = Vector2.ONE * (from.size.y / item.size.y)
 	var tw := item.create_tween().set_parallel().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	tw.tween_property(item, "position", Vector2.ZERO, MOVE_TIME)
-	tw.tween_property(item, "scale", Vector2.ONE * end_scale, MOVE_TIME)
+	tw.tween_property(item, "position", Vector2.ZERO, App.anim_time(MOVE_TIME))
+	tw.tween_property(item, "scale", Vector2.ONE * end_scale, App.anim_time(MOVE_TIME))
 	tw.chain().tween_callback(func() -> void: item.z_index = 0)
 
 

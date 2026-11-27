@@ -9,30 +9,24 @@ const ModuleScreen := preload("res://scripts/screens/module_screen.gd")
 const SettingsScreen := preload("res://scripts/screens/settings_screen.gd")
 const AboutScreen := preload("res://scripts/screens/about_screen.gd")
 
-var _background: ColorRect
 var _screen: Control
 
 
+# Tło okna rysuje Backdrop (pod ekranami). Ekran startowy jest całkowicie czarny.
 func _ready() -> void:
 	set_process(false)
-	_background = ColorRect.new()
-	_background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_background.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_background)
-	ThemeManager.theme_changed.connect(_update_background)
 	App.screen_requested.connect(_show)
-	_show(&"splash")
-
-
-func _update_background() -> void:
-	_background.color = Color.BLACK if App.current_screen == &"splash" else ThemeManager.color("bg")
+	if bool(App.setting(&"show_splash")) or "--perf-audit" in OS.get_cmdline_user_args():
+		_show(&"splash")
+	else:
+		_show(App.start_screen())
 
 
 func _show(screen_id: StringName) -> void:
 	# Przejście ze startu do menu: menu dostaje położenie logo, a tło płynnie zmienia kolor.
 	var intro := {}
 	if _screen and App.current_screen == &"splash" and screen_id == &"menu" \
-			and not "--perf-audit" in OS.get_cmdline_user_args():
+			and not "--perf-audit" in OS.get_cmdline_user_args() and App.animations() != "off":
 		intro = _screen.logo_rects()
 	if _screen:
 		_screen.queue_free()
@@ -53,8 +47,11 @@ func _show(screen_id: StringName) -> void:
 			_screen.module_id = screen_id
 	_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(_screen)
-	_update_background()
-	if not intro.is_empty():
-		var target := _background.color
-		_background.color = Color.BLACK
-		_background.create_tween().tween_property(_background, "color", target, 0.8)
+	if screen_id == &"splash":
+		Backdrop.set_fade(0.0)
+	elif not intro.is_empty() and App.animations() != "off":
+		Backdrop.set_fade(1.0, App.anim_time(0.8))
+	else:
+		Backdrop.set_fade(1.0)
+	if screen_id != &"splash" and screen_id != &"about":
+		App.set_setting(&"last_screen", String(screen_id))

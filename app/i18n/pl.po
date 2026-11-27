@@ -157,3 +157,489 @@ msgstr "Składniki innych autorów"
 msgid "Public domain"
 msgstr "Domena publiczna"
 
+msgid "General"
+msgstr "Ogólne"
+
+msgid "Appearance"
+msgstr "Wygląd"
+
+msgid "Guitar"
+msgstr "Gitara"
+
+msgid "Audio"
+msgstr "Dźwięk"
+
+msgid "MIDI"
+msgstr "MIDI"
+
+msgid "Graphics"
+msgstr "Grafika"
+
+msgid "Restore defaults"
+msgstr "Przywróć domyślne"
+
+msgid "Interface language"
+msgstr "Język interfejsu"
+
+msgid "Start"
+msgstr "Uruchamianie"
+
+msgid "Show the start screen"
+msgstr "Pokazuj ekran startowy"
+
+msgid "Last opened screen"
+msgstr "Ostatnio otwarty ekran"
+
+msgid "After start-up open"
+msgstr "Po uruchomieniu otwórz"
+
+msgid "Theme"
+msgstr "Motyw"
+
+msgid "Automatic (as in the system)"
+msgstr "Automatyczny (jak w systemie)"
+
+msgid "Accent colour"
+msgstr "Kolor akcentu"
+
+msgid "Theme colour"
+msgstr "Kolor motywu"
+
+msgid "Background"
+msgstr "Tło"
+
+msgid "Solid colour"
+msgstr "Jednolity kolor"
+
+msgid "Gradient"
+msgstr "Gradient"
+
+msgid "Pattern"
+msgstr "Deseń"
+
+msgid "Own image"
+msgstr "Własny obraz"
+
+msgid "Colour"
+msgstr "Kolor"
+
+msgid "First colour"
+msgstr "Pierwszy kolor"
+
+msgid "Second colour"
+msgstr "Drugi kolor"
+
+msgid "Direction"
+msgstr "Kierunek"
+
+msgid "Wood"
+msgstr "Drewno"
+
+msgid "Carbon"
+msgstr "Karbon"
+
+msgid "Leather"
+msgstr "Skóra"
+
+msgid "Felt"
+msgstr "Filc"
+
+msgid "Notes"
+msgstr "Nuty"
+
+msgid "Geometric"
+msgstr "Geometryczny"
+
+msgid "Base colour"
+msgstr "Kolor podstawowy"
+
+msgid "Pattern colour"
+msgstr "Kolor deseniu"
+
+msgid "Pattern intensity"
+msgstr "Wyrazistość deseniu"
+
+msgid "Pattern scale"
+msgstr "Skala deseniu"
+
+msgid "Blur"
+msgstr "Rozmycie"
+
+msgid "Dim"
+msgstr "Przyciemnienie"
+
+msgid "Animated background"
+msgstr "Ruchome tło"
+
+msgid "Animation speed"
+msgstr "Szybkość animacji"
+
+msgid "Background particles"
+msgstr "Cząsteczki w tle"
+
+msgid "Particles"
+msgstr "Cząsteczki"
+
+msgid "Off"
+msgstr "Wyłączone"
+
+msgid "Dust"
+msgstr "Pył"
+
+msgid "Sparks"
+msgstr "Iskry"
+
+msgid "Floating notes"
+msgstr "Unoszące się nuty"
+
+msgid "Bokeh"
+msgstr "Bokeh"
+
+msgid "Density"
+msgstr "Gęstość"
+
+msgid "Speed"
+msgstr "Szybkość"
+
+msgid "Played note effect"
+msgstr "Efekt zagranego dźwięku"
+
+msgid "Particles when a note is hit"
+msgstr "Cząsteczki po trafieniu dźwięku"
+
+msgid "Effect"
+msgstr "Efekt"
+
+msgid "Glow"
+msgstr "Poświata"
+
+msgid "Try it"
+msgstr "Wypróbuj"
+
+msgid "Panels and tiles"
+msgstr "Panele i kafelki"
+
+msgid "Opacity"
+msgstr "Krycie"
+
+msgid "Corner rounding"
+msgstr "Zaokrąglenie narożników"
+
+msgid "Shadow"
+msgstr "Cień"
+
+msgid "Text size"
+msgstr "Wielkość tekstu"
+
+msgid "Choose an image…"
+msgstr "Wybierz obraz…"
+
+msgid "Background image"
+msgstr "Obraz tła"
+
+msgid "No image selected"
+msgstr "Nie wybrano obrazu"
+
+msgid "Image"
+msgstr "Obraz"
+
+msgid "Any colour"
+msgstr "Dowolny kolor"
+
+msgid "Instrument"
+msgstr "Instrument"
+
+msgid "Standard (E A D G B E)"
+msgstr "Standardowy (E A D G B E)"
+
+msgid "Drop D (D A D G B E)"
+msgstr "Drop D (D A D G B E)"
+
+msgid "Half step down (E♭ A♭ D♭ G♭ B♭ E♭)"
+msgstr "Obniżony o pół tonu (E♭ A♭ D♭ G♭ B♭ E♭)"
+
+msgid "Whole step down (D G C F A D)"
+msgstr "Obniżony o cały ton (D G C F A D)"
+
+msgid "Drop C (C G C F A D)"
+msgstr "Drop C (C G C F A D)"
+
+msgid "DADGAD"
+msgstr "DADGAD"
+
+msgid "Open G (D G D G B D)"
+msgstr "Otwarty G (D G D G B D)"
+
+msgid "Open D (D A D F♯ A D)"
+msgstr "Otwarty D (D A D F♯ A D)"
+
+msgid "Open E (E B E G♯ B E)"
+msgstr "Otwarty E (E B E G♯ B E)"
+
+msgid "Strings"
+msgstr "Struny"
+
+msgid "Frets"
+msgstr "Progi"
+
+msgid "Left-handed"
+msgstr "Leworęczny"
+
+msgid "Reference pitch A4"
+msgstr "Strój odniesienia A4"
+
+msgid "Fretboard look"
+msgstr "Wygląd gryfu"
+
+msgid "Electric"
+msgstr "Elektryczna"
+
+msgid "Acoustic"
+msgstr "Akustyczna"
+
+msgid "Classical"
+msgstr "Klasyczna"
+
+msgid "Fretboard wood"
+msgstr "Drewno podstrunnicy"
+
+msgid "Rosewood"
+msgstr "Palisander"
+
+msgid "Maple"
+msgstr "Klon"
+
+msgid "Ebony"
+msgstr "Heban"
+
+msgid "Nickel"
+msgstr "Nikiel"
+
+msgid "Stainless steel"
+msgstr "Stal nierdzewna"
+
+msgid "Gold"
+msgstr "Złoto"
+
+msgid "Inlays"
+msgstr "Znaczniki"
+
+msgid "Dots"
+msgstr "Kropki"
+
+msgid "Blocks"
+msgstr "Prostokąty"
+
+msgid "Trapezoids"
+msgstr "Trapezy"
+
+msgid "None"
+msgstr "Brak"
+
+msgid "Bronze"
+msgstr "Brąz"
+
+msgid "Black"
+msgstr "Czarne"
+
+msgid "Devices"
+msgstr "Urządzenia"
+
+msgid "Input (guitar)"
+msgstr "Wejście (gitara)"
+
+msgid "Input channel"
+msgstr "Kanał wejścia"
+
+msgid "Left"
+msgstr "Lewy"
+
+msgid "Right"
+msgstr "Prawy"
+
+msgid "Both (mono)"
+msgstr "Oba (mono)"
+
+msgid "Output"
+msgstr "Wyjście"
+
+msgid "System default"
+msgstr "Domyślne systemowe"
+
+msgid "Latency"
+msgstr "Opóźnienie"
+
+msgid "Buffer"
+msgstr "Bufor"
+
+msgid "Latency compensation"
+msgstr "Kompensacja opóźnienia"
+
+msgid "Recognition"
+msgstr "Rozpoznawanie"
+
+msgid "Sensitivity"
+msgstr "Czułość"
+
+msgid "Noise gate"
+msgstr "Bramka szumów"
+
+msgid "Hear the input in the headphones"
+msgstr "Odsłuch wejścia w słuchawkach"
+
+msgid "Program volume"
+msgstr "Głośność programu"
+
+msgid "Built-in synthesizer"
+msgstr "Wbudowany syntezator"
+
+msgid "Input (MIDI guitar, keyboard)"
+msgstr "Wejście (gitara MIDI, klawiatura)"
+
+msgid "Sound"
+msgstr "Brzmienie"
+
+msgid "Volume"
+msgstr "Głośność"
+
+msgid "Reverb"
+msgstr "Pogłos"
+
+msgid "Velocity"
+msgstr "Siła uderzenia"
+
+msgid "Window"
+msgstr "Okno"
+
+msgid "Display mode"
+msgstr "Tryb wyświetlania"
+
+msgid "Maximized window"
+msgstr "Okno zmaksymalizowane"
+
+msgid "Full screen"
+msgstr "Pełny ekran"
+
+msgid "Exclusive full screen"
+msgstr "Wyłączny pełny ekran"
+
+msgid "Window size"
+msgstr "Rozmiar okna"
+
+msgid "Automatic"
+msgstr "Automatycznie"
+
+msgid "Monitor"
+msgstr "Monitor"
+
+msgid "Interface scale"
+msgstr "Skala interfejsu"
+
+msgid "Frame rate"
+msgstr "Klatki na sekundę"
+
+msgid "V-Sync"
+msgstr "Synchronizacja pionowa"
+
+msgid "On"
+msgstr "Włączona"
+
+msgid "Adaptive"
+msgstr "Adaptacyjna"
+
+msgid "Frame limit"
+msgstr "Limit klatek"
+
+msgid "No limit"
+msgstr "Bez limitu"
+
+msgid "Power saving (redraw only on change)"
+msgstr "Oszczędzanie energii (odświeżanie tylko przy zmianie)"
+
+msgid "Frames in the background"
+msgstr "Klatki w tle"
+
+msgid "3D quality"
+msgstr "Jakość 3D"
+
+msgid "Quality profile"
+msgstr "Profil jakości"
+
+msgid "Low"
+msgstr "Niska"
+
+msgid "Medium"
+msgstr "Średnia"
+
+msgid "High"
+msgstr "Wysoka"
+
+msgid "Ultra"
+msgstr "Najwyższa"
+
+msgid "Custom"
+msgstr "Własna"
+
+msgid "Anti-aliasing (MSAA)"
+msgstr "Wygładzanie krawędzi (MSAA)"
+
+msgid "3D render scale"
+msgstr "Rozdzielczość renderowania 3D"
+
+msgid "Anisotropic filtering"
+msgstr "Filtrowanie anizotropowe"
+
+msgid "Shadows"
+msgstr "Cienie"
+
+msgid "Reflections of the surroundings"
+msgstr "Odbicia otoczenia"
+
+msgid "Picture"
+msgstr "Obraz"
+
+msgid "Brightness"
+msgstr "Jasność"
+
+msgid "Contrast"
+msgstr "Kontrast"
+
+msgid "Gamma"
+msgstr "Gamma"
+
+msgid "Animations"
+msgstr "Animacje"
+
+msgid "Interface animations"
+msgstr "Animacje interfejsu"
+
+msgid "Full"
+msgstr "Pełne"
+
+msgid "Reduced"
+msgstr "Ograniczone"
+
+msgid "Random logo spin"
+msgstr "Losowe obroty logo"
+
+msgid "Spin frequency"
+msgstr "Częstość obrotów"
+
+msgid "Rarely"
+msgstr "Rzadko"
+
+msgid "Normally"
+msgstr "Normalnie"
+
+msgid "Often"
+msgstr "Często"
+
+msgid "3D fretboard"
+msgstr "Gryf 3D"
+
+msgid "Camera tilt"
+msgstr "Pochylenie kamery"
+
+msgid "Perspective (field of view)"
+msgstr "Perspektywa (pole widzenia)"
+
