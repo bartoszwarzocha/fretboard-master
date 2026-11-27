@@ -206,7 +206,7 @@ func _on_resized() -> void:
 		_vp.size = Vector2i(size * SS)
 		# Duży obraz (Encyklopedia – gryf na całą szerokość): nadpróbkowanie 2× już wygładza krawędzie,
 		# więc MSAA najwyżej 2× – bufor wielopróbkowy 4× zająłby kilkadziesiąt MB pamięci karty.
-		var cap := Viewport.MSAA_2X if _vp.size.x * _vp.size.y > 4000000 else Viewport.MSAA_4X
+		var cap := Viewport.MSAA_2X if _vp.size.x * _vp.size.y > 1500000 else Viewport.MSAA_4X
 		_vp.msaa_3d = mini(Graphics.msaa_mode(), cap) as Viewport.MSAA
 		_apply_camera()
 	queue_redraw()
