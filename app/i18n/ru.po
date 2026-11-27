@@ -208,8 +208,8 @@ msgstr "Пример:"
 msgid "Show performance data (F3)"
 msgstr "Показывать данные производительности (F3)"
 
-msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
-msgstr "Fretboard Master – программа для обучения игре на гитаре: энциклопедия гамм и аккордов, упражнения, чтение нот, тюнер и метроном – с распознаванием сыгранных нот в реальном времени."
+msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with live assessment of your playing."
+msgstr "Fretboard Master – программа для обучения игре на гитаре: энциклопедия гамм и аккордов, упражнения, чтение нот, тюнер и метроном – с оценкой игры вживую."
 
 msgid "Copyright"
 msgstr "Авторские права"

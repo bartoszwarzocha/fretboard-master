@@ -105,11 +105,11 @@ T = {
  "Solfège (Do Re Mi Fa Sol La Si)": ("Solmizacja (Do Re Mi Fa Sol La Si)", "Solmisation (Do Re Mi Fa Sol La Si)", "Solfeo (Do Re Mi Fa Sol La Si)", "Сольмизация (Do Re Mi Fa Sol La Si)"),
  "Example:": ("Przykład:", "Beispiel:", "Ejemplo:", "Пример:"),
  "Show performance data (F3)": ("Pokaż dane wydajności (F3)", "Leistungsdaten anzeigen (F3)", "Mostrar datos de rendimiento (F3)", "Показывать данные производительности (F3)"),
- "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with real-time recognition of the notes you play.": (
-  "Fretboard Master to program do nauki gry na gitarze: encyklopedia skal i akordów, ćwiczenia, czytanie nut, tuner i metronom – z rozpoznawaniem dźwięku granego na gitarze w czasie rzeczywistym.",
-  "Fretboard Master ist ein Programm zum Gitarrelernen: Enzyklopädie der Tonleitern und Akkorde, Übungen, Notenlesen, Stimmgerät und Metronom – mit Echtzeit-Erkennung der gespielten Töne.",
-  "Fretboard Master es un programa para aprender guitarra: enciclopedia de escalas y acordes, ejercicios, lectura de notas, afinador y metrónomo, con reconocimiento en tiempo real de las notas que tocas.",
-  "Fretboard Master – программа для обучения игре на гитаре: энциклопедия гамм и аккордов, упражнения, чтение нот, тюнер и метроном – с распознаванием сыгранных нот в реальном времени."),
+ "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with live assessment of your playing.": (
+  "Fretboard Master to program do nauki gry na gitarze: encyklopedia skal i akordów, ćwiczenia, czytanie nut, tuner i metronom – z oceną gry na żywo.",
+  "Fretboard Master ist ein Programm zum Gitarrelernen: Enzyklopädie der Tonleitern und Akkorde, Übungen, Notenlesen, Stimmgerät und Metronom – mit Live-Bewertung deines Spiels.",
+  "Fretboard Master es un programa para aprender guitarra: enciclopedia de escalas y acordes, ejercicios, lectura de notas, afinador y metrónomo, con evaluación de tu forma de tocar en directo.",
+  "Fretboard Master – программа для обучения игре на гитаре: энциклопедия гамм и аккордов, упражнения, чтение нот, тюнер и метроном – с оценкой игры вживую."),
  "Copyright": ("Prawa autorskie", "Urheberrecht", "Derechos de autor", "Авторские права"),
  "Licence": ("Licencja", "Lizenz", "Licencia", "Лицензия"),
  "Show licence": ("Pokaż licencję", "Lizenz anzeigen", "Ver licencia", "Показать лицензию"),
