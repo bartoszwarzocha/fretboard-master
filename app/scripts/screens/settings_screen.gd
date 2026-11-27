@@ -3,17 +3,18 @@
 # Zakładka jest budowana od nowa tylko wtedy, gdy zmiana pokazuje lub ukrywa inne pola
 # (np. tryb tła) – zwykła zmiana wartości niczego nie przebudowuje.
 # Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
-extends ModuleScreen
+extends Control
 
 const LANGUAGE_NAMES := {"": "System language", "en": "English", "pl": "Polski", "de": "Deutsch",
 		"es": "Español", "ru": "Русский"}
+# Zakładki jak w zaakceptowanej makiecie; identyfikator zakładki = grupa ustawień w App.DEFAULTS.
 const TABS := [
-	[&"general", "General"], [&"look", "Appearance"], [&"guitar", "Guitar"], [&"audio", "Audio"],
-	[&"midi", "MIDI"], [&"graphics", "Graphics"],
+	[&"audio", "Sound and MIDI"], [&"guitar", "Guitar and tuning"], [&"look", "Appearance and graphics"],
+	[&"language", "Language and notation"], [&"profile", "Profile and progress"],
 ]
 # Zmiana tych ustawień pokazuje lub ukrywa inne pola – zakładka jest wtedy budowana od nowa.
 const REBUILD_KEYS := [&"theme", &"accent", &"bg_mode", &"bg_gradient_type", &"bg_animated", &"particles", &"hit_particles", &"window_mode", &"neck_view",
-		&"quality", &"power_saving", &"logo_spin", &"animations", &"midi_output"]
+		&"quality", &"power_saving", &"logo_spin", &"animations", &"panel_radius", &"panel_opacity", &"panel_shadow", &"font_scale"]
 # Widoki gryfu: realistyczne 3D (trzy rodzaje gitar) i schematyczne (jak w pierwotnej makiecie).
 # Rysowanie powstanie razem z modułem gryfu; tu tylko wybór. Kolejne widoki – nowa pozycja listy.
 const NECK_VIEWS := [
@@ -29,60 +30,52 @@ const TUNINGS := [
 	["drop_c", "Drop C (C G C F A D)"], ["dadgad", "DADGAD"], ["open_g", "Open G (D G D G B D)"],
 	["open_d", "Open D (D A D F♯ A D)"], ["open_e", "Open E (E B E G♯ B E)"],
 ]
-const GM_INSTRUMENTS := ["Acoustic Grand Piano", "Bright Acoustic Piano", "Electric Grand Piano",
-	"Honky-tonk Piano", "Electric Piano 1", "Electric Piano 2", "Harpsichord", "Clavinet", "Celesta",
-	"Glockenspiel", "Music Box", "Vibraphone", "Marimba", "Xylophone", "Tubular Bells", "Dulcimer",
-	"Drawbar Organ", "Percussive Organ", "Rock Organ", "Church Organ", "Reed Organ", "Accordion",
-	"Harmonica", "Tango Accordion", "Acoustic Guitar (nylon)", "Acoustic Guitar (steel)",
-	"Electric Guitar (jazz)", "Electric Guitar (clean)", "Electric Guitar (muted)", "Overdriven Guitar",
-	"Distortion Guitar", "Guitar Harmonics", "Acoustic Bass", "Electric Bass (finger)",
-	"Electric Bass (pick)", "Fretless Bass", "Slap Bass 1", "Slap Bass 2", "Synth Bass 1", "Synth Bass 2",
-	"Violin", "Viola", "Cello", "Contrabass", "Tremolo Strings", "Pizzicato Strings", "Orchestral Harp",
-	"Timpani", "String Ensemble 1", "String Ensemble 2", "Synth Strings 1", "Synth Strings 2",
-	"Choir Aahs", "Voice Oohs", "Synth Voice", "Orchestra Hit", "Trumpet", "Trombone", "Tuba",
-	"Muted Trumpet", "French Horn", "Brass Section", "Synth Brass 1", "Synth Brass 2", "Soprano Sax",
-	"Alto Sax", "Tenor Sax", "Baritone Sax", "Oboe", "English Horn", "Bassoon", "Clarinet", "Piccolo",
-	"Flute", "Recorder", "Pan Flute", "Blown Bottle", "Shakuhachi", "Whistle", "Ocarina",
-	"Lead 1 (square)", "Lead 2 (sawtooth)", "Lead 3 (calliope)", "Lead 4 (chiff)", "Lead 5 (charang)",
-	"Lead 6 (voice)", "Lead 7 (fifths)", "Lead 8 (bass + lead)", "Pad 1 (new age)", "Pad 2 (warm)",
-	"Pad 3 (polysynth)", "Pad 4 (choir)", "Pad 5 (bowed)", "Pad 6 (metallic)", "Pad 7 (halo)",
-	"Pad 8 (sweep)", "FX 1 (rain)", "FX 2 (soundtrack)", "FX 3 (crystal)", "FX 4 (atmosphere)",
-	"FX 5 (brightness)", "FX 6 (goblins)", "FX 7 (echoes)", "FX 8 (sci-fi)", "Sitar", "Banjo",
-	"Shamisen", "Koto", "Kalimba", "Bagpipe", "Fiddle", "Shanai", "Tinkle Bell", "Agogo", "Steel Drums",
-	"Woodblock", "Taiko Drum", "Melodic Tom", "Synth Drum", "Reverse Cymbal", "Guitar Fret Noise",
-	"Breath Noise", "Seashore", "Bird Tweet", "Telephone Ring", "Helicopter", "Applause", "Gunshot"]
 
-var _tab: StringName = &"general"
+var _tab: StringName = &"audio"
 var _tab_buttons := {}
-var _title: Label
 var _scroll: ScrollContainer
-var _rows: VBoxContainer
+var _page: VBoxContainer       # treść zakładki (przebudowywana)
+var _rows: VBoxContainer       # bieżąca karta, do której trafiają wiersze
 var _sample: Label
 var _rebuild_pending := false
 
 
-func _init() -> void:
-	module_id = &"settings"
-
-
-func _build_content() -> void:
+func _ready() -> void:
+	set_process(false)
 	var body := HBoxContainer.new()
-	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.add_theme_constant_override("separation", 24)
-	content.add_child(body)
+	body.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	body.add_theme_constant_override("separation", 0)
+	add_child(body)
 
-	# Zakładki
+	# Pasek zakładek po lewej (jak w makiecie): powrót do menu, nagłówek, zakładki.
+	var nav := PanelContainer.new()
+	nav.custom_minimum_size.x = 290
+	var nav_box := ThemeManager.box(ThemeManager.color("bg").lerp(ThemeManager.color("surface"), 0.3),
+			Color.TRANSPARENT, 0, 0, 22, 44)
+	nav_box.border_color = ThemeManager.color("border")
+	nav_box.border_width_right = 1
+	nav.add_theme_stylebox_override("panel", nav_box)
+	body.add_child(nav)
 	var side := VBoxContainer.new()
-	side.custom_minimum_size.x = 230
 	side.add_theme_constant_override("separation", 4)
-	body.add_child(side)
+	nav.add_child(side)
+	var back := Button.new()
+	back.text = "← " + tr("Main menu")
+	back.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	back.add_theme_color_override("font_color", ThemeManager.color("muted"))
+	back.add_theme_font_size_override("font_size", ThemeManager.fs(16))
+	back.add_theme_stylebox_override("normal", ThemeManager.box(Color.TRANSPARENT, ThemeManager.color("border"), 10, 1, 14, 9))
+	back.add_theme_stylebox_override("hover", ThemeManager.box(ThemeManager.color("surface_2"), ThemeManager.color("border_strong"), 10, 1, 14, 9))
+	back.add_theme_stylebox_override("pressed", ThemeManager.box(ThemeManager.color("border"), ThemeManager.color("border_strong"), 10, 1, 14, 9))
+	back.pressed.connect(App.go.bind(&"menu"))
+	side.add_child(back)
+	side.add_child(_spacer(26))
 	var heading := Label.new()
 	heading.text = "Settings"
-	heading.theme_type_variation = &"Heading"
+	heading.theme_type_variation = &"Title"
+	heading.add_theme_font_size_override("font_size", ThemeManager.fs(30))
 	side.add_child(heading)
-	var gap := Control.new()
-	gap.custom_minimum_size.y = 12
-	side.add_child(gap)
+	side.add_child(_spacer(20))
 	var group := ButtonGroup.new()
 	for t in TABS:
 		var b := Button.new()
@@ -91,53 +84,39 @@ func _build_content() -> void:
 		b.toggle_mode = true
 		b.button_group = group
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		b.button_pressed = t[0] == _tab
+		b.add_theme_font_size_override("font_size", ThemeManager.fs(17))
 		b.pressed.connect(_select_tab.bind(t[0]))
 		side.add_child(b)
 		_tab_buttons[t[0]] = b
 
 	# Treść zakładki
-	var card := PanelContainer.new()
-	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.add_child(card)
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 16)
-	card.add_child(col)
-	var head := HBoxContainer.new()
-	col.add_child(head)
-	_title = Label.new()
-	_title.theme_type_variation = &"Title"
-	_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	head.add_child(_title)
-	var reset := Button.new()
-	reset.text = "Restore defaults"
-	reset.pressed.connect(func() -> void:
-		App.reset_group(_tab)
-		if _tab == &"graphics":
-			Graphics.apply_quality(str(App.setting(&"quality")))
-		_rebuild())
-	head.add_child(reset)
-	col.add_child(HSeparator.new())
 	_scroll = ScrollContainer.new()
-	_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	col.add_child(_scroll)
+	body.add_child(_scroll)
 
 	App.settings_changed.connect(_on_setting)
-	_rebuild()
+	_select_tab(_tab)
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel"):
+		App.go(&"menu")
+		get_viewport().set_input_as_handled()
 
 
 func _select_tab(tab: StringName) -> void:
 	_tab = tab
 	for t in _tab_buttons:
-		(_tab_buttons[t] as Button).set_pressed_no_signal(t == tab)
+		var b := _tab_buttons[t] as Button
+		b.set_pressed_no_signal(t == tab)
+		b.add_theme_font_override("font", ThemeManager.font_body_bold if t == tab else ThemeManager.font_body_medium)
 	_rebuild()
 	_scroll.scroll_vertical = 0
 
 
 func _on_setting(key: StringName) -> void:
-	if key in REBUILD_KEYS and not _rebuild_pending:
+	if _tab != &"audio" and key in REBUILD_KEYS and not _rebuild_pending:
 		_rebuild_pending = true
 		_rebuild.call_deferred()
 
@@ -146,53 +125,92 @@ func _on_setting(key: StringName) -> void:
 func _rebuild() -> void:
 	_rebuild_pending = false
 	var keep := _scroll.scroll_vertical
-	if _rows:
-		_rows.queue_free()
-	_rows = VBoxContainer.new()
-	_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_rows.add_theme_constant_override("separation", 14)
-	_scroll.add_child(_rows)
+	var margin := MarginContainer.new()
+	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.add_theme_constant_override("margin_left", 52)
+	margin.add_theme_constant_override("margin_right", 52)
+	margin.add_theme_constant_override("margin_top", 40)
+	margin.add_theme_constant_override("margin_bottom", 40)
+	_page = VBoxContainer.new()
+	_page.add_theme_constant_override("separation", 20)
+	margin.add_child(_page)
+	if _scroll.get_child_count() > 0:
+		_scroll.get_child(0).queue_free()
+	_scroll.add_child(margin)
+	_rows = null
+	_sample = null
+	if _tab == &"audio":
+		_page.add_child(SettingsAudio.new())
+	else:
+		_title_row()
+		match _tab:
+			&"guitar": _build_guitar()
+			&"look":
+				_build_look()
+				_build_graphics()
+			&"language": _build_language()
+			&"profile": _build_profile()
+	(func() -> void: _scroll.scroll_vertical = keep).call_deferred()
+
+
+# Tytuł zakładki i „Przywróć domyślne” (poza zakładką dźwięku, która w makiecie nie ma nagłówka).
+func _title_row() -> void:
+	var head := HBoxContainer.new()
+	_page.add_child(head)
+	var title := Label.new()
+	title.theme_type_variation = &"Title"
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for t in TABS:
 		if t[0] == _tab:
-			_title.text = t[1]
-	_sample = null
-	match _tab:
-		&"general": _build_general()
-		&"look": _build_look()
-		&"guitar": _build_guitar()
-		&"audio": _build_audio()
-		&"midi": _build_midi()
-		&"graphics": _build_graphics()
-	var pad := Control.new()
-	pad.custom_minimum_size.y = 8
-	_rows.add_child(pad)
-	(func() -> void: _scroll.scroll_vertical = keep).call_deferred()
+			title.text = t[1]
+	head.add_child(title)
+	var reset := Button.new()
+	reset.text = "Restore defaults"
+	reset.pressed.connect(func() -> void:
+		App.reset_group(_tab)
+		if _tab == &"look":
+			Graphics.apply_quality(str(App.setting(&"quality")))
+		_rebuild())
+	head.add_child(reset)
 
 
 # --- Zakładki -----------------------------------------------------------------
 
-func _build_general() -> void:
+func _build_language() -> void:
 	_section("Language")
 	var langs := []
 	for code in App.LANGUAGES:
 		langs.append([code, LANGUAGE_NAMES[code]])
 	var lang := _select(&"language", "Interface language", langs, false)
 	lang.set_item_auto_translate_mode(0, Node.AUTO_TRANSLATE_MODE_ALWAYS)
+
+	_section("Note names")
 	var notation := []
 	for i in NoteNames.NOTATION_LABELS.size():
 		notation.append([i, NoteNames.NOTATION_LABELS[i]])
-	_select(&"notation", "Note names", notation).item_selected.connect(func(_i: int) -> void: _update_sample())
+	_select(&"notation", "Notation", notation).item_selected.connect(func(_i: int) -> void: _update_sample())
 	_sample = Label.new()
 	_sample.theme_type_variation = &"Muted"
 	_sample.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_row("", _sample)
 	_update_sample()
 
-	_section("Start")
-	var screens := [["menu", "Main menu"], ["last", "Last opened screen"]]
-	for m in App.MODULES:
-		screens.append([String(m.id), m.name])
-	_select(&"start_screen", "After start-up open", screens)
+
+# Profil: imię (powitanie w menu głównym) i dzienny cel ćwiczeń (karta „Cel dnia”).
+func _build_profile() -> void:
+	_section("Profile")
+	var name_edit := LineEdit.new()
+	name_edit.custom_minimum_size.x = 380
+	name_edit.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	name_edit.max_length = 32
+	name_edit.placeholder_text = "Your name"
+	name_edit.text = str(App.setting(&"profile_name"))
+	name_edit.text_changed.connect(func(t: String) -> void: _store(&"profile_name", t.strip_edges()))
+	_row("Name (greeting in the main menu)", name_edit)
+
+	_section("Progress")
+	_select(&"daily_goal", "Daily practice goal", [[10, "10 min"], [15, "15 min"], [20, "20 min"],
+			[30, "30 min"], [45, "45 min"], [60, "60 min"], [90, "90 min"]], false)
 
 
 func _build_look() -> void:
@@ -282,47 +300,12 @@ func _build_guitar() -> void:
 			["none", "None"]])
 
 
-func _build_audio() -> void:
-	_section("Devices")
-	_select(&"audio_input", "Input (guitar)", _devices(AudioServer.get_input_device_list()), false)
-	_select(&"input_channel", "Input channel", [[0, "Left"], [1, "Right"], [2, "Both (mono)"]])
-	_select(&"audio_output", "Output", _devices(AudioServer.get_output_device_list()), false)
-
-	_section("Latency")
-	_select(&"buffer_ms", "Buffer", [[3, "3 ms"], [5, "5 ms"], [10, "10 ms"], [20, "20 ms"], [40, "40 ms"]], false)
-	_slider(&"latency_comp_ms", "Latency compensation", -100, 100, 1, "%d ms")
-
-	_section("Recognition")
-	_slider(&"sensitivity", "Sensitivity", 0, 1, 0.05, "%")
-	_slider(&"noise_gate_db", "Noise gate", -90, -20, 1, "%d dB")
-	_toggle(&"input_monitor", "Input monitoring (headphones)")
-	_slider(&"master_volume", "Program volume", 0, 1, 0.05, "%")
-
-
-func _build_midi() -> void:
-	_section("Devices")
-	var outputs := [["internal", "Built-in synthesizer"]]
-	_select(&"midi_output", "Output", outputs)
-	# Wejścia MIDI obsłuży rdzeń C++ (PortMidi). Wbudowane MIDI Godota (OS.open_midi_inputs)
-	# zawieszało program na Windows przy otwarciu tej zakładki – nie jest tu używane.
-	var inputs := [["", tr("None")]]
-	var saved := str(App.setting(&"midi_input"))
-	if not saved.is_empty():
-		inputs.append([saved, saved])
-	_select(&"midi_input", "Input (MIDI guitar, keyboard)", inputs, false)
-
-	_section("Sound")
-	var instruments := []
-	for i in GM_INSTRUMENTS.size():
-		instruments.append([i, "%d. %s" % [i + 1, GM_INSTRUMENTS[i]]])
-	_select(&"midi_instrument", "Instrument", instruments, false)
-	_slider(&"midi_volume", "Volume", 0, 1, 0.05, "%")
-	_slider(&"midi_reverb", "Reverb", 0, 1, 0.05, "%")
-	_slider(&"midi_velocity", "Velocity", 1, 127, 1, "%d")
-
-
 func _build_graphics() -> void:
 	_section("Window")
+	var screens := [["menu", "Main menu"], ["last", "Last opened screen"]]
+	for m in App.MODULES:
+		screens.append([String(m.id), m.name])
+	_select(&"start_screen", "After start-up open", screens)
 	var mode := str(App.setting(&"window_mode"))
 	_select(&"window_mode", "Display mode", [["windowed", "Window"], ["maximized", "Maximized window"],
 			["fullscreen", "Full screen"], ["exclusive", "Exclusive full screen"]])
@@ -379,16 +362,25 @@ func _build_graphics() -> void:
 
 # --- Wiersze ------------------------------------------------------------------
 
+# Każda sekcja to osobna karta (jak karty w makiecie) z tytułem; kolejne wiersze trafiają do niej.
 func _section(text: String) -> void:
-	if _rows.get_child_count() > 0:
-		var gap := Control.new()
-		gap.custom_minimum_size.y = 10
-		_rows.add_child(gap)
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override("panel", ThemeManager.card_box(ThemeManager.color("surface"), ThemeManager.color("border"), 24))
+	_page.add_child(card)
+	_rows = VBoxContainer.new()
+	_rows.add_theme_constant_override("separation", 14)
+	card.add_child(_rows)
 	var l := Label.new()
 	l.text = text
-	l.theme_type_variation = &"Section"
-	l.uppercase = true
+	l.add_theme_font_override("font", ThemeManager.font_heading)
+	l.add_theme_font_size_override("font_size", ThemeManager.fs(22))
 	_rows.add_child(l)
+
+
+func _spacer(h: int) -> Control:
+	var c := Control.new()
+	c.custom_minimum_size.y = h
+	return c
 
 
 func _row(label_text: String, control: Control) -> void:

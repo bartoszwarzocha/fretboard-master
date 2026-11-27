@@ -78,7 +78,9 @@ func _ready() -> void:
 	gap.custom_minimum_size.y = 48
 	left.add_child(gap)
 	var hello := Label.new()
-	hello.text = "Hello!"
+	var who := str(App.setting(&"profile_name"))
+	hello.text = "Hello!" if who.is_empty() else tr("Hello, %s!") % who
+	hello.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_ALWAYS if who.is_empty() else Node.AUTO_TRANSLATE_MODE_DISABLED
 	hello.theme_type_variation = &"Muted"
 	hello.add_theme_font_size_override("font_size", 18)
 	left.add_child(hello)

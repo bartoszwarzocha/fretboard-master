@@ -9,11 +9,17 @@ const SETTINGS_PATH := "user://settings.cfg"
 const LANGUAGES: Array[String] = ["", "en", "pl", "de", "es", "ru"]  # "" = język systemu
 
 # Wszystkie ustawienia z wartościami domyślnymi, pogrupowane jak zakładki okna konfiguracji
-# (przycisk „Przywróć domyślne” przywraca klucze jednej grupy).
+# (przycisk „Przywróć domyślne” przywraca klucze jednej grupy). Grupa „state” nie ma zakładki.
 const DEFAULTS := {
-	&"general": {
-		&"language": "", &"notation": 0, &"start_screen": "menu",
-		&"last_screen": "menu",
+	&"audio": {
+		&"audio_driver": "wasapi", &"audio_input": "Default", &"input_channel": 0,
+		&"audio_output": "Default", &"output_volume": 70, &"input_monitor": false, &"buffer_samples": 128,
+		&"midi_output": "internal", &"midi_instrument": 24,
+	},
+	&"guitar": {
+		&"tuning": "standard", &"strings": 6, &"frets": 22, &"left_handed": false, &"a4": 440.0,
+		&"neck_view": "electric_3d", &"fretboard_wood": "rosewood", &"fret_metal": "nickel",
+		&"inlays": "dots", &"string_color": "nickel",
 	},
 	&"look": {
 		&"theme": "night", &"accent": "", &"bg_mode": "solid", &"bg_color": "", &"bg_color2": "1D2A55",
@@ -23,28 +29,23 @@ const DEFAULTS := {
 		&"particles": "off", &"particles_density": 0.5, &"particles_speed": 1.0, &"particles_color": "",
 		&"hit_particles": true, &"hit_style": "sparks",
 		&"panel_opacity": 1.0, &"panel_radius": 20, &"panel_shadow": 0, &"font_scale": 1.0,
-	},
-	&"guitar": {
-		&"tuning": "standard", &"strings": 6, &"frets": 22, &"left_handed": false, &"a4": 440.0,
-		&"neck_view": "electric_3d", &"fretboard_wood": "rosewood", &"fret_metal": "nickel",
-		&"inlays": "dots", &"string_color": "nickel",
-	},
-	&"audio": {
-		&"audio_input": "Default", &"audio_output": "Default", &"input_channel": 0,
-		&"buffer_ms": 10, &"latency_comp_ms": 0, &"sensitivity": 0.6, &"noise_gate_db": -50.0,
-		&"input_monitor": false, &"master_volume": 0.8,
-	},
-	&"midi": {
-		&"midi_output": "internal", &"midi_input": "", &"midi_instrument": 25, &"midi_volume": 0.8,
-		&"midi_reverb": 0.3, &"midi_velocity": 100,
-	},
-	&"graphics": {
-		&"window_mode": "maximized", &"resolution": "1600x900", &"window_rect": "", &"monitor": -1, &"ui_scale": 1.0,
+		&"start_screen": "menu",
+		&"window_mode": "maximized", &"resolution": "1600x900", &"monitor": -1, &"ui_scale": 1.0,
 		&"vsync": "on", &"max_fps": 0, &"quality": "high", &"msaa": 4, &"render_scale": 1.0,
 		&"anisotropy": 4, &"shadows": "medium", &"reflections": false,
 		&"brightness": 1.0, &"contrast": 1.0, &"gamma": 1.0, &"animations": "full", &"anim_speed": 1.0,
 		&"logo_spin": true, &"logo_spin_rate": "normal", &"neck_tilt": 35.0, &"neck_fov": 40.0,
 		&"perf_info": false, &"power_saving": true, &"background_fps": 10,
+	},
+	&"language": {
+		&"language": "", &"notation": 0,
+	},
+	&"profile": {
+		&"profile_name": "", &"daily_goal": 20,
+	},
+	# Stan programu zapamiętywany między uruchomieniami – bez zakładki, nie jest przywracany.
+	&"state": {
+		&"last_screen": "menu", &"window_rect": "",
 	},
 }
 
@@ -78,6 +79,24 @@ func _ready() -> void:
 	_config.load(SETTINGS_PATH)
 	_apply_language()
 	get_window().min_size = Vector2i(1280, 720)
+	for key in [&"audio_input", &"audio_output", &"output_volume"]:
+		_apply_audio(key)
+	settings_changed.connect(_apply_audio)
+
+
+# Urządzenia dźwięku i głośność programu (szyna Master). Docelowo przejmie to rdzeń audio w C++.
+func _apply_audio(key: StringName) -> void:
+	match key:
+		&"audio_input":
+			var name := str(setting(key))
+			if name in AudioServer.get_input_device_list():
+				AudioServer.input_device = name
+		&"audio_output":
+			var name := str(setting(key))
+			if name in AudioServer.get_output_device_list():
+				AudioServer.output_device = name
+		&"output_volume":
+			AudioServer.set_bus_volume_db(0, linear_to_db(maxf(int(setting(key)) / 100.0, 0.0001)))
 
 
 # Strona programu – adres ustawiany w project.godot (application/config/website).
@@ -134,7 +153,7 @@ func reset_group(group: StringName) -> void:
 		if _config.has_section_key("settings", key):
 			_config.erase_section_key("settings", key)
 	_config.save(SETTINGS_PATH)
-	if group == &"general":
+	if group == &"language":
 		_apply_language()
 	for key in DEFAULTS[group]:
 		settings_changed.emit(key)

@@ -678,3 +678,171 @@ msgstr ""
 msgid "Centre – vertically"
 msgstr ""
 
+msgid "Sound and MIDI"
+msgstr ""
+
+msgid "Guitar and tuning"
+msgstr ""
+
+msgid "Appearance and graphics"
+msgstr ""
+
+msgid "Language and notation"
+msgstr ""
+
+msgid "Profile and progress"
+msgstr ""
+
+msgid "Sound driver"
+msgstr ""
+
+msgid "ASIO gives the lowest latency if your sound card supports it."
+msgstr ""
+
+msgid "Connected"
+msgstr ""
+
+msgid "Coming with the new audio engine"
+msgstr ""
+
+msgid "Input – guitar"
+msgstr ""
+
+msgid "Device"
+msgstr ""
+
+msgid "Channel"
+msgstr ""
+
+msgid "Input 1 (Hi-Z)"
+msgstr ""
+
+msgid "Input 2"
+msgstr ""
+
+msgid "Signal level – play a few notes"
+msgstr ""
+
+msgid "no signal"
+msgstr ""
+
+msgid "too quiet"
+msgstr ""
+
+msgid "good"
+msgstr ""
+
+msgid "clipping"
+msgstr ""
+
+msgid "Recognised note"
+msgstr ""
+
+msgid "Output – headphones and speakers"
+msgstr ""
+
+msgid "Test sound"
+msgstr ""
+
+msgid "Guitar monitoring: on"
+msgstr ""
+
+msgid "Guitar monitoring: off"
+msgstr ""
+
+msgid "Buffer size (in samples)"
+msgstr ""
+
+msgid "Total latency:"
+msgstr ""
+
+msgid "very good for live playing"
+msgstr ""
+
+msgid "sufficient"
+msgstr ""
+
+msgid "noticeable when playing live"
+msgstr ""
+
+msgid "measured"
+msgstr ""
+
+msgid "measuring…"
+msgstr ""
+
+msgid "no signal – connect the output to the input"
+msgstr ""
+
+msgid "Measure latency"
+msgstr ""
+
+msgid "MIDI playback – instrument"
+msgstr ""
+
+msgid "The program plays examples in the encyclopedia, exercises and backing tracks with this sound."
+msgstr ""
+
+msgid "External MIDI device"
+msgstr ""
+
+msgid "Classical guitar"
+msgstr ""
+
+msgid "nylon strings"
+msgstr ""
+
+msgid "Acoustic guitar"
+msgstr ""
+
+msgid "steel strings"
+msgstr ""
+
+msgid "Electric guitar"
+msgstr ""
+
+msgid "clean tone"
+msgstr ""
+
+msgid "Jazz guitar"
+msgstr ""
+
+msgid "warm, full tone"
+msgstr ""
+
+msgid "Overdriven guitar"
+msgstr ""
+
+msgid "overdriven tone"
+msgstr ""
+
+msgid "Piano"
+msgstr ""
+
+msgid "for ear training"
+msgstr ""
+
+msgid "Bass guitar"
+msgstr ""
+
+msgid "fingerstyle"
+msgstr ""
+
+msgid "Notation"
+msgstr ""
+
+msgid "Profile"
+msgstr ""
+
+msgid "Your name"
+msgstr ""
+
+msgid "Name (greeting in the main menu)"
+msgstr ""
+
+msgid "Daily practice goal"
+msgstr ""
+
+msgid "Hello, %s!"
+msgstr ""
+

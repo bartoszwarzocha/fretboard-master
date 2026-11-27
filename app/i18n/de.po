@@ -679,3 +679,171 @@ msgstr "Mitte – horizontal"
 msgid "Centre – vertically"
 msgstr "Mitte – vertikal"
 
+msgid "Sound and MIDI"
+msgstr "Sound und MIDI"
+
+msgid "Guitar and tuning"
+msgstr "Gitarre und Stimmung"
+
+msgid "Appearance and graphics"
+msgstr "Aussehen und Grafik"
+
+msgid "Language and notation"
+msgstr "Sprache und Notenschrift"
+
+msgid "Profile and progress"
+msgstr "Profil und Fortschritt"
+
+msgid "Sound driver"
+msgstr "Audiotreiber"
+
+msgid "ASIO gives the lowest latency if your sound card supports it."
+msgstr "ASIO bietet die geringste Latenz, wenn deine Soundkarte es unterstützt."
+
+msgid "Connected"
+msgstr "Verbunden"
+
+msgid "Coming with the new audio engine"
+msgstr "Kommt mit der neuen Audio-Engine"
+
+msgid "Input – guitar"
+msgstr "Eingang – Gitarre"
+
+msgid "Device"
+msgstr "Gerät"
+
+msgid "Channel"
+msgstr "Kanal"
+
+msgid "Input 1 (Hi-Z)"
+msgstr "Eingang 1 (Hi-Z)"
+
+msgid "Input 2"
+msgstr "Eingang 2"
+
+msgid "Signal level – play a few notes"
+msgstr "Signalpegel – spiel ein paar Töne"
+
+msgid "no signal"
+msgstr "kein Signal"
+
+msgid "too quiet"
+msgstr "zu leise"
+
+msgid "good"
+msgstr "gut"
+
+msgid "clipping"
+msgstr "übersteuert"
+
+msgid "Recognised note"
+msgstr "Erkannter Ton"
+
+msgid "Output – headphones and speakers"
+msgstr "Ausgang – Kopfhörer und Lautsprecher"
+
+msgid "Test sound"
+msgstr "Testton"
+
+msgid "Guitar monitoring: on"
+msgstr "Gitarren-Monitoring: an"
+
+msgid "Guitar monitoring: off"
+msgstr "Gitarren-Monitoring: aus"
+
+msgid "Buffer size (in samples)"
+msgstr "Puffergröße (in Samples)"
+
+msgid "Total latency:"
+msgstr "Gesamtlatenz:"
+
+msgid "very good for live playing"
+msgstr "sehr gut zum Livespielen"
+
+msgid "sufficient"
+msgstr "ausreichend"
+
+msgid "noticeable when playing live"
+msgstr "beim Livespielen spürbar"
+
+msgid "measured"
+msgstr "gemessen"
+
+msgid "measuring…"
+msgstr "Messung läuft…"
+
+msgid "no signal – connect the output to the input"
+msgstr "kein Signal – verbinde den Ausgang mit dem Eingang"
+
+msgid "Measure latency"
+msgstr "Latenz messen"
+
+msgid "MIDI playback – instrument"
+msgstr "MIDI-Wiedergabe – Instrument"
+
+msgid "The program plays examples in the encyclopedia, exercises and backing tracks with this sound."
+msgstr "Mit diesem Sound spielt das Programm Beispiele in der Enzyklopädie, den Übungen und Backing Tracks."
+
+msgid "External MIDI device"
+msgstr "Externes MIDI-Gerät"
+
+msgid "Classical guitar"
+msgstr "Konzertgitarre"
+
+msgid "nylon strings"
+msgstr "Nylonsaiten"
+
+msgid "Acoustic guitar"
+msgstr "Westerngitarre"
+
+msgid "steel strings"
+msgstr "Stahlsaiten"
+
+msgid "Electric guitar"
+msgstr "E-Gitarre"
+
+msgid "clean tone"
+msgstr "Clean-Sound"
+
+msgid "Jazz guitar"
+msgstr "Jazzgitarre"
+
+msgid "warm, full tone"
+msgstr "warmer, voller Klang"
+
+msgid "Overdriven guitar"
+msgstr "Overdrive-Gitarre"
+
+msgid "overdriven tone"
+msgstr "verzerrter Sound"
+
+msgid "Piano"
+msgstr "Klavier"
+
+msgid "for ear training"
+msgstr "für Gehörbildung"
+
+msgid "Bass guitar"
+msgstr "E-Bass"
+
+msgid "fingerstyle"
+msgstr "mit den Fingern"
+
+msgid "Notation"
+msgstr "Schreibweise"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Your name"
+msgstr "Dein Name"
+
+msgid "Name (greeting in the main menu)"
+msgstr "Name (Begrüßung im Hauptmenü)"
+
+msgid "Daily practice goal"
+msgstr "Tägliches Übungsziel"
+
+msgid "Hello, %s!"
+msgstr "Hallo, %s!"
+

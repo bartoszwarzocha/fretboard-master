@@ -24,6 +24,10 @@ config/icon="res://icon.svg"
 config/website="https://bwdsp.com.pl"
 config/windows_native_icon="res://assets/branding/icon.ico"
 
+[audio]
+
+driver/enable_input=true
+
 [autoload]
 
 App="*res://scripts/autoload/app.gd"

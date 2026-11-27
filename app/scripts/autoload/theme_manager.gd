@@ -327,7 +327,7 @@ func _build_theme() -> Theme:
 	t.set_constant("h_separation", "SideTab", 14)
 	t.set_stylebox("normal", "SideTab", box(Color.TRANSPARENT, Color.TRANSPARENT, RADIUS_CONTROL, 0, 18, 12))
 	t.set_stylebox("hover", "SideTab", box(p.surface_2, Color.TRANSPARENT, RADIUS_CONTROL, 0, 18, 12))
-	var sel := box(Color(p.accent, 0.16), Color.TRANSPARENT, RADIUS_CONTROL, 0, 18, 12)
+	var sel := box(p.border, Color.TRANSPARENT, RADIUS_CONTROL, 0, 18, 12)   # jak w makiecie: granatowe tło
 	t.set_stylebox("pressed", "SideTab", sel)
 	t.set_stylebox("hover_pressed", "SideTab", sel)
 	t.set_stylebox("focus", "SideTab", _focus_box())

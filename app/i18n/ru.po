@@ -679,3 +679,171 @@ msgstr "Центр – по горизонтали"
 msgid "Centre – vertically"
 msgstr "Центр – по вертикали"
 
+msgid "Sound and MIDI"
+msgstr "Звук и MIDI"
+
+msgid "Guitar and tuning"
+msgstr "Гитара и строй"
+
+msgid "Appearance and graphics"
+msgstr "Внешний вид и графика"
+
+msgid "Language and notation"
+msgstr "Язык и нотация"
+
+msgid "Profile and progress"
+msgstr "Профиль и прогресс"
+
+msgid "Sound driver"
+msgstr "Звуковой драйвер"
+
+msgid "ASIO gives the lowest latency if your sound card supports it."
+msgstr "ASIO даёт минимальную задержку, если звуковая карта его поддерживает."
+
+msgid "Connected"
+msgstr "Подключено"
+
+msgid "Coming with the new audio engine"
+msgstr "Появится с новым звуковым движком"
+
+msgid "Input – guitar"
+msgstr "Вход – гитара"
+
+msgid "Device"
+msgstr "Устройство"
+
+msgid "Channel"
+msgstr "Канал"
+
+msgid "Input 1 (Hi-Z)"
+msgstr "Вход 1 (Hi-Z)"
+
+msgid "Input 2"
+msgstr "Вход 2"
+
+msgid "Signal level – play a few notes"
+msgstr "Уровень сигнала – сыграйте несколько нот"
+
+msgid "no signal"
+msgstr "нет сигнала"
+
+msgid "too quiet"
+msgstr "слишком тихо"
+
+msgid "good"
+msgstr "хороший"
+
+msgid "clipping"
+msgstr "перегруз"
+
+msgid "Recognised note"
+msgstr "Распознанная нота"
+
+msgid "Output – headphones and speakers"
+msgstr "Выход – наушники и колонки"
+
+msgid "Test sound"
+msgstr "Тестовый звук"
+
+msgid "Guitar monitoring: on"
+msgstr "Мониторинг гитары: вкл."
+
+msgid "Guitar monitoring: off"
+msgstr "Мониторинг гитары: выкл."
+
+msgid "Buffer size (in samples)"
+msgstr "Размер буфера (в сэмплах)"
+
+msgid "Total latency:"
+msgstr "Общая задержка:"
+
+msgid "very good for live playing"
+msgstr "отлично для игры вживую"
+
+msgid "sufficient"
+msgstr "достаточно"
+
+msgid "noticeable when playing live"
+msgstr "заметна при игре вживую"
+
+msgid "measured"
+msgstr "измерено"
+
+msgid "measuring…"
+msgstr "идёт измерение…"
+
+msgid "no signal – connect the output to the input"
+msgstr "нет сигнала – соедините выход со входом"
+
+msgid "Measure latency"
+msgstr "Измерить задержку"
+
+msgid "MIDI playback – instrument"
+msgstr "Воспроизведение MIDI – инструмент"
+
+msgid "The program plays examples in the encyclopedia, exercises and backing tracks with this sound."
+msgstr "Этим звуком программа воспроизводит примеры в энциклопедии, упражнениях и минусовках."
+
+msgid "External MIDI device"
+msgstr "Внешнее MIDI-устройство"
+
+msgid "Classical guitar"
+msgstr "Классическая гитара"
+
+msgid "nylon strings"
+msgstr "нейлоновые струны"
+
+msgid "Acoustic guitar"
+msgstr "Акустическая гитара"
+
+msgid "steel strings"
+msgstr "металлические струны"
+
+msgid "Electric guitar"
+msgstr "Электрогитара"
+
+msgid "clean tone"
+msgstr "чистый звук"
+
+msgid "Jazz guitar"
+msgstr "Джазовая гитара"
+
+msgid "warm, full tone"
+msgstr "тёплый, полный звук"
+
+msgid "Overdriven guitar"
+msgstr "Гитара с перегрузом"
+
+msgid "overdriven tone"
+msgstr "перегруженный звук"
+
+msgid "Piano"
+msgstr "Фортепиано"
+
+msgid "for ear training"
+msgstr "для тренировки слуха"
+
+msgid "Bass guitar"
+msgstr "Бас-гитара"
+
+msgid "fingerstyle"
+msgstr "игра пальцами"
+
+msgid "Notation"
+msgstr "Запись"
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "Your name"
+msgstr "Ваше имя"
+
+msgid "Name (greeting in the main menu)"
+msgstr "Имя (приветствие в главном меню)"
+
+msgid "Daily practice goal"
+msgstr "Ежедневная цель занятий"
+
+msgid "Hello, %s!"
+msgstr "Здравствуйте, %s!"
+
