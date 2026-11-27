@@ -5,6 +5,9 @@
 #  • intro > 0 (ekran startowy): logo nadlatuje z oddali, obracając się; w ostatniej sekundzie
 #    już tylko się zbliża, płynnie wyhamowując.
 #  • animated = false (nagłówek modułów, „O programie”): obraz rysowany raz.
+# Obok logo stoi numer wersji „2.0” jako tekst 3D (czcionka Anton, TextMesh) – zgrupowany z logo,
+# porusza się razem z nim. Numer pochodzi z ustawień projektu (application/config/version),
+# więc przy kolejnej wersji wystarczy go podbić.
 # Optymalizacja: 22 siatki modelu są przy pierwszym użyciu scalane w JEDNĄ siatkę z czterema
 # powierzchniami (po jednej na kolor) – 4 wywołania rysowania zamiast 22; siatka i materiały są
 # współdzielone przez wszystkie wystąpienia logo. Bez cieni, jedno światło kierunkowe.
@@ -13,6 +16,9 @@ class_name Logo3D
 extends SubViewportContainer
 
 const MODEL_PATH := "res://assets/branding/logo.glb"
+const VERSION_FONT := "res://assets/fonts/Anton.ttf"
+const VERSION_HEIGHT := 0.62   # wysokość „2.0” względem wysokości logo
+const VERSION_GAP := 0.035     # odstęp od logo względem jego szerokości
 
 # Kolory części modelu (nazwy węzłów z pliku .glb – kontury wektorowe z Inkscape).
 const COLORS := {
@@ -40,12 +46,15 @@ const SPIN_EVERY := Vector2(3.0, 10.0)   # losowy obrót o 360° co tyle sekund 
 const SPIN_TIME := Vector2(0.5, 0.7)     # czas trwania obrotu (od–do)
 
 static var _mesh: ArrayMesh
+static var _text: TextMesh
+static var _logo_pos: Vector3
+static var _text_pos: Vector3
 static var _size: Vector3
 
 var animated := true
 var intro := 0.0
 var _vp: SubViewport
-var _pivot: MeshInstance3D
+var _pivot: Node3D
 var _time := 0.0
 var _idle := 0.0
 var _amp := 1.0
@@ -91,10 +100,18 @@ func _ready() -> void:
 	light.rotation_degrees = Vector3(-28, -32, 0)
 	_vp.add_child(light)
 
-	_pivot = MeshInstance3D.new()
-	_pivot.mesh = _mesh
-	_pivot.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_pivot = Node3D.new()
 	_vp.add_child(_pivot)
+	var logo := MeshInstance3D.new()
+	logo.mesh = _mesh
+	logo.position = _logo_pos
+	logo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_pivot.add_child(logo)
+	var ver := MeshInstance3D.new()
+	ver.mesh = _text
+	ver.position = _text_pos
+	ver.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_pivot.add_child(ver)
 
 	var cam := Camera3D.new()
 	cam.fov = FOV
@@ -253,11 +270,40 @@ static func _build_mesh() -> void:
 		var mat := StandardMaterial3D.new()
 		mat.albedo_color = COLORS[part]
 		# Połysk: gładka powierzchnia z lakierem (clearcoat) – wyraźne odblaski przy kołysaniu.
-		mat.roughness = 0.45 if part == &"panel" else 0.28
-		mat.metallic_specular = 0.7
+		# Elementy pomarańczowe: gładsze i z mocniejszym odbiciem – ostrzejsze, ale wąskie odblaski,
+		# więc kolor powierzchni się nie rozjaśnia.
+		var glossy: bool = part == &"frame" or part == &"orange"
+		mat.roughness = 0.45 if part == &"panel" else (0.14 if glossy else 0.28)
+		mat.metallic_specular = 1.0 if glossy else 0.7
 		mat.clearcoat_enabled = true
 		mat.clearcoat = 0.6
 		mat.clearcoat_roughness = 0.12
 		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		_mesh.surface_set_material(_mesh.get_surface_count() - 1, mat)
-	_size = box.size
+	# Numer wersji „2.0” – tekst 3D z czcionki Anton, ten sam materiał co pomarańczowe elementy logo.
+	_text = TextMesh.new()
+	_text.text = _version_label()
+	_text.font = load(VERSION_FONT)
+	_text.font_size = 64
+	_text.pixel_size = 0.001
+	_text.depth = box.size.z * 0.4
+	_text.curve_step = 1.0
+	var h0 := _text.get_aabb().size.y
+	_text.pixel_size = 0.001 * box.size.y * VERSION_HEIGHT / maxf(h0, 0.000001)
+	_text.material = _mesh.surface_get_material(2)
+	var tb := _text.get_aabb()
+	# Logo wyśrodkowane w (0,0,0); „2.0” po prawej, wyrównane do dolnej krawędzi tafli.
+	var lb := AABB(-box.size * 0.5, box.size)
+	var tpos := Vector3(lb.end.x + box.size.x * VERSION_GAP - tb.position.x,
+			lb.position.y - tb.position.y, lb.end.z - tb.end.z)   # przód „2.0” równo z przodem liter
+	var group := lb.merge(AABB(tb.position + tpos, tb.size))
+	var shift := -group.get_center()
+	_logo_pos = shift
+	_text_pos = tpos + shift
+	_size = group.size
+
+
+# „2.0” z numeru wersji „2.0.0” w ustawieniach projektu (główny.podrzędny).
+static func _version_label() -> String:
+	var parts := str(ProjectSettings.get_setting("application/config/version", "2.0.0")).split(".")
+	return ".".join(parts.slice(0, 2)) if parts.size() >= 2 else parts[0]

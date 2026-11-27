@@ -17,7 +17,7 @@ Fretboard Master is closed-source freeware covered by `LICENSE.md`. It uses the 
 | Spotify Basic Pitch (model) | rozpoznawanie akordów – planowane / chord (polyphonic) recognition – planned | Apache 2.0 | https://github.com/spotify/basic-pitch |
 | ONNX Runtime | uruchamianie modelu Basic Pitch – planowane / runs the Basic Pitch model – planned | MIT | https://onnxruntime.ai |
 | SQLite | profil i postępy / profile and progress | domena publiczna / public domain | https://sqlite.org |
-| Inter, Space Grotesk, Noto Music, Noto Sans Symbols 2 | kroje pisma / fonts | SIL Open Font License 1.1 | https://fonts.google.com |
+| Inter, Space Grotesk, Anton, Noto Music, Noto Sans Symbols, Noto Sans Symbols 2 | kroje pisma / fonts | SIL Open Font License 1.1 | https://fonts.google.com |
 
 ## Warunki szczególne / Specific obligations
 

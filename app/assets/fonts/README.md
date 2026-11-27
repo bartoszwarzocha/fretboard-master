@@ -6,6 +6,7 @@ Wszystkie na licencji SIL Open Font License 1.1 (pliki OFL-*.txt).
 |---|---|---|
 | Inter.ttf | tekst, nagłówki po rosyjsku | brak (wersja zmienna, oś wght) |
 | SpaceGrotesk.ttf | nagłówki | brak |
+| Anton.ttf | numer wersji „2.0” przy logo (tekst 3D) | brak |
 | NotoSansSymbols.ttf | symbole ←↗♩♭♮♯⚙ | podzbiór, ustalona grubość 400, zmienione metryki pionowe |
 | NotoSansSymbols2.ttf | pozostałe symbole interfejsu | podzbiór, zmienione metryki pionowe |
 | NotoMusic.ttf | klucz wiolinowy 𝄞 | podzbiór, zmienione metryki pionowe |
