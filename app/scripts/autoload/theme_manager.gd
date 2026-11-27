@@ -13,6 +13,8 @@ const PALETTES := {
 		"text": Color("E8ECF6"), "muted": Color("AEB7CF"), "faint": Color("6F7A99"),
 		"accent": Color("F5B544"), "accent_text": Color("1A1206"), "focus": Color("3FD0C9"),
 		"placeholder": Color("3A4566"),
+		"hint": Color("8C96B3"), "selected": Color("1B2440"), "pattern": Color("1D2A55"),
+		"cell_group": Color("1A2244"), "dim": Color("5A6585"), "well": Color("0A0F1F"), "surface_low": Color("0F1428"),
 	},
 	&"graphite": {
 		"name": "Graphite",
@@ -21,6 +23,8 @@ const PALETTES := {
 		"text": Color("ECEDEF"), "muted": Color("B3B8C0"), "faint": Color("7C838D"),
 		"accent": Color("F5B544"), "accent_text": Color("1A1206"), "focus": Color("3FD0C9"),
 		"placeholder": Color("4A505A"),
+		"hint": Color("959CA6"), "selected": Color("2A2E34"), "pattern": Color("2A2E35"),
+		"cell_group": Color("24282E"), "dim": Color("646B76"), "well": Color("0B0C0E"), "surface_low": Color("141619"),
 	},
 	&"light": {
 		"name": "Light",
@@ -29,9 +33,11 @@ const PALETTES := {
 		"text": Color("1B2030"), "muted": Color("4E5568"), "faint": Color("7C8295"),
 		"accent": Color("D98E0B"), "accent_text": Color("FFFFFF"), "focus": Color("118C86"),
 		"placeholder": Color("B9B09E"),
+		"hint": Color("6A7083"), "selected": Color("E6DCC8"), "pattern": Color("D9D0BE"),
+		"cell_group": Color("E9E3D6"), "dim": Color("9A9FAE"), "well": Color("ECE7DC"), "surface_low": Color("F8F6F1"),
 	},
 }
-const DEFAULT_PALETTE := &"night"
+const DEFAULT_PALETTE := &"graphite"
 # Kolory akcentu do wyboru w ustawieniach ("" = akcent motywu).
 const ACCENTS := ["F5B544", "FF8A1F", "FF5C5C", "E85D9C", "B98CFF", "5AA9FF", "3FD0C9", "7BD88F"]
 # Ustawienia, po których zmianie motyw jest budowany od nowa.

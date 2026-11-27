@@ -10,7 +10,7 @@ extends CanvasLayer
 signal live_changed
 
 const MODES := ["solid", "gradient", "pattern", "image"]
-const PATTERNS := ["wood", "carbon", "leather", "felt", "notes", "hex"]
+const PATTERNS := ["wood", "carbon", "leather", "felt", "notes", "hex", "canvas"]
 const PARTICLES := ["off", "dust", "sparks", "notes", "bokeh"]
 const HIT_STYLES := ["sparks", "notes", "glow"]
 const GRADIENTS := ["linear", "radial", "conic"]
@@ -97,7 +97,7 @@ func _update_background() -> void:
 		else:
 			_render_music()
 	_mat.set_shader_parameter(&"color1", _color_or(str(App.setting(&"bg_color")), ThemeManager.color("bg")))
-	_mat.set_shader_parameter(&"color2", Color(str(App.setting(&"bg_color2"))))
+	_mat.set_shader_parameter(&"color2", _color_or(str(App.setting(&"bg_color2")), ThemeManager.color("pattern")))
 	_mat.set_shader_parameter(&"angle", float(App.setting(&"bg_gradient_angle")))
 	_mat.set_shader_parameter(&"gradient_type", maxi(GRADIENTS.find(str(App.setting(&"bg_gradient_type"))), 0))
 	_mat.set_shader_parameter(&"gradient_center", Vector2(float(App.setting(&"bg_gradient_x")),

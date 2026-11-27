@@ -325,6 +325,9 @@ msgstr "Кожа"
 msgid "Felt"
 msgstr "Фетр"
 
+msgid "Canvas"
+msgstr "Холст"
+
 msgid "Notes"
 msgstr "Ноты"
 

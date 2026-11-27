@@ -19,7 +19,6 @@ const TEMPO_NAMES := [[40, "Grave"], [60, "Largo"], [66, "Larghetto"], [76, "Ada
 		[120, "Moderato"], [156, "Allegro"], [176, "Vivace"], [200, "Presto"], [9999, "Prestissimo"]]
 const BPM_MIN := 30
 const BPM_MAX := 260
-const TEAL := Color("3FD0C9")
 const STOP := Color("FF7A59")
 const ARROW_STEPS := {KEY_UP: 1, KEY_DOWN: -1, KEY_RIGHT: 5, KEY_LEFT: -5}
 
@@ -180,7 +179,7 @@ func _rebuild() -> void:
 	help.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	help.add_theme_font_override("font", ThemeManager.font_body_bold)
 	help.add_theme_font_size_override("font_size", ThemeManager.fs(16))
-	help.add_theme_color_override("font_color", Color("8C96B3"))
+	help.add_theme_color_override("font_color", ThemeManager.color("hint"))
 	help.add_theme_stylebox_override("normal", ThemeManager.box(ThemeManager.color("surface_2"), ThemeManager.color("border_strong"), 15, 1, 0, 0))
 	help.tooltip_text = tr("Click the button (or press T) in time with the music – at least 2 times. The tempo sets itself.") + \
 			"\n" + tr("Space – start/stop · ↑/↓ – tempo ±1 · ←/→ – tempo ±5")
@@ -262,10 +261,10 @@ func _build_drums() -> void:
 	var legend := HBoxContainer.new()
 	legend.add_theme_constant_override("separation", 22)
 	_main.add_child(legend)
-	legend.add_child(_label("Click a cell: hit → accent → empty.", 16, Color("8C96B3")))
-	legend.add_child(_legend_item(TEAL, "hit"))
+	legend.add_child(_label("Click a cell: hit → accent → empty.", 16, ThemeManager.color("hint")))
+	legend.add_child(_legend_item(ThemeManager.color("focus"), "hit"))
 	legend.add_child(_legend_item(ThemeManager.color("accent"), "accent"))
-	var loop := _label(tr("Loop: 1 bar, %s") % _steps_text(_steps(_metre(), _grid_kind())), 16, Color("8C96B3"))
+	var loop := _label(tr("Loop: 1 bar, %s") % _steps_text(_steps(_metre(), _grid_kind())), 16, ThemeManager.color("hint"))
 	loop.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	legend.add_child(loop)
 	var lsp := Control.new()
@@ -325,7 +324,7 @@ func _build_aside(drums: bool) -> void:
 			_apply(), true)
 		var f := _field("MIDI drum kit", kit_row)
 		var note := _label("Built-in synthesizer, channel 10 (General MIDI drums). You can change this in the Sound and MIDI settings.",
-				14, Color("8C96B3"))
+				14, ThemeManager.color("hint"))
 		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		f.add_child(note)
 		col.add_child(f)
@@ -347,7 +346,7 @@ func _build_aside(drums: bool) -> void:
 	var boxes := HBoxContainer.new()
 	boxes.add_theme_constant_override("separation", 12)
 	rc.add_child(boxes)
-	var info := _label("", 16, Color("8C96B3"))
+	var info := _label("", 16, ThemeManager.color("hint"))
 	info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var update_info := func() -> void:
@@ -524,7 +523,7 @@ func _update_play_button() -> void:
 		return
 	_play.text = tr("Stop") if _playing else tr("Run")
 	var bg: Color = STOP if _playing else ThemeManager.color("accent")
-	var dark := Color("1A1206")
+	var dark := ThemeManager.color("accent_text")
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		_play.add_theme_color_override(c, dark)
 	_play.add_theme_stylebox_override("normal", ThemeManager.box(bg, Color.TRANSPARENT, 14, 0, 40, 10))
@@ -784,14 +783,14 @@ func _chip(text: String, on: bool, small := false) -> Button:
 func _style_chip(b: Button, on: bool, small: bool) -> void:
 	var pad := 13 if small else 17
 	var off := ThemeManager.box(ThemeManager.color("surface_2"), ThemeManager.color("border_strong"), 8 if small else 10, 1, pad, 4)
-	var sel := ThemeManager.box(Color(TEAL, 0.12), TEAL, 8 if small else 10, 1, pad, 4)
+	var sel := ThemeManager.box(Color(ThemeManager.color("focus"), 0.12), ThemeManager.color("focus"), 8 if small else 10, 1, pad, 4)
 	b.add_theme_stylebox_override("normal", sel if on else off)
 	b.add_theme_stylebox_override("hover", sel if on else ThemeManager.box(ThemeManager.color("border"), ThemeManager.color("border_strong"), 8 if small else 10, 1, pad, 4))
 	b.add_theme_stylebox_override("pressed", sel)
 	b.add_theme_stylebox_override("disabled", ThemeManager.box(Color(ThemeManager.color("surface_2"), 0.35), Color(ThemeManager.color("border_strong"), 0.35), 8 if small else 10, 1, pad, 4))
 	if on:
-		b.add_theme_color_override("font_color", TEAL)
-		b.add_theme_color_override("font_hover_color", TEAL)
+		b.add_theme_color_override("font_color", ThemeManager.color("focus"))
+		b.add_theme_color_override("font_hover_color", ThemeManager.color("focus"))
 	else:
 		b.remove_theme_color_override("font_color")
 		b.remove_theme_color_override("font_hover_color")
@@ -840,7 +839,7 @@ func _legend_item(color: Color, text: String) -> HBoxContainer:
 	sw.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	sw.add_theme_stylebox_override("panel", ThemeManager.box(color, Color.TRANSPARENT, 3, 0, 0, 0))
 	h.add_child(sw)
-	h.add_child(_label(text, 16, Color("8C96B3")))
+	h.add_child(_label(text, 16, ThemeManager.color("hint")))
 	return h
 
 
@@ -852,7 +851,7 @@ func _value_box(key: StringName, title: String, lo: int, hi: int, prefix: String
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 0)
 	p.add_child(col)
-	col.add_child(_label(title, 14, Color("8C96B3")))
+	col.add_child(_label(title, 14, ThemeManager.color("hint")))
 	var e := LineEdit.new()
 	e.text = prefix + str(int(App.setting(key)))
 	e.flat = true
@@ -907,7 +906,7 @@ class BeatLights extends Control:
 	func _draw() -> void:
 		var x := (size.x - (count * 55 + (count - 1) * 22)) * 0.5
 		var cy := size.y * 0.5
-		var teal := Color("3FD0C9")
+		var teal := ThemeManager.color("focus")
 		for i in count:
 			var acc: bool = i in accents
 			var r := 27.5 if acc else 21.5
@@ -918,7 +917,7 @@ class BeatLights extends Control:
 					draw_circle(c, r + 4.0 + g * 3.0, Color(col, 0.10 - g * 0.015))
 				draw_circle(c, r, col)
 			else:
-				draw_circle(c, r, Color("1C2440"))
+				draw_circle(c, r, ThemeManager.color("border"))
 				draw_arc(c, r - 1.0, 0.0, TAU, 48, col, 2.5, true)
 			x += 55.0 + 22.0
 
@@ -995,20 +994,20 @@ class DrumGrid extends Control:
 			var base := y + CELL_H * 0.5 + fs * 0.35
 			draw_string(font, Vector2(0, base), names[r][0], HORIZONTAL_ALIGNMENT_LEFT, -1, fs, ThemeManager.color("text"))
 			var nw := font.get_string_size(names[r][0], HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
-			draw_string(small, Vector2(nw + 6, base), names[r][1], HORIZONTAL_ALIGNMENT_LEFT, -1, ThemeManager.fs(13), Color("6F7A99"))
+			draw_string(small, Vector2(nw + 6, base), names[r][1], HORIZONTAL_ALIGNMENT_LEFT, -1, ThemeManager.fs(13), ThemeManager.color("faint"))
 			for s in counts.size():
 				var v := int(pattern[r][s])
 				var rect := Rect2(_cell_x(s), y, w, CELL_H)
-				var bg: Color = accent if v == 2 else Color("3FD0C9") if v == 1 else (Color("1A2244") if s in groups else Color("121933"))
+				var bg: Color = accent if v == 2 else ThemeManager.color("focus") if v == 1 else (ThemeManager.color("cell_group") if s in groups else ThemeManager.color("surface_2"))
 				var cur := s == step
-				var border: Color = Color.WHITE if cur else (Color.TRANSPARENT if v else Color("26305A"))
+				var border: Color = ThemeManager.color("text") if cur else (Color.TRANSPARENT if v else ThemeManager.color("border_strong"))
 				draw_style_box(ThemeManager.box(bg, border, 8, 1, 0, 0), rect)
 				if cur and v:
 					draw_style_box(ThemeManager.box(Color(1, 1, 1, 0.18), Color.TRANSPARENT, 7, 0, 0, 0), rect.grow(3))
 			y += CELL_H + ROW_GAP
 		for s in counts.size():
 			var c: Array = counts[s]
-			var col: Color = Color.WHITE if s == step else (Color("AEB7CF") if c[1] else Color("5A6585"))
+			var col: Color = ThemeManager.color("text") if s == step else (ThemeManager.color("muted") if c[1] else ThemeManager.color("dim"))
 			draw_string(font if c[1] else small, Vector2(_cell_x(s), y + 16), c[0], HORIZONTAL_ALIGNMENT_CENTER, w,
 					ThemeManager.fs(14), col)
 
@@ -1032,6 +1031,6 @@ class Switch extends Control:
 			accept_event()
 
 	func _draw() -> void:
-		var track: Color = Color("3FD0C9") if on else Color("26305A")
+		var track: Color = ThemeManager.color("focus") if on else ThemeManager.color("border_strong")
 		draw_style_box(ThemeManager.box(track, Color.TRANSPARENT, 17, 0, 0, 0), Rect2(Vector2.ZERO, size))
 		draw_circle(Vector2(size.x - 17.0 if on else 17.0, size.y * 0.5), 13.0, Color.WHITE)

@@ -15,7 +15,6 @@ const BEATS := [2, 3, 4, 6, 7]
 const SUBS := [1, 2, 3, 4]
 const KITS := [["Standard", 0], ["Room", 8], ["Power", 16], ["Jazz", 32], ["Brush", 40]]
 const PRESETS := ["Rock", "Pop", "Shuffle", "Waltz", "Ballad 6/8"]
-const TEAL := Color("3FD0C9")
 const RED := Color("FF5A5F")
 const STOP := Color("FF7A59")
 const MAX_SECONDS := 600.0
@@ -74,7 +73,7 @@ func build(main: VBoxContainer, aside: VBoxContainer) -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(sp)
-	var hint: Label = scr._label("tempo of a new recording", 16, Color("8C96B3"))
+	var hint: Label = scr._label("tempo of a new recording", 16, ThemeManager.color("hint"))
 	hint.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(hint)
 
@@ -83,7 +82,7 @@ func build(main: VBoxContainer, aside: VBoxContainer) -> void:
 	head.add_theme_constant_override("separation", 14)
 	main.add_child(head)
 	head.add_child(scr._label("Recorded tracks", 22, ThemeManager.color("text"), ThemeManager.font_heading))
-	var h2: Label = scr._label("ticked tracks play together · drag across the wave to choose a range", 16, Color("8C96B3"))
+	var h2: Label = scr._label("ticked tracks play together · drag across the wave to choose a range", 16, ThemeManager.color("hint"))
 	h2.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	head.add_child(h2)
 
@@ -96,7 +95,7 @@ func build(main: VBoxContainer, aside: VBoxContainer) -> void:
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override("separation", 10)
 	scroll.add_child(_list)
-	_empty = scr._label("No recordings yet. Press „Record new” (R) – you always record along with the drum machine or the metronome.", 17, Color("8C96B3"))
+	_empty = scr._label("No recordings yet. Press „Record new” (R) – you always record along with the drum machine or the metronome.", 17, ThemeManager.color("hint"))
 	_empty.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_list.add_child(_empty)
 	for t in _tracks:
@@ -109,7 +108,7 @@ func build(main: VBoxContainer, aside: VBoxContainer) -> void:
 	main.add_child(legend)
 	legend.add_child(scr._legend_item(ThemeManager.color("accent"), "start and end (trim)"))
 	legend.add_child(_outline_item("playback range"))
-	legend.add_child(scr._label("A track remembers the tempo, metre and backing of its recording.", 16, Color("8C96B3")))
+	legend.add_child(scr._label("A track remembers the tempo, metre and backing of its recording.", 16, ThemeManager.color("hint")))
 
 	main.add_child(scr._gap(18))
 	_error = scr._label("", 15, STOP)
@@ -172,7 +171,7 @@ func _build_aside(aside: VBoxContainer) -> void:
 	var rc := rec.get_child(0) as VBoxContainer
 	rc.add_theme_constant_override("separation", 17)
 	rc.add_child(scr._label("Recording", 24, ThemeManager.color("text"), ThemeManager.font_heading))
-	var note: Label = scr._label("", 14, Color("8C96B3"))
+	var note: Label = scr._label("", 14, ThemeManager.color("hint"))
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	note.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	var set_note := func() -> void:
@@ -208,17 +207,17 @@ func _build_aside(aside: VBoxContainer) -> void:
 	else:
 		dev.text = tr("Audio input unavailable – check the Sound and MIDI settings.")
 	lh.add_child(dev)
-	_level_label = scr._label("", 16, TEAL)
+	_level_label = scr._label("", 16, ThemeManager.color("focus"))
 	_level_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	lh.add_child(_level_label)
 	_level_bar = Panel.new()
 	_level_bar.custom_minimum_size.y = 10
-	_level_bar.add_theme_stylebox_override("panel", ThemeManager.box(Color("1C2440"), Color.TRANSPARENT, 5, 0, 0, 0))
+	_level_bar.add_theme_stylebox_override("panel", ThemeManager.box(ThemeManager.color("border"), Color.TRANSPARENT, 5, 0, 0, 0))
 	lv.add_child(_level_bar)
 	_level_fill = Panel.new()
-	_level_fill.add_theme_stylebox_override("panel", ThemeManager.box(TEAL, Color.TRANSPARENT, 5, 0, 0, 0))
+	_level_fill.add_theme_stylebox_override("panel", ThemeManager.box(ThemeManager.color("focus"), Color.TRANSPARENT, 5, 0, 0, 0))
 	_level_bar.add_child(_level_fill)
-	rc.add_child(scr._label("Space – playback · R – recording", 14, Color("8C96B3")))
+	rc.add_child(scr._label("Space – playback · R – recording", 14, ThemeManager.color("hint")))
 
 
 func _outline_item(text: String) -> HBoxContainer:
@@ -227,9 +226,9 @@ func _outline_item(text: String) -> HBoxContainer:
 	var sw := Panel.new()
 	sw.custom_minimum_size = Vector2(11, 11)
 	sw.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	sw.add_theme_stylebox_override("panel", ThemeManager.box(Color.TRANSPARENT, TEAL, 3, 2, 0, 0))
+	sw.add_theme_stylebox_override("panel", ThemeManager.box(Color.TRANSPARENT, ThemeManager.color("focus"), 3, 2, 0, 0))
 	h.add_child(sw)
-	h.add_child(scr._label(text, 16, Color("8C96B3")))
+	h.add_child(scr._label(text, 16, ThemeManager.color("hint")))
 	return h
 
 
@@ -254,10 +253,10 @@ func _update_buttons() -> void:
 	if _play == null:
 		return
 	_play.text = tr("Stop") if _playing else tr("Play")
-	_play.icon = ButtonGlyph.icon("stop" if _playing else "play", Color("1A1206"))
+	_play.icon = ButtonGlyph.icon("stop" if _playing else "play", ThemeManager.color("accent_text"))
 	_play.add_theme_constant_override("h_separation", 10)
 	var bg: Color = STOP if _playing else ThemeManager.color("accent")
-	var dark := Color("1A1206")
+	var dark := ThemeManager.color("accent_text")
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		_play.add_theme_color_override(c, dark)
 	_play.add_theme_stylebox_override("normal", ThemeManager.box(bg, Color.TRANSPARENT, 14, 0, 36, 10))
@@ -731,7 +730,6 @@ func _count_text(n: int, on: int) -> String:
 
 ## Wiersz listy: pole wyboru, nazwa (do zmiany), opis, fala z przycięciem i zakresem, „Utnij ciszę”, usuń.
 class TrackRow extends PanelContainer:
-	const TEAL := Color("3FD0C9")
 	const RED := Color("FF5A5F")
 	var tab: LooperTab
 	var t: Dictionary
@@ -773,7 +771,7 @@ class TrackRow extends PanelContainer:
 		var empty := StyleBoxEmpty.new()
 		for s in ["normal", "read_only"]:
 			name_edit.add_theme_stylebox_override(s, empty)
-		name_edit.add_theme_stylebox_override("focus", ThemeManager.box(Color("0A0F1F"), Color("26305A"), 6, 1, 4, 0))
+		name_edit.add_theme_stylebox_override("focus", ThemeManager.box(ThemeManager.color("well"), ThemeManager.color("border_strong"), 6, 1, 4, 0))
 		name_edit.text_submitted.connect(func(s: String) -> void:
 			tab.row_rename(t, s)
 			name_edit.release_focus())
@@ -782,9 +780,9 @@ class TrackRow extends PanelContainer:
 				tab.row_rename(t, name_edit.text)
 				name_edit.text = t.name)
 		col.add_child(name_edit)
-		meta = _small(14, Color("8C96B3"))
+		meta = _small(14, ThemeManager.color("hint"))
 		col.add_child(meta)
-		info = _small(14, Color("6F7A99"))
+		info = _small(14, ThemeManager.color("faint"))
 		col.add_child(info)
 		wave = WaveView.new()
 		wave.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -850,7 +848,7 @@ class TrackRow extends PanelContainer:
 		if wave.span.y > wave.span.x:
 			txt = tr("range %s–%s") % [LooperTab.time_text(wave.span.x, rate), LooperTab.time_text(wave.span.y, rate)] + " · "
 		info.text = txt + LooperTab.time_text(int(t.frames), rate)
-		info.add_theme_color_override("font_color", Color("6F7A99"))
+		info.add_theme_color_override("font_color", ThemeManager.color("faint"))
 
 	func set_live(title: String, meta_text: String) -> void:
 		name_edit.text = title
@@ -869,8 +867,8 @@ class TrackRow extends PanelContainer:
 
 	func _restyle() -> void:
 		var on := t.is_empty() or bool(t.get("on", true))
-		var border: Color = (RED if t.is_empty() else Color("26305A")) if _selected else Color.TRANSPARENT
-		add_theme_stylebox_override("panel", ThemeManager.box(Color("121933") if on else Color("0F1428"), border, 14, 1, 17, 12))
+		var border: Color = (RED if t.is_empty() else ThemeManager.color("border_strong")) if _selected else Color.TRANSPARENT
+		add_theme_stylebox_override("panel", ThemeManager.box(ThemeManager.color("surface_2") if on else ThemeManager.color("surface_low"), border, 14, 1, 17, 12))
 		name_edit.add_theme_color_override("font_color", ThemeManager.color("text") if on else ThemeManager.color("muted"))
 
 	func _on_delete() -> void:
@@ -889,7 +887,6 @@ class TrackRow extends PanelContainer:
 
 ## Pole wyboru rysowane jak w makiecie (turkusowy kwadrat z ptaszkiem).
 class CheckBox_ extends Control:
-	const TEAL := Color("3FD0C9")
 	const RED := Color("FF5A5F")
 	signal toggled_on(on: bool)
 	var on := true
@@ -910,19 +907,18 @@ class CheckBox_ extends Control:
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
 		if on:
-			draw_style_box(ThemeManager.box(TEAL, Color.TRANSPARENT, 7, 0, 0, 0), r)
+			draw_style_box(ThemeManager.box(ThemeManager.color("focus"), Color.TRANSPARENT, 7, 0, 0, 0), r)
 			var p := PackedVector2Array([Vector2(size.x * 0.25, size.y * 0.52), Vector2(size.x * 0.43, size.y * 0.70),
 					Vector2(size.x * 0.76, size.y * 0.32)])
 			draw_polyline(p, Color("04201E"), 3.0, true)
 		else:
-			draw_style_box(ThemeManager.box(Color.TRANSPARENT, Color("3A4566"), 7, 2, 0, 0), r)
+			draw_style_box(ThemeManager.box(Color.TRANSPARENT, ThemeManager.color("placeholder"), 7, 2, 0, 0), r)
 
 
 ## Fala ścieżki: słupki szczytów, przyciemnione przycięte końce z pomarańczowymi uchwytami (przeciągane),
 ## turkusowa ramka wybranego zakresu (przeciągnięcie po fali; kliknięcie bez przeciągania – bez zakresu)
 ## i biała kreska odtwarzania.
 class WaveView extends Control:
-	const TEAL := Color("3FD0C9")
 	const RED := Color("FF5A5F")
 	signal edited(final: bool)
 	const BAR_W := 6.7
@@ -994,7 +990,7 @@ class WaveView extends Control:
 	func _draw() -> void:
 		var w := size.x
 		var h := size.y
-		draw_style_box(ThemeManager.box(Color("0A0F1F"), Color.TRANSPARENT, 9, 0, 0, 0), Rect2(Vector2.ZERO, size))
+		draw_style_box(ThemeManager.box(ThemeManager.color("well"), Color.TRANSPARENT, 9, 0, 0, 0), Rect2(Vector2.ZERO, size))
 		var n := maxi(int(w / BAR_W), 1)
 		var bw := w / n
 		var top := 0.05
@@ -1017,13 +1013,13 @@ class WaveView extends Control:
 			if live:
 				col = RED
 			elif mid < trim.x or mid > trim.y:
-				col = Color("3A4566")
+				col = ThemeManager.color("placeholder")
 			elif has_range and (mid < span.x or mid > span.y):
 				col = Color("2E6F75")
 			else:
-				col = TEAL
+				col = ThemeManager.color("focus")
 			if f0 >= peak_frames and live:
-				col = Color("26305A")
+				col = ThemeManager.color("border_strong")
 				bh = 2.0
 			draw_rect(Rect2(i * bw + 0.6, (h - bh) * 0.5, bw - 1.6, bh), col)
 		if not live:
@@ -1036,6 +1032,6 @@ class WaveView extends Control:
 				draw_style_box(ThemeManager.box(orange, Color.TRANSPARENT, 3, 0, 0, 0), Rect2(x - 5, h * 0.5 - 9, 10, 18))
 			if has_range:
 				var r := Rect2(_x(span.x), 1, _x(span.y) - _x(span.x), h - 2)
-				draw_style_box(ThemeManager.box(Color(TEAL, 0.10), TEAL, 5, 2, 0, 0), r)
+				draw_style_box(ThemeManager.box(Color(ThemeManager.color("focus"), 0.10), ThemeManager.color("focus"), 5, 2, 0, 0), r)
 		if head >= 0 and head <= frames:
-			draw_rect(Rect2(_x(head) - 1.0, 0, 2.0, h), Color.WHITE)
+			draw_rect(Rect2(_x(head) - 1.0, 0, 2.0, h), ThemeManager.color("text"))

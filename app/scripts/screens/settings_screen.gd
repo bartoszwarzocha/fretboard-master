@@ -233,7 +233,7 @@ func _build_look() -> void:
 					["conic", "Angular"]])
 			_colors(&"bg_color", "First colour", "Theme colour", BG_PALETTE)
 			_colors(&"bg_color3", "Middle colour", "None", BG_PALETTE)
-			_colors(&"bg_color2", "Last colour", "", BG_PALETTE)
+			_colors(&"bg_color2", "Last colour", "Theme colour", BG_PALETTE)
 			if kind != "radial":
 				_slider(&"bg_gradient_angle", "Direction", 0, 360, 5, "%d°")
 			if kind != "linear":
@@ -241,9 +241,9 @@ func _build_look() -> void:
 				_slider(&"bg_gradient_y", "Centre – vertically", 0, 1, 0.05, "%")
 		"pattern":
 			_select(&"bg_pattern", "Pattern", [["wood", "Wood"], ["carbon", "Carbon"], ["leather", "Leather"],
-					["felt", "Felt"], ["notes", "Notes"], ["hex", "Geometric"]])
+					["felt", "Felt"], ["canvas", "Canvas"], ["notes", "Notes"], ["hex", "Geometric"]])
 			_colors(&"bg_color", "Base colour", "Theme colour", BG_PALETTE)
-			_colors(&"bg_color2", "Pattern colour", "", BG_PALETTE)
+			_colors(&"bg_color2", "Pattern colour", "Theme colour", BG_PALETTE)
 			_slider(&"bg_intensity", "Pattern intensity", 0, 1, 0.05, "%")
 			_slider(&"bg_scale", "Pattern scale", 0.5, 3, 0.1, "×")
 		"image":

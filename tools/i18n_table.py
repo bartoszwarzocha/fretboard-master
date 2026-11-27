@@ -148,6 +148,7 @@ T = {
  "Carbon": ("Karbon", "Carbon", "Carbono", "Карбон"),
  "Leather": ("Skóra", "Leder", "Cuero", "Кожа"),
  "Felt": ("Filc", "Filz", "Fieltro", "Фетр"),
+ "Canvas": ("Płótno", "Leinwand", "Lienzo", "Холст"),
  "Notes": ("Nuty", "Noten", "Notas", "Ноты"),
  "Geometric": ("Geometryczny", "Geometrisch", "Geométrico", "Геометрический"),
  "Base colour": ("Kolor podstawowy", "Grundfarbe", "Color base", "Основной цвет"),

@@ -325,6 +325,9 @@ msgstr "Cuero"
 msgid "Felt"
 msgstr "Fieltro"
 
+msgid "Canvas"
+msgstr "Lienzo"
+
 msgid "Notes"
 msgstr "Notas"
 

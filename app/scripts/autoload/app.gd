@@ -23,9 +23,9 @@ const DEFAULTS := {
 		&"marker_color": "", &"marker_root_color": "", &"marker_text_color": "",
 	},
 	&"look": {
-		&"theme": "night", &"accent": "", &"bg_mode": "pattern", &"bg_color": "", &"bg_color2": "1D2A55",
+		&"theme": "graphite", &"accent": "", &"bg_mode": "pattern", &"bg_color": "", &"bg_color2": "",
 		&"bg_color3": "", &"bg_gradient_type": "linear",
-		&"bg_gradient_angle": 135.0, &"bg_gradient_x": 0.5, &"bg_gradient_y": 0.5, &"bg_pattern": "hex", &"bg_intensity": 0.5, &"bg_scale": 1.0,
+		&"bg_gradient_angle": 135.0, &"bg_gradient_x": 0.5, &"bg_gradient_y": 0.5, &"bg_pattern": "hex", &"bg_intensity": 0.55, &"bg_scale": 1.0,
 		&"bg_dim": 0.0, &"bg_blur": 0.0, &"bg_image": "", &"bg_animated": false, &"bg_anim_speed": 1.0,
 		&"particles": "off", &"particles_density": 0.5, &"particles_speed": 1.0, &"particles_color": "",
 		&"hit_particles": true, &"hit_style": "sparks",

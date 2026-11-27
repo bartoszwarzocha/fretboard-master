@@ -325,6 +325,9 @@ msgstr "Leder"
 msgid "Felt"
 msgstr "Filz"
 
+msgid "Canvas"
+msgstr "Leinwand"
+
 msgid "Notes"
 msgstr "Noten"
 

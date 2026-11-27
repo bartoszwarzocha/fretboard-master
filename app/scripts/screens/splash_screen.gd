@@ -56,7 +56,7 @@ func _finish() -> void:
 
 func _warm_up() -> void:
 	var t0 := Time.get_ticks_msec()
-	await get_tree().process_frame
+	await (Engine.get_main_loop() as SceneTree).process_frame
 	# 1) Modele 3D – wczytywanie w tle; zostają w pamięci (CACHE) do końca działania programu.
 	var paths: Array = [ModuleIcon3D.MODEL_PATH]   # logo wczytuje się samo (jest już na ekranie)
 	for k in GuitarModel3D.KINDS:
@@ -73,12 +73,18 @@ func _warm_up() -> void:
 				var res := ResourceLoader.load_threaded_get(p)
 				if res:
 					CACHE.append(res)
-		await get_tree().process_frame
+		await (Engine.get_main_loop() as SceneTree).process_frame
+	# Ekran startowy mógł już zniknąć (tryb audytu przechodzi od razu dalej) – reszta rozgrzewki
+	# potrzebuje go w drzewie.
+	if not is_inside_tree():
+		return
 	# 2) Menu: siatki ikon modułów i wszystkie gitary narysowane raz poza ekranem.
 	await _warm_menu()
 	# 3) Dźwięk: otwarcie urządzeń i wczytanie SoundFontu (pierwsze otwarcie Tunera/Metronomu).
 	AudioEngine.ensure_open()
-	await get_tree().process_frame
+	await (Engine.get_main_loop() as SceneTree).process_frame
+	if not is_inside_tree():
+		return
 	# 4) Gryf 3D wg ustawień – budowa siatek i kompilacja shaderów.
 	await FretboardView.warm_up(self)
 	print("[ekran] rozgrzewka: %d ms" % (Time.get_ticks_msec() - t0))

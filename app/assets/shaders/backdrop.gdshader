@@ -6,7 +6,7 @@ shader_type canvas_item;
 render_mode unshaded, blend_disabled;
 
 uniform int mode = 0;            // 0 jednolite, 1 gradient, 2 deseń, 3 obraz
-uniform int pattern = 0;         // 0 drewno, 1 karbon, 2 skóra, 3 filc, 4 nuty, 5 geometryczny
+uniform int pattern = 0;         // 0 drewno, 1 karbon, 2 skóra, 3 filc, 4 nuty, 5 geometryczny, 6 płótno
 uniform vec4 color1 : source_color = vec4(0.03, 0.04, 0.08, 1.0);
 uniform vec4 color2 : source_color = vec4(0.11, 0.16, 0.33, 1.0);
 uniform vec4 color3 : source_color = vec4(0.2, 0.1, 0.3, 1.0);
@@ -82,6 +82,18 @@ float notes(vec2 p) {
 	return texture(notes_tex, p / 512.0).a;
 }
 
+// Płótno: splot płócienny – nici osnowy i wątku na przemian nad i pod sobą, z lekką nierównością przędzy.
+float canvas_weave(vec2 p) {
+	vec2 g = p / 6.0;
+	vec2 c = floor(g), f = fract(g);
+	bool over = mod(c.x + c.y, 2.0) < 1.0;
+	float warp = sin(f.x * 3.14159);          // nić pionowa (osnowa)
+	float weft = sin(f.y * 3.14159);          // nić pozioma (wątek)
+	float thread = over ? warp * (0.55 + 0.45 * weft) : weft * (0.55 + 0.45 * warp);
+	float slub = noise(vec2(c.x * 0.37, p.y * 0.02)) * 0.25 + noise(vec2(p.x * 0.02, c.y * 0.37)) * 0.25;
+	return clamp(1.0 - thread * 0.85 + slub - 0.15, 0.0, 1.0);
+}
+
 float hexgrid(vec2 p) {
 	vec2 s = vec2(1.0, 1.7320508);
 	p /= 34.0;
@@ -127,6 +139,7 @@ void fragment() {
 		else if (pattern == 2) v = leather(p);
 		else if (pattern == 3) v = felt(p);
 		else if (pattern == 4) v = notes(p);
+		else if (pattern == 6) v = canvas_weave(p);
 		else v = hexgrid(p);
 		col = mix(color1.rgb, color2.rgb, v * intensity);
 	} else if (mode == 3) {

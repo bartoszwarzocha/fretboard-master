@@ -22,7 +22,6 @@ const FLATS := [
 const GREEN := Color("7BD88F")
 const YELLOW := Color("F2D15C")
 const ORANGE := Color("FF7A59")
-const FAINT := Color("8C96B3")
 const IN_TUNE := 5.0          # ± centów uznawane za nastrojenie
 const POLL := 1.0 / 30.0
 const HOLD := 1.5             # s – jak długo pokazywać ostatni odczyt po wybrzmieniu
@@ -109,7 +108,7 @@ func _rebuild() -> void:
 	_main.add_child(head)
 	var title := _label("Tuner", 31, ThemeManager.color("text"), ThemeManager.font_heading)
 	head.add_child(title)
-	_subtitle = _label("", 16, FAINT)
+	_subtitle = _label("", 16, ThemeManager.color("hint"))
 	_subtitle.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_subtitle.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	head.add_child(_subtitle)
@@ -127,7 +126,7 @@ func _rebuild() -> void:
 		1: _build_analog()
 		_: _build_digital()
 
-	_advice = _label("", 17, FAINT)
+	_advice = _label("", 17, ThemeManager.color("hint"))
 	_advice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_advice.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_main.add_child(_gap(17))
@@ -488,7 +487,7 @@ func _build_strings() -> void:
 		b.focus_mode = Control.FOCUS_NONE
 		b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		var on := i == sel
-		var bg := Color("1B2440") if on else ThemeManager.color("surface_2")
+		var bg := ThemeManager.color("selected") if on else ThemeManager.color("surface_2")
 		var border: Color = ThemeManager.color("accent") if on else ThemeManager.color("border_strong")
 		for st in ["normal", "hover", "pressed"]:
 			b.add_theme_stylebox_override(st, ThemeManager.box(bg if st == "normal" else bg.lightened(0.05), border, 17, 1, 0, 17))
@@ -502,14 +501,14 @@ func _build_strings() -> void:
 		name.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		col.add_child(name)
-		var num := _label(tr("string %d") % (6 - i), 14, FAINT)
+		var num := _label(tr("string %d") % (6 - i), 14, ThemeManager.color("hint"))
 		num.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		col.add_child(num)
 		col.add_child(_gap(7))
 		var sc: Variant = _string_cents[i]
 		var state := _label("–" if sc == null else tr("in tune") if absf(sc) <= IN_TUNE else tr("too low") if sc < 0 else tr("too high"),
-				14, FAINT if sc == null else GREEN if absf(sc) <= IN_TUNE else YELLOW, ThemeManager.font_body_bold)
+				14, ThemeManager.color("hint") if sc == null else GREEN if absf(sc) <= IN_TUNE else YELLOW, ThemeManager.font_body_bold)
 		state.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		state.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		col.add_child(state)
@@ -538,7 +537,7 @@ func _build_notes() -> void:
 		b.add_theme_font_override("font", ThemeManager.font_heading)
 		b.add_theme_font_size_override("font_size", ThemeManager.fs(22 if b.text.length() <= 2 else 17))
 		var on := pc == sel
-		var bg := Color("1B2440") if on else ThemeManager.color("surface_2")
+		var bg := ThemeManager.color("selected") if on else ThemeManager.color("surface_2")
 		var border: Color = ThemeManager.color("accent") if on else ThemeManager.color("border_strong")
 		for st in ["normal", "hover", "pressed"]:
 			b.add_theme_stylebox_override(st, ThemeManager.box(bg if st == "normal" else bg.lightened(0.05), border, 14, 1, 0, 0))
@@ -576,7 +575,7 @@ func _update_tone_button() -> void:
 	if _tone_button == null:
 		return
 	_tone_button.text = tr("Stop reference tone") if _tone_on else tr("Play reference tone")
-	var bg: Color = Color("1B2440") if _tone_on else ThemeManager.color("surface_2")
+	var bg: Color = ThemeManager.color("selected") if _tone_on else ThemeManager.color("surface_2")
 	var border: Color = ThemeManager.color("accent") if _tone_on else ThemeManager.color("border_strong")
 	_tone_button.add_theme_stylebox_override("normal", ThemeManager.box(bg, border, 12, 1, 12, 0))
 	_tone_button.add_theme_stylebox_override("hover", ThemeManager.box(bg.lightened(0.05), border, 12, 1, 12, 0))
@@ -636,7 +635,7 @@ func _tuning_row(i: int) -> Button:
 	b.custom_minimum_size.y = 48
 	b.focus_mode = Control.FOCUS_NONE
 	b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	var bg := Color("1B2440") if on else ThemeManager.color("surface_2")
+	var bg := ThemeManager.color("selected") if on else ThemeManager.color("surface_2")
 	var border: Color = ThemeManager.color("accent") if on else Color.TRANSPARENT
 	b.add_theme_stylebox_override("normal", ThemeManager.box(bg, border, 12, 1, 17, 0))
 	b.add_theme_stylebox_override("hover", ThemeManager.box(bg.lightened(0.05), border, 12, 1, 17, 0))
@@ -655,7 +654,7 @@ func _tuning_row(i: int) -> Button:
 	var parts := PackedStringArray()
 	for m in ([] if i < 0 else TUNINGS[i][2]):
 		parts.append(FLATS[clampi(App.notation(), 0, 2)][posmod(m, 12)] if TUNINGS[i][0] == "half_down" else NoteNames.note_name(m, App.notation()))
-	var notes := _label(tr("chromatic") if i < 0 else " ".join(parts), 14, FAINT)
+	var notes := _label(tr("chromatic") if i < 0 else " ".join(parts), 14, ThemeManager.color("hint"))
 	notes.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	notes.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	notes.add_theme_constant_override("letter_spacing", 1)
@@ -679,7 +678,7 @@ func _view_button(icon: String, text: String, on: bool) -> Button:
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.focus_mode = Control.FOCUS_NONE
 	b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	var bg := Color("1B2440") if on else ThemeManager.color("surface_2")
+	var bg := ThemeManager.color("selected") if on else ThemeManager.color("surface_2")
 	var border: Color = ThemeManager.color("accent") if on else ThemeManager.color("border_strong")
 	b.add_theme_stylebox_override("normal", ThemeManager.box(bg, border, 14, 1, 0, 0))
 	b.add_theme_stylebox_override("hover", ThemeManager.box(bg.lightened(0.05), border, 14, 1, 0, 0))
@@ -882,10 +881,10 @@ class LinearMeter extends Control:
 			var x := _x(v)
 			var top := (28.0 if v == 0 or absi(v) == 50 else 34.0) * s
 			var len := (36.0 if v == 0 else 24.0) * s
-			draw_rect(Rect2(x - s, top, 2.0 * s, len), Color("E8ECF6") if v == 0 else Color("3A4566"))
+			draw_rect(Rect2(x - s, top, 2.0 * s, len), ThemeManager.color("text") if v == 0 else ThemeManager.color("placeholder"))
 			var t := "0" if v == 0 else ("+%d" % v if v > 0 else "−%d" % -v)
 			var w := font.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, fsz).x
-			draw_string(font, Vector2(x - w * 0.5, 70.0 * s + fsz), t, HORIZONTAL_ALIGNMENT_LEFT, -1, fsz, Color("8C96B3"))
+			draw_string(font, Vector2(x - w * 0.5, 70.0 * s + fsz), t, HORIZONTAL_ALIGNMENT_LEFT, -1, fsz, ThemeManager.color("hint"))
 		# Wskaźnik.
 		if active:
 			var c := Color("7BD88F") if ok else accent
