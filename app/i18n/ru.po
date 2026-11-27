@@ -10,11 +10,14 @@ msgstr ""
 msgid "Encyclopedia"
 msgstr "Энциклопедия"
 
-msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any trainer from here."
-msgstr "Гаммы, аккорды и арпеджио на грифе и нотном стане. Отсюда запускается любой тренажёр."
+msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any exercise from here."
+msgstr "Гаммы, аккорды и арпеджио на грифе и нотном стане. Отсюда запускается любое упражнение."
 
-msgid "Trainers"
-msgstr "Тренажёры"
+msgid "Exercises"
+msgstr "Упражнения"
+
+msgid "Tuner"
+msgstr "Тюнер"
 
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
 msgstr "Программа слушает гитару и оценивает игру: найди ноту, сыграй гамму, узнай аккорд."
@@ -26,7 +29,7 @@ msgid "Notes and tablature at a gradually increasing tempo."
 msgstr "Ноты и табулатура в постепенно растущем темпе."
 
 msgid "Tuning"
-msgstr "Настройка"
+msgstr "Строй"
 
 msgid "Chromatic tuner and alternate tunings."
 msgstr "Хроматический тюнер и альтернативные строи."
@@ -130,8 +133,8 @@ msgstr "Пример:"
 msgid "Show performance data (F3)"
 msgstr "Показывать данные производительности (F3)"
 
-msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, trainers, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
-msgstr "Fretboard Master – программа для обучения игре на гитаре: энциклопедия гамм и аккордов, тренажёры, чтение нот, тюнер и метроном – с распознаванием сыгранных нот в реальном времени."
+msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
+msgstr "Fretboard Master – программа для обучения игре на гитаре: энциклопедия гамм и аккордов, упражнения, чтение нот, тюнер и метроном – с распознаванием сыгранных нот в реальном времени."
 
 msgid "Copyright"
 msgstr "Авторские права"

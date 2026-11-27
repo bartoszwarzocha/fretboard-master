@@ -50,12 +50,12 @@ const DEFAULTS := {
 # Moduły w kolejności z menu głównego. Nazwy i opisy to identyfikatory tłumaczeń (gettext).
 const MODULES: Array[Dictionary] = [
 	{"id": &"encyclopedia", "name": "Encyclopedia", "icon": "♮", "color": Color("F5B544"),
-		"desc": "Scales, chords and arpeggios on the fretboard and the staff. Start any trainer from here."},
-	{"id": &"trainers", "name": "Trainers", "icon": "◎", "color": Color("3FD0C9"),
+		"desc": "Scales, chords and arpeggios on the fretboard and the staff. Start any exercise from here."},
+	{"id": &"trainers", "name": "Exercises", "icon": "◎", "color": Color("3FD0C9"),
 		"desc": "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."},
 	{"id": &"reading", "name": "Note reading", "icon": "𝄞", "color": Color("B98CFF"),
 		"desc": "Notes and tablature at a gradually increasing tempo."},
-	{"id": &"tuning", "name": "Tuning", "icon": "◐", "color": Color("7BD88F"),
+	{"id": &"tuning", "name": "Tuner", "icon": "◐", "color": Color("7BD88F"),
 		"desc": "Chromatic tuner and alternate tunings."},
 	{"id": &"metronome", "name": "Metronome", "icon": "♩", "color": Color("FF7A59"),
 		"desc": "Tempo, metre, accents and gradual speed-up."},

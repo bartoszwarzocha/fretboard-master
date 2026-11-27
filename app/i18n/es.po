@@ -10,11 +10,14 @@ msgstr ""
 msgid "Encyclopedia"
 msgstr "Enciclopedia"
 
-msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any trainer from here."
-msgstr "Escalas, acordes y arpegios en el mástil y en el pentagrama. Desde aquí inicias cualquier entrenador."
+msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any exercise from here."
+msgstr "Escalas, acordes y arpegios en el mástil y en el pentagrama. Desde aquí inicias cualquier ejercicio."
 
-msgid "Trainers"
-msgstr "Entrenadores"
+msgid "Exercises"
+msgstr "Ejercicios"
+
+msgid "Tuner"
+msgstr "Afinador"
 
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
 msgstr "El programa escucha tu guitarra y evalúa cómo tocas: encuentra la nota, toca la escala, reconoce el acorde."
@@ -130,8 +133,8 @@ msgstr "Ejemplo:"
 msgid "Show performance data (F3)"
 msgstr "Mostrar datos de rendimiento (F3)"
 
-msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, trainers, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
-msgstr "Fretboard Master es un programa para aprender guitarra: enciclopedia de escalas y acordes, entrenadores, lectura de notas, afinador y metrónomo, con reconocimiento en tiempo real de las notas que tocas."
+msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
+msgstr "Fretboard Master es un programa para aprender guitarra: enciclopedia de escalas y acordes, ejercicios, lectura de notas, afinador y metrónomo, con reconocimiento en tiempo real de las notas que tocas."
 
 msgid "Copyright"
 msgstr "Derechos de autor"

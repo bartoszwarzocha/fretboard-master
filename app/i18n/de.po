@@ -10,11 +10,14 @@ msgstr ""
 msgid "Encyclopedia"
 msgstr "Enzyklopädie"
 
-msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any trainer from here."
-msgstr "Tonleitern, Akkorde und Arpeggien auf dem Griffbrett und im Notensystem. Von hier aus startest du jeden Trainer."
+msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any exercise from here."
+msgstr "Tonleitern, Akkorde und Arpeggien auf dem Griffbrett und im Notensystem. Von hier aus startest du jede Übung."
 
-msgid "Trainers"
-msgstr "Trainer"
+msgid "Exercises"
+msgstr "Übungen"
+
+msgid "Tuner"
+msgstr "Stimmgerät"
 
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
 msgstr "Das Programm hört deiner Gitarre zu und bewertet dein Spiel: Ton finden, Tonleiter spielen, Akkord erkennen."
@@ -26,7 +29,7 @@ msgid "Notes and tablature at a gradually increasing tempo."
 msgstr "Noten und Tabulatur in allmählich steigendem Tempo."
 
 msgid "Tuning"
-msgstr "Stimmen"
+msgstr "Stimmung"
 
 msgid "Chromatic tuner and alternate tunings."
 msgstr "Chromatisches Stimmgerät und alternative Stimmungen."
@@ -130,8 +133,8 @@ msgstr "Beispiel:"
 msgid "Show performance data (F3)"
 msgstr "Leistungsdaten anzeigen (F3)"
 
-msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, trainers, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
-msgstr "Fretboard Master ist ein Programm zum Gitarrelernen: Enzyklopädie der Tonleitern und Akkorde, Trainer, Notenlesen, Stimmgerät und Metronom – mit Echtzeit-Erkennung der gespielten Töne."
+msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
+msgstr "Fretboard Master ist ein Programm zum Gitarrelernen: Enzyklopädie der Tonleitern und Akkorde, Übungen, Notenlesen, Stimmgerät und Metronom – mit Echtzeit-Erkennung der gespielten Töne."
 
 msgid "Copyright"
 msgstr "Urheberrecht"

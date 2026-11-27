@@ -9,10 +9,13 @@ msgstr ""
 msgid "Encyclopedia"
 msgstr ""
 
-msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any trainer from here."
+msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any exercise from here."
 msgstr ""
 
-msgid "Trainers"
+msgid "Exercises"
+msgstr ""
+
+msgid "Tuner"
 msgstr ""
 
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
@@ -129,7 +132,7 @@ msgstr ""
 msgid "Show performance data (F3)"
 msgstr ""
 
-msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, trainers, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
+msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
 msgstr ""
 
 msgid "Copyright"

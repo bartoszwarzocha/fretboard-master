@@ -10,11 +10,14 @@ msgstr ""
 msgid "Encyclopedia"
 msgstr "Encyklopedia"
 
-msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any trainer from here."
-msgstr "Skale, akordy i arpeggia na gryfie i pięciolinii. Stąd uruchomisz każdy trener."
+msgid "Scales, chords and arpeggios on the fretboard and the staff. Start any exercise from here."
+msgstr "Skale, akordy i arpeggia na gryfie i pięciolinii. Stąd uruchomisz każde ćwiczenie."
 
-msgid "Trainers"
-msgstr "Trenery"
+msgid "Exercises"
+msgstr "Ćwiczenia"
+
+msgid "Tuner"
+msgstr "Tuner"
 
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
 msgstr "Program słucha gitary i ocenia grę: znajdź dźwięk, zagraj skalę, rozpoznaj akord."
@@ -26,10 +29,10 @@ msgid "Notes and tablature at a gradually increasing tempo."
 msgstr "Nuty i tabulatura w stopniowo rosnącym tempie."
 
 msgid "Tuning"
-msgstr "Strojenie"
+msgstr "Strój"
 
 msgid "Chromatic tuner and alternate tunings."
-msgstr "Stroik chromatyczny i stroje alternatywne."
+msgstr "Tuner chromatyczny i stroje alternatywne."
 
 msgid "Metronome"
 msgstr "Metronom"
@@ -130,8 +133,8 @@ msgstr "Przykład:"
 msgid "Show performance data (F3)"
 msgstr "Pokaż dane wydajności (F3)"
 
-msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, trainers, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
-msgstr "Fretboard Master to program do nauki gry na gitarze: encyklopedia skal i akordów, trenery, czytanie nut, stroik i metronom – z rozpoznawaniem dźwięku granego na gitarze w czasie rzeczywistym."
+msgid "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with real-time recognition of the notes you play."
+msgstr "Fretboard Master to program do nauki gry na gitarze: encyklopedia skal i akordów, ćwiczenia, czytanie nut, tuner i metronom – z rozpoznawaniem dźwięku granego na gitarze w czasie rzeczywistym."
 
 msgid "Copyright"
 msgstr "Prawa autorskie"

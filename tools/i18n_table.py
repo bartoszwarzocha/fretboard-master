@@ -7,12 +7,13 @@ LANGS = ["pl", "de", "es", "ru"]
 # msgid (EN) : (pl, de, es, ru)
 T = {
  "Encyclopedia": ("Encyklopedia", "Enzyklopädie", "Enciclopedia", "Энциклопедия"),
- "Scales, chords and arpeggios on the fretboard and the staff. Start any trainer from here.": (
-  "Skale, akordy i arpeggia na gryfie i pięciolinii. Stąd uruchomisz każdy trener.",
-  "Tonleitern, Akkorde und Arpeggien auf dem Griffbrett und im Notensystem. Von hier aus startest du jeden Trainer.",
-  "Escalas, acordes y arpegios en el mástil y en el pentagrama. Desde aquí inicias cualquier entrenador.",
-  "Гаммы, аккорды и арпеджио на грифе и нотном стане. Отсюда запускается любой тренажёр."),
- "Trainers": ("Trenery", "Trainer", "Entrenadores", "Тренажёры"),
+ "Scales, chords and arpeggios on the fretboard and the staff. Start any exercise from here.": (
+  "Skale, akordy i arpeggia na gryfie i pięciolinii. Stąd uruchomisz każde ćwiczenie.",
+  "Tonleitern, Akkorde und Arpeggien auf dem Griffbrett und im Notensystem. Von hier aus startest du jede Übung.",
+  "Escalas, acordes y arpegios en el mástil y en el pentagrama. Desde aquí inicias cualquier ejercicio.",
+  "Гаммы, аккорды и арпеджио на грифе и нотном стане. Отсюда запускается любое упражнение."),
+ "Exercises": ("Ćwiczenia", "Übungen", "Ejercicios", "Упражнения"),
+ "Tuner": ("Tuner", "Stimmgerät", "Afinador", "Тюнер"),
  "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord.": (
   "Program słucha gitary i ocenia grę: znajdź dźwięk, zagraj skalę, rozpoznaj akord.",
   "Das Programm hört deiner Gitarre zu und bewertet dein Spiel: Ton finden, Tonleiter spielen, Akkord erkennen.",
@@ -24,9 +25,9 @@ T = {
   "Noten und Tabulatur in allmählich steigendem Tempo.",
   "Notas y tablatura a un tempo que aumenta gradualmente.",
   "Ноты и табулатура в постепенно растущем темпе."),
- "Tuning": ("Strojenie", "Stimmen", "Afinación", "Настройка"),
+ "Tuning": ("Strój", "Stimmung", "Afinación", "Строй"),
  "Chromatic tuner and alternate tunings.": (
-  "Stroik chromatyczny i stroje alternatywne.",
+  "Tuner chromatyczny i stroje alternatywne.",
   "Chromatisches Stimmgerät und alternative Stimmungen.",
   "Afinador cromático y afinaciones alternativas.",
   "Хроматический тюнер и альтернативные строи."),
@@ -79,11 +80,11 @@ T = {
  "Solfège (Do Re Mi Fa Sol La Si)": ("Solmizacja (Do Re Mi Fa Sol La Si)", "Solmisation (Do Re Mi Fa Sol La Si)", "Solfeo (Do Re Mi Fa Sol La Si)", "Сольмизация (Do Re Mi Fa Sol La Si)"),
  "Example:": ("Przykład:", "Beispiel:", "Ejemplo:", "Пример:"),
  "Show performance data (F3)": ("Pokaż dane wydajności (F3)", "Leistungsdaten anzeigen (F3)", "Mostrar datos de rendimiento (F3)", "Показывать данные производительности (F3)"),
- "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, trainers, note reading, a tuner and a metronome – with real-time recognition of the notes you play.": (
-  "Fretboard Master to program do nauki gry na gitarze: encyklopedia skal i akordów, trenery, czytanie nut, stroik i metronom – z rozpoznawaniem dźwięku granego na gitarze w czasie rzeczywistym.",
-  "Fretboard Master ist ein Programm zum Gitarrelernen: Enzyklopädie der Tonleitern und Akkorde, Trainer, Notenlesen, Stimmgerät und Metronom – mit Echtzeit-Erkennung der gespielten Töne.",
-  "Fretboard Master es un programa para aprender guitarra: enciclopedia de escalas y acordes, entrenadores, lectura de notas, afinador y metrónomo, con reconocimiento en tiempo real de las notas que tocas.",
-  "Fretboard Master – программа для обучения игре на гитаре: энциклопедия гамм и аккордов, тренажёры, чтение нот, тюнер и метроном – с распознаванием сыгранных нот в реальном времени."),
+ "Fretboard Master is a guitar-learning program: an encyclopedia of scales and chords, exercises, note reading, a tuner and a metronome – with real-time recognition of the notes you play.": (
+  "Fretboard Master to program do nauki gry na gitarze: encyklopedia skal i akordów, ćwiczenia, czytanie nut, tuner i metronom – z rozpoznawaniem dźwięku granego na gitarze w czasie rzeczywistym.",
+  "Fretboard Master ist ein Programm zum Gitarrelernen: Enzyklopädie der Tonleitern und Akkorde, Übungen, Notenlesen, Stimmgerät und Metronom – mit Echtzeit-Erkennung der gespielten Töne.",
+  "Fretboard Master es un programa para aprender guitarra: enciclopedia de escalas y acordes, ejercicios, lectura de notas, afinador y metrónomo, con reconocimiento en tiempo real de las notas que tocas.",
+  "Fretboard Master – программа для обучения игре на гитаре: энциклопедия гамм и аккордов, упражнения, чтение нот, тюнер и метроном – с распознаванием сыгранных нот в реальном времени."),
  "Copyright": ("Prawa autorskie", "Urheberrecht", "Derechos de autor", "Авторские права"),
  "Licence": ("Licencja", "Lizenz", "Licencia", "Лицензия"),
  "Freeware – proprietary licence": ("Freeware – licencja własnościowa", "Freeware – proprietäre Lizenz", "Freeware – licencia propietaria", "Freeware – проприетарная лицензия"),
