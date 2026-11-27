@@ -7,12 +7,13 @@ class_name GuitarModel3D
 extends SubViewportContainer
 
 const MODEL_PATH := "res://assets/models/guitar-classical.glb"
-const TILT_DEG := -32.0       # pochylenie osi gitary względem pionu (główka w prawo u góry)
+const TILT_DEG := -37.0       # pochylenie osi gitary względem pionu (główka w prawo u góry)
 const LEAN_DEG := 12.0        # lekkie odchylenie w stronę widza
-const TURN_TIME := 24.0       # s na pełny obrót
+const TURN_TIME := 20.0       # s na pełny obrót
 const STILL_DEG := 35.0       # ujęcie przy wyłączonych animacjach
 const FOV := 22.0
 const MARGIN := 1.08          # zapas wokół bryły
+const ZOOM := 1.08            # powiększenie ponad dopasowanie (razem z większym pochyleniem ok. +10%)
 
 var _vp: SubViewport
 var _spin: Node3D
@@ -129,7 +130,7 @@ func _fit_camera() -> void:
 	var w := _length * sin(a) + _width * cos(a)
 	var h := _length * cos(a) + _width * sin(a)
 	var aspect := size.x / size.y
-	var half_h := maxf(h * 0.5, w * 0.5 / aspect) * MARGIN
+	var half_h := maxf(h * 0.5, w * 0.5 / aspect) * MARGIN / ZOOM
 	var dist := half_h / tan(deg_to_rad(FOV * 0.5)) + _width * 0.5
 	_cam.position = Vector3(0, 0, dist)
 	_cam.near = maxf(dist - _length, 0.01)
