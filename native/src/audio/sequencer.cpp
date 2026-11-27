@@ -275,6 +275,27 @@ void Sequencer::render(float *stereo, int frames) {
             next_tick_ += tick_length();
         }
     }
+    // Kamerton: sinus z odrobiną 2. i 3. harmonicznej (słyszalny także w małych głośnikach),
+    // głośność zmienia się płynnie (ok. 20 ms) – bez trzasków przy włączaniu i zmianie struny.
+    const float target = tone_target_.load(std::memory_order_relaxed);
+    if (target > 0.0f || tone_gain_ > 0.0f) {
+        const double step = 2.0 * kPi * tone_hz_.load(std::memory_order_relaxed) / rate_;
+        const float slew = static_cast<float>(1.0 / (0.02 * rate_));
+        for (int i = 0; i < frames; ++i) {
+            tone_gain_ += std::clamp(target - tone_gain_, -slew, slew);
+            const double ph = tone_phase_;
+            const float v = tone_gain_ * static_cast<float>(0.8 * std::sin(ph) + 0.15 * std::sin(2.0 * ph) + 0.05 * std::sin(3.0 * ph));
+            stereo[i * 2] += v;
+            stereo[i * 2 + 1] += v;
+            tone_phase_ += step;
+            if (tone_phase_ > 2.0 * kPi) {
+                tone_phase_ -= 2.0 * kPi;
+            }
+        }
+        if (tone_gain_ < 1e-5f && target <= 0.0f) {
+            tone_gain_ = 0.0f;
+        }
+    }
     const float vol = volume_.load(std::memory_order_relaxed);
     for (int i = 0; i < frames * 2; ++i) {
         stereo[i] = std::clamp(stereo[i] * vol, -1.0f, 1.0f);

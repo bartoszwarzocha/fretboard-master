@@ -75,6 +75,9 @@ add_library(fbm_core SHARED
     src/fbm_core.h
     src/note_names.cpp
     src/note_names.h
+    src/audio/input_ring.h
+    src/audio/pitch.cpp
+    src/audio/pitch.h
     src/audio/sequencer.cpp
     src/audio/sequencer.h
     src/audio/fbm_audio.cpp

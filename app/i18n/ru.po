@@ -19,6 +19,72 @@ msgstr "Упражнения"
 msgid "Tuner"
 msgstr "Тюнер"
 
+msgid "String detection"
+msgstr "Определение струны"
+
+msgid "Selected string"
+msgstr "Выбранная струна"
+
+msgid "chromatic tuner · A4 = %d Hz"
+msgstr "хроматический тюнер · A4 = %d Hz"
+
+msgid "Tuner view"
+msgstr "Вид тюнера"
+
+msgid "Analog"
+msgstr "Аналоговый"
+
+msgid "Digital"
+msgstr "Цифровой"
+
+msgid "Standard"
+msgstr "Стандартный"
+
+msgid "Half step down"
+msgstr "На полтона ниже"
+
+msgid "Reference pitch"
+msgstr "Эталонный строй"
+
+msgid "Play reference tone"
+msgstr "Играть эталонный тон"
+
+msgid "Stop reference tone"
+msgstr "Остановить эталонный тон"
+
+msgid "CENTS"
+msgstr "ЦЕНТЫ"
+
+msgid "string %d"
+msgstr "струна %d"
+
+msgid "in tune"
+msgstr "настроена"
+
+msgid "too low"
+msgstr "низко"
+
+msgid "too high"
+msgstr "высоко"
+
+msgid "String in tune."
+msgstr "Струна настроена."
+
+msgid "Too low – tighten the string."
+msgstr "Низко – подтяните струну."
+
+msgid "Too high – loosen the string."
+msgstr "Высоко – ослабьте струну."
+
+msgid "Play an open string."
+msgstr "Сыграйте открытую струну."
+
+msgid "Play the selected string."
+msgstr "Сыграйте выбранную струну."
+
+msgid "No sound input – check the Sound and MIDI settings."
+msgstr "Нет аудиовхода – проверьте настройки звука и MIDI."
+
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
 msgstr "Программа слушает гитару и оценивает игру: найди ноту, сыграй гамму, узнай аккорд."
 

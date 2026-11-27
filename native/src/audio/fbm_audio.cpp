@@ -47,17 +47,34 @@ struct FbmAudio::Stream {
     std::atomic<int64_t> base_frame{0};
     std::atomic<double> base_dac{0.0};
     fbm::Sequencer *seq = nullptr;
+    // Wejście: w tym samym strumieniu (duplex) albo w osobnym `in_pa`.
+    PaStream *in_pa = nullptr;
+    fbm::InputRing *ring = nullptr;
+    int in_channels = 0;
+    int in_channel = 0;
+    bool input = false;
+    double in_latency = 0.0;    // s
 };
 
-static int pa_callback(const void *, void *output, unsigned long frames, const PaStreamCallbackTimeInfo *time,
+static int pa_callback(const void *input, void *output, unsigned long frames, const PaStreamCallbackTimeInfo *time,
         PaStreamCallbackFlags, void *user) {
     auto *s = static_cast<FbmAudio::Stream *>(user);
+    if (s->input && !s->in_pa) {
+        s->ring->write(static_cast<const float *>(input), static_cast<int>(frames), s->in_channels, s->in_channel);
+    }
     const int64_t first = s->seq->frames_rendered();
     s->seq->render(static_cast<float *>(output), static_cast<int>(frames));
     if (time && time->outputBufferDacTime > 0.0) {
         s->base_dac.store(time->outputBufferDacTime, std::memory_order_relaxed);
         s->base_frame.store(first, std::memory_order_relaxed);
     }
+    return paContinue;
+}
+
+static int pa_input_callback(const void *input, void *, unsigned long frames, const PaStreamCallbackTimeInfo *,
+        PaStreamCallbackFlags, void *user) {
+    auto *s = static_cast<FbmAudio::Stream *>(user);
+    s->ring->write(static_cast<const float *>(input), static_cast<int>(frames), s->in_channels, s->in_channel);
     return paContinue;
 }
 
@@ -75,7 +92,16 @@ FbmAudio::~FbmAudio() {
 void FbmAudio::_bind_methods() {
     ClassDB::bind_method(D_METHOD("host_apis"), &FbmAudio::host_apis);
     ClassDB::bind_method(D_METHOD("output_devices", "api"), &FbmAudio::output_devices);
-    ClassDB::bind_method(D_METHOD("open", "api", "device", "buffer_frames"), &FbmAudio::open);
+    ClassDB::bind_method(D_METHOD("input_devices", "api"), &FbmAudio::input_devices);
+    ClassDB::bind_method(D_METHOD("open", "api", "device", "in_device", "in_channel", "buffer_frames"), &FbmAudio::open);
+    ClassDB::bind_method(D_METHOD("input_latency_ms"), &FbmAudio::input_latency_ms);
+    ClassDB::bind_method(D_METHOD("input_ok"), &FbmAudio::input_ok);
+    ClassDB::bind_method(D_METHOD("input_error"), &FbmAudio::input_error);
+    ClassDB::bind_method(D_METHOD("input_peak_db"), &FbmAudio::input_peak_db);
+    ClassDB::bind_method(D_METHOD("pitch"), &FbmAudio::pitch);
+    ClassDB::bind_method(D_METHOD("input_frames"), &FbmAudio::input_frames);
+    ClassDB::bind_method(D_METHOD("detect_pitch", "samples", "rate"), &FbmAudio::detect_pitch);
+    ClassDB::bind_method(D_METHOD("set_tone", "hz", "gain"), &FbmAudio::set_tone);
     ClassDB::bind_method(D_METHOD("close"), &FbmAudio::close);
     ClassDB::bind_method(D_METHOD("is_open"), &FbmAudio::is_open);
     ClassDB::bind_method(D_METHOD("current_api"), &FbmAudio::current_api);
@@ -124,7 +150,25 @@ PackedStringArray FbmAudio::output_devices(const String &api) const {
     return out;
 }
 
-String FbmAudio::open(const String &api, const String &device, int buffer_frames) {
+PackedStringArray FbmAudio::input_devices(const String &api) const {
+    PackedStringArray out;
+    const PaHostApiIndex h = pa_ready_ ? api_index(api) : -1;
+    if (h < 0) {
+        return out;
+    }
+    out.push_back("Default");
+    const PaHostApiInfo *info = Pa_GetHostApiInfo(h);
+    for (int k = 0; k < info->deviceCount; ++k) {
+        const PaDeviceInfo *di = Pa_GetDeviceInfo(Pa_HostApiDeviceIndexToDeviceIndex(h, k));
+        if (di && di->maxInputChannels >= 1) {
+            out.push_back(String::utf8(di->name));
+        }
+    }
+    return out;
+}
+
+String FbmAudio::open(const String &api, const String &device, const String &in_device, int in_channel,
+        int buffer_frames) {
     close();
     if (!pa_ready_) {
         return "PortAudio";
@@ -152,8 +196,41 @@ String FbmAudio::open(const String &api, const String &device, int buffer_frames
     out.suggestedLatency = di->defaultLowOutputLatency;
     out.hostApiSpecificStreamInfo = nullptr;
 
+    // Wejście: wybrane urządzenie tego sterownika; ASIO pozwala tylko na jedno urządzenie naraz.
+    input_error_ = "";
+    PaDeviceIndex in_dev = info->defaultInputDevice;
+    if (in_device != "Default") {
+        for (int k = 0; k < info->deviceCount; ++k) {
+            const PaDeviceIndex d = Pa_HostApiDeviceIndexToDeviceIndex(h, k);
+            const PaDeviceInfo *x = Pa_GetDeviceInfo(d);
+            if (x && x->maxInputChannels > 0 && device_name(d) == in_device) {
+                in_dev = d;
+            }
+        }
+    }
+    if (info->type == paASIO) {
+        in_dev = dev;
+    }
+    const PaDeviceInfo *ii = in_dev != paNoDevice ? Pa_GetDeviceInfo(in_dev) : nullptr;
+    PaStreamParameters in{};
+    const bool want_input = ii && ii->maxInputChannels > 0;
+    if (want_input) {
+        in.device = in_dev;
+        in.channelCount = std::clamp(in_channel + 1, 1, ii->maxInputChannels);
+        in.sampleFormat = paFloat32;
+        in.suggestedLatency = ii->defaultLowInputLatency;
+    } else {
+        input_error_ = "input device";
+    }
+
     auto s = std::make_unique<Stream>();
     s->seq = &sequencer_;
+    s->ring = &ring_;
+    ring_.reset();
+    if (want_input) {
+        s->in_channels = in.channelCount;
+        s->in_channel = std::min(in_channel, in.channelCount - 1);
+    }
     // 48 kHz, a gdy urządzenie go nie obsługuje – jego domyślna częstotliwość.
     double rate = 48000.0;
     if (Pa_IsFormatSupported(nullptr, &out, rate) != paFormatIsSupported) {
@@ -161,18 +238,48 @@ String FbmAudio::open(const String &api, const String &device, int buffer_frames
     }
     sequencer_.set_sample_rate(rate);
     const unsigned long frames = buffer_frames > 0 ? static_cast<unsigned long>(buffer_frames) : paFramesPerBufferUnspecified;
-    PaError err = Pa_OpenStream(&s->pa, nullptr, &out, rate, frames, paClipOff, pa_callback, s.get());
-    if (err != paNoError) {
-        return String::utf8(Pa_GetErrorText(err));
+    PaError err = paInternalError;
+    if (want_input && Pa_IsFormatSupported(&in, &out, rate) == paFormatIsSupported) {
+        s->input = true;
+        err = Pa_OpenStream(&s->pa, &in, &out, rate, frames, paClipOff, pa_callback, s.get());
+        if (err != paNoError) {
+            s->pa = nullptr;
+            s->input = false;
+        }
+    }
+    if (!s->input) {
+        err = Pa_OpenStream(&s->pa, nullptr, &out, rate, frames, paClipOff, pa_callback, s.get());
+        if (err != paNoError) {
+            return String::utf8(Pa_GetErrorText(err));
+        }
+        // Wejście osobno (np. inne urządzenie WASAPI niż wyjście).
+        if (want_input) {
+            const PaError ie = Pa_OpenStream(&s->in_pa, &in, nullptr, rate, frames, paClipOff, pa_input_callback, s.get());
+            if (ie == paNoError && Pa_StartStream(s->in_pa) == paNoError) {
+                s->input = true;
+            } else {
+                if (s->in_pa) {
+                    Pa_CloseStream(s->in_pa);
+                    s->in_pa = nullptr;
+                }
+                input_error_ = String::utf8(Pa_GetErrorText(ie != paNoError ? ie : paInternalError));
+            }
+        }
     }
     err = Pa_StartStream(s->pa);
     if (err != paNoError) {
         Pa_CloseStream(s->pa);
+        if (s->in_pa) {
+            Pa_StopStream(s->in_pa);
+            Pa_CloseStream(s->in_pa);
+        }
         return String::utf8(Pa_GetErrorText(err));
     }
     const PaStreamInfo *si = Pa_GetStreamInfo(s->pa);
     s->rate = si ? si->sampleRate : rate;
     s->latency = si ? si->outputLatency : 0.0;
+    const PaStreamInfo *isi = s->in_pa ? Pa_GetStreamInfo(s->in_pa) : si;
+    s->in_latency = s->input && isi ? isi->inputLatency : 0.0;
     stream_ = std::move(s);
     api_ = api;
     return "";
@@ -182,6 +289,10 @@ void FbmAudio::close() {
     if (stream_ && stream_->pa) {
         Pa_StopStream(stream_->pa);
         Pa_CloseStream(stream_->pa);
+    }
+    if (stream_ && stream_->in_pa) {
+        Pa_StopStream(stream_->in_pa);
+        Pa_CloseStream(stream_->in_pa);
     }
     stream_.reset();
     api_ = "";
@@ -201,6 +312,59 @@ double FbmAudio::sample_rate() const {
 
 double FbmAudio::output_latency_ms() const {
     return stream_ ? stream_->latency * 1000.0 : 0.0;
+}
+
+double FbmAudio::input_latency_ms() const {
+    return stream_ ? stream_->in_latency * 1000.0 : 0.0;
+}
+
+bool FbmAudio::input_ok() const {
+    return stream_ && stream_->input;
+}
+
+String FbmAudio::input_error() const {
+    return input_error_;
+}
+
+double FbmAudio::input_peak_db() {
+    const float p = ring_.take_peak();
+    return p > 1e-6f ? 20.0 * std::log10(static_cast<double>(p)) : -120.0;
+}
+
+Dictionary FbmAudio::pitch() {
+    Dictionary d;
+    if (!input_ok()) {
+        d["hz"] = 0.0;
+        d["clarity"] = 0.0;
+        d["level_db"] = -120.0;
+        return d;
+    }
+    // Okno ok. 85 ms – dwa okresy nawet dla niskiego H (ok. 62 Hz) w stroju obniżonym.
+    const int n = stream_->rate > 60000.0 ? 8192 : 4096;
+    window_.resize(static_cast<size_t>(n));
+    ring_.latest(window_.data(), n);
+    const fbm::PitchResult r = detector_.detect(window_.data(), n, stream_->rate);
+    d["hz"] = r.hz;
+    d["clarity"] = r.clarity;
+    d["level_db"] = r.level_db;
+    return d;
+}
+
+int64_t FbmAudio::input_frames() const {
+    return ring_.written();
+}
+
+Dictionary FbmAudio::detect_pitch(const PackedFloat32Array &samples, double rate) {
+    const fbm::PitchResult r = detector_.detect(samples.ptr(), static_cast<int>(samples.size()), rate);
+    Dictionary d;
+    d["hz"] = r.hz;
+    d["clarity"] = r.clarity;
+    d["level_db"] = r.level_db;
+    return d;
+}
+
+void FbmAudio::set_tone(double hz, double gain) {
+    sequencer_.set_tone(std::clamp(hz, 20.0, 4000.0), static_cast<float>(std::clamp(gain, 0.0, 1.0)));
 }
 
 bool FbmAudio::load_soundfont(const PackedByteArray &data) {

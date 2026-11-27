@@ -72,7 +72,8 @@ func _driver_card() -> Control:
 	row.add_child(_segmented(DRIVERS, driver, func(v: Variant) -> void:
 		App.set_setting(&"audio_driver", v)
 		_refresh_pill()
-		_fill_outputs(), 16))
+		_fill_outputs()
+		_fill_inputs(), 16))
 	_pill = Label.new()
 	_pill.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_pill.add_theme_font_override("font", ThemeManager.font_body_bold)
@@ -84,6 +85,7 @@ func _driver_card() -> Control:
 
 var _pill: Label
 var _outputs: OptionButton
+var _inputs: OptionButton
 
 
 # Urządzenia wyjściowe: z rdzenia audio dla wybranego sterownika, a bez rdzenia – z Godota (WASAPI).
@@ -102,6 +104,26 @@ func _fill_outputs() -> void:
 			_outputs.selected = i
 	if _outputs.selected < 0 and devices.size() > 0:
 		_outputs.selected = 0
+
+
+# Urządzenia wejściowe (gitara): z rdzenia audio dla wybranego sterownika, a bez rdzenia – z Godota.
+func _fill_inputs() -> void:
+	if _inputs == null:
+		return
+	var devices := AudioEngine.input_devices(AudioEngine.driver()) if AudioEngine.available() \
+			else AudioServer.get_input_device_list()
+	if devices.is_empty():
+		devices = PackedStringArray(["Default"])
+	_inputs.set_meta(&"devices", devices)
+	_inputs.clear()
+	var current := str(App.setting(&"audio_input"))
+	for i in devices.size():
+		_inputs.add_item(tr("System default") if devices[i] == "Default" else devices[i])
+		_inputs.set_item_auto_translate_mode(i, Node.AUTO_TRANSLATE_MODE_DISABLED)
+		if devices[i] == current:
+			_inputs.selected = i
+	if _inputs.selected < 0:
+		_inputs.selected = 0
 
 
 # Pastylka stanu: WASAPI działa już teraz; ASIO i WDM-KS – z nowym rdzeniem audio.
@@ -129,7 +151,9 @@ func _input_card() -> Control:
 	col.add_child(_label("Input – guitar", 22, ThemeManager.color("text"), true))
 	col.add_child(_gap(4))
 	col.add_child(_label("Device", 15, ThemeManager.color("muted")))
-	col.add_child(_device_select(&"audio_input", AudioServer.get_input_device_list()))
+	_inputs = _device_select(&"audio_input", PackedStringArray())
+	col.add_child(_inputs)
+	_fill_inputs()
 	col.add_child(_gap(6))
 	col.add_child(_label("Channel", 15, ThemeManager.color("muted")))
 	col.add_child(_chips([[0, "Input 1 (Hi-Z)"], [1, "Input 2"]], int(App.setting(&"input_channel")),

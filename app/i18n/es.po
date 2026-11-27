@@ -19,6 +19,72 @@ msgstr "Ejercicios"
 msgid "Tuner"
 msgstr "Afinador"
 
+msgid "String detection"
+msgstr "Detección de cuerda"
+
+msgid "Selected string"
+msgstr "Cuerda elegida"
+
+msgid "chromatic tuner · A4 = %d Hz"
+msgstr "afinador cromático · A4 = %d Hz"
+
+msgid "Tuner view"
+msgstr "Vista del afinador"
+
+msgid "Analog"
+msgstr "Analógico"
+
+msgid "Digital"
+msgstr "Digital"
+
+msgid "Standard"
+msgstr "Estándar"
+
+msgid "Half step down"
+msgstr "Medio tono abajo"
+
+msgid "Reference pitch"
+msgstr "Tono de referencia"
+
+msgid "Play reference tone"
+msgstr "Tocar tono de referencia"
+
+msgid "Stop reference tone"
+msgstr "Detener tono de referencia"
+
+msgid "CENTS"
+msgstr "CENTS"
+
+msgid "string %d"
+msgstr "cuerda %d"
+
+msgid "in tune"
+msgstr "afinada"
+
+msgid "too low"
+msgstr "baja"
+
+msgid "too high"
+msgstr "alta"
+
+msgid "String in tune."
+msgstr "Cuerda afinada."
+
+msgid "Too low – tighten the string."
+msgstr "Está baja – tensa la cuerda."
+
+msgid "Too high – loosen the string."
+msgstr "Está alta – afloja la cuerda."
+
+msgid "Play an open string."
+msgstr "Toca una cuerda al aire."
+
+msgid "Play the selected string."
+msgstr "Toca la cuerda elegida."
+
+msgid "No sound input – check the Sound and MIDI settings."
+msgstr "Sin entrada de sonido: revisa los ajustes de Sonido y MIDI."
+
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
 msgstr "El programa escucha tu guitarra y evalúa cómo tocas: encuentra la nota, toca la escala, reconoce el acorde."
 

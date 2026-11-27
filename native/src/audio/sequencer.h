@@ -66,6 +66,11 @@ public:
     void set_volume(float linear) { volume_.store(linear); }
     // Pojedynczy dźwięk MIDI (program General MIDI 0–127, kanał 1) trwający `seconds`.
     void play_note(int program, int key, float velocity, double seconds);
+    // Dźwięk wzorcowy (kamerton): ciągły ton o częstotliwości `hz`; gain 0 wycisza (łagodnie).
+    void set_tone(double hz, float gain) {
+        tone_hz_.store(hz);
+        tone_target_.store(gain);
+    }
     // Krok brzmiący w próbce `frame` (do animacji wskaźnika w interfejsie).
     TickInfo tick_at(int64_t frame) const;
 
@@ -123,6 +128,10 @@ private:
     std::vector<PendingOff> offs_;
     std::array<std::vector<float>, 9> clicks_;   // brzmienie × (akcent, uderzenie, podział)
     std::vector<float> scratch_;
+    std::atomic<double> tone_hz_{440.0};
+    std::atomic<float> tone_target_{0.0f};
+    float tone_gain_ = 0.0f;
+    double tone_phase_ = 0.0;
 
     // Historia kroków dla interfejsu.
     mutable std::mutex ticks_mutex_;

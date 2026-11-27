@@ -49,6 +49,10 @@ const DEFAULTS := {
 		&"met_kit": 0, &"met_pattern": "", &"met_preset": 0, &"met_ramp": true, &"met_ramp_to": 120,
 		&"met_ramp_step": 4, &"met_ramp_bars": 8,
 	},
+	# Tuner – widok, tryb i wybrana struna (0 = 6. struna).
+	&"tuner": {
+		&"tun_view": 0, &"tun_mode": 0, &"tun_string": 1,
+	},
 	# Stan programu zapamiętywany między uruchomieniami – bez zakładki, nie jest przywracany.
 	&"state": {
 		&"last_screen": "menu", &"window_rect": "",

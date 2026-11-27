@@ -18,6 +18,72 @@ msgstr ""
 msgid "Tuner"
 msgstr ""
 
+msgid "String detection"
+msgstr ""
+
+msgid "Selected string"
+msgstr ""
+
+msgid "chromatic tuner · A4 = %d Hz"
+msgstr ""
+
+msgid "Tuner view"
+msgstr ""
+
+msgid "Analog"
+msgstr ""
+
+msgid "Digital"
+msgstr ""
+
+msgid "Standard"
+msgstr ""
+
+msgid "Half step down"
+msgstr ""
+
+msgid "Reference pitch"
+msgstr ""
+
+msgid "Play reference tone"
+msgstr ""
+
+msgid "Stop reference tone"
+msgstr ""
+
+msgid "CENTS"
+msgstr ""
+
+msgid "string %d"
+msgstr ""
+
+msgid "in tune"
+msgstr ""
+
+msgid "too low"
+msgstr ""
+
+msgid "too high"
+msgstr ""
+
+msgid "String in tune."
+msgstr ""
+
+msgid "Too low – tighten the string."
+msgstr ""
+
+msgid "Too high – loosen the string."
+msgstr ""
+
+msgid "Play an open string."
+msgstr ""
+
+msgid "Play the selected string."
+msgstr ""
+
+msgid "No sound input – check the Sound and MIDI settings."
+msgstr ""
+
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
 msgstr ""
 

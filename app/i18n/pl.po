@@ -19,6 +19,72 @@ msgstr "Ćwiczenia"
 msgid "Tuner"
 msgstr "Tuner"
 
+msgid "String detection"
+msgstr "Rozpoznawanie struny"
+
+msgid "Selected string"
+msgstr "Wybrana struna"
+
+msgid "chromatic tuner · A4 = %d Hz"
+msgstr "stroik chromatyczny · A4 = %d Hz"
+
+msgid "Tuner view"
+msgstr "Widok tunera"
+
+msgid "Analog"
+msgstr "Analogowy"
+
+msgid "Digital"
+msgstr "Cyfrowy"
+
+msgid "Standard"
+msgstr "Standardowy"
+
+msgid "Half step down"
+msgstr "Pół tonu niżej"
+
+msgid "Reference pitch"
+msgstr "Strój odniesienia"
+
+msgid "Play reference tone"
+msgstr "Zagraj dźwięk wzorcowy"
+
+msgid "Stop reference tone"
+msgstr "Zatrzymaj dźwięk wzorcowy"
+
+msgid "CENTS"
+msgstr "CENTY"
+
+msgid "string %d"
+msgstr "struna %d"
+
+msgid "in tune"
+msgstr "nastrojona"
+
+msgid "too low"
+msgstr "za nisko"
+
+msgid "too high"
+msgstr "za wysoko"
+
+msgid "String in tune."
+msgstr "Struna nastrojona."
+
+msgid "Too low – tighten the string."
+msgstr "Dźwięk za niski – podciągnij strunę."
+
+msgid "Too high – loosen the string."
+msgstr "Dźwięk za wysoki – poluzuj strunę."
+
+msgid "Play an open string."
+msgstr "Zagraj pustą strunę."
+
+msgid "Play the selected string."
+msgstr "Zagraj wybraną strunę."
+
+msgid "No sound input – check the Sound and MIDI settings."
+msgstr "Brak wejścia dźwięku – sprawdź ustawienia dźwięku i MIDI."
+
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
 msgstr "Program słucha gitary i ocenia grę: znajdź dźwięk, zagraj skalę, rozpoznaj akord."
 

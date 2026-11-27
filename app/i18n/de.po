@@ -19,6 +19,72 @@ msgstr "Übungen"
 msgid "Tuner"
 msgstr "Stimmgerät"
 
+msgid "String detection"
+msgstr "Saitenerkennung"
+
+msgid "Selected string"
+msgstr "Gewählte Saite"
+
+msgid "chromatic tuner · A4 = %d Hz"
+msgstr "chromatisches Stimmgerät · A4 = %d Hz"
+
+msgid "Tuner view"
+msgstr "Stimmgerät-Ansicht"
+
+msgid "Analog"
+msgstr "Analog"
+
+msgid "Digital"
+msgstr "Digital"
+
+msgid "Standard"
+msgstr "Standard"
+
+msgid "Half step down"
+msgstr "Halbton tiefer"
+
+msgid "Reference pitch"
+msgstr "Kammerton"
+
+msgid "Play reference tone"
+msgstr "Referenzton spielen"
+
+msgid "Stop reference tone"
+msgstr "Referenzton stoppen"
+
+msgid "CENTS"
+msgstr "CENT"
+
+msgid "string %d"
+msgstr "Saite %d"
+
+msgid "in tune"
+msgstr "gestimmt"
+
+msgid "too low"
+msgstr "zu tief"
+
+msgid "too high"
+msgstr "zu hoch"
+
+msgid "String in tune."
+msgstr "Saite gestimmt."
+
+msgid "Too low – tighten the string."
+msgstr "Zu tief – Saite spannen."
+
+msgid "Too high – loosen the string."
+msgstr "Zu hoch – Saite entspannen."
+
+msgid "Play an open string."
+msgstr "Spiel eine Leersaite."
+
+msgid "Play the selected string."
+msgstr "Spiel die gewählte Saite."
+
+msgid "No sound input – check the Sound and MIDI settings."
+msgstr "Kein Audioeingang – prüfe die Einstellungen Sound und MIDI."
+
 msgid "The program listens to your guitar and rates your playing: find the note, play the scale, recognise the chord."
 msgstr "Das Programm hört deiner Gitarre zu und bewertet dein Spiel: Ton finden, Tonleiter spielen, Akkord erkennen."
 

@@ -7,7 +7,7 @@ class_name AudioEngine
 extends RefCounted
 
 const SOUNDFONT := "res://assets/sound/GeneralUser-GS.sf2"
-const REOPEN_KEYS := [&"audio_driver", &"audio_output", &"buffer_samples"]
+const REOPEN_KEYS := [&"audio_driver", &"audio_output", &"audio_input", &"input_channel", &"buffer_samples"]
 
 static var _core: Object
 static var _ready := false
@@ -66,12 +66,22 @@ static func driver() -> String:
 	return list[0]
 
 
+static func input_devices(driver: String) -> PackedStringArray:
+	var c := core()
+	return c.input_devices(driver) if c else PackedStringArray()
+
+
 static func _open() -> void:
 	var c := core()
-	_error = c.open(driver(), str(App.setting(&"audio_output")), int(App.setting(&"buffer_samples")))
+	var input := str(App.setting(&"audio_input"))
+	var channel := int(App.setting(&"input_channel"))
+	var buffer := int(App.setting(&"buffer_samples"))
+	_error = c.open(driver(), str(App.setting(&"audio_output")), input, channel, buffer)
 	if not _error.is_empty():
 		# Urządzenie z ustawień niedostępne (np. odłączone) – próba z domyślnym.
-		_error = c.open(driver(), "Default", int(App.setting(&"buffer_samples")))
+		_error = c.open(driver(), "Default", input, channel, buffer)
+	elif not c.input_ok() and input != "Default":
+		_error = c.open(driver(), str(App.setting(&"audio_output")), "Default", channel, buffer)
 
 
 static func _on_setting(key: StringName) -> void:
