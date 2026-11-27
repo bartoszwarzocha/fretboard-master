@@ -507,6 +507,18 @@ msgstr ""
 msgid "Inlays"
 msgstr ""
 
+msgid "Note markers"
+msgstr ""
+
+msgid "Root markers"
+msgstr ""
+
+msgid "Text on markers"
+msgstr ""
+
+msgid "Default colour"
+msgstr ""
+
 msgid "Dots"
 msgstr ""
 

@@ -11,10 +11,12 @@ extends Control
 
 # Ustawienia, których zmiana przebudowuje gryf.
 const KEYS := [&"neck_view", &"fretboard_wood", &"fret_metal", &"string_color", &"inlays", &"strings",
-		&"frets", &"tuning", &"left_handed", &"neck_tilt", &"neck_fov", &"shadows", &"msaa", &"notation"]
+		&"frets", &"tuning", &"left_handed", &"neck_tilt", &"neck_fov", &"shadows", &"msaa", &"notation",
+		&"marker_color", &"marker_root_color", &"marker_text_color"]
 const GUTTER := 56.0        # kolumna nazw strun
 const TOP := 30.0           # wiersz numerów progów
 const PAD := 10.0
+const SS := 2               # nadpróbkowanie obrazu 3D (2× w każdą stronę) – gładkie struny i krawędzie
 const THICK := [1.0, 1.3, 1.7, 2.2, 2.7, 3.2, 3.7, 4.2]
 const INLAY_SINGLE := [3, 5, 7, 9, 15, 17, 19, 21]
 
@@ -66,12 +68,7 @@ func _rebuild() -> void:
 	_lefty = bool(App.setting(&"left_handed"))
 	if demo:
 		_notes = demo_notes(spec)
-	if _vp:
-		_vp.queue_free()
-		_tex.queue_free()
-		_vp = null
-		_tex = null
-		_neck = null
+	_drop_3d()
 	if NeckSpec.is_3d(_view):
 		_vp = SubViewport.new()
 		_vp.own_world_3d = true
@@ -82,13 +79,15 @@ func _rebuild() -> void:
 		_vp.gui_disable_input = true
 		_vp.render_target_update_mode = SubViewport.UPDATE_DISABLED
 		add_child(_vp)
-		_neck = Neck3D.new()
+		_neck = _take_neck(spec)
 		_vp.add_child(_neck)
-		_neck.build(spec)
 		_neck.set_notes(_notes)
 		_tex = TextureRect.new()
 		_tex.texture = _vp.get_texture()
 		_tex.flip_h = _lefty
+		_tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_tex.stretch_mode = TextureRect.STRETCH_SCALE
+		_tex.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 		_tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_tex.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		_tex.show_behind_parent = true
@@ -96,10 +95,86 @@ func _rebuild() -> void:
 	_on_resized()
 
 
+func _exit_tree() -> void:
+	_drop_3d()
+
+
+func _drop_3d() -> void:
+	if _vp:
+		_release_neck(_neck)
+		_vp.queue_free()
+		_tex.queue_free()
+		_vp = null
+		_tex = null
+		_neck = null
+
+
+# --- Gryf 3D w pamięci ---------------------------------------------------------------
+# Zbudowana scena gryfu jest przechowywana po zamknięciu widoku i używana ponownie, gdy ustawienia
+# się nie zmieniły (budowa siatek w GDScripcie trwa kilkadziesiąt ms). Rozgrzewka na ekranie
+# startowym buduje ją z wyprzedzeniem i rysuje raz, żeby skompilować shadery.
+
+static var _cached_neck: Neck3D
+static var _cached_key := ""
+
+
+static func _neck_key() -> String:
+	var parts := PackedStringArray()
+	for k in KEYS:
+		parts.append(str(App.setting(k)))
+	return "|".join(parts)
+
+
+static func _take_neck(neck_spec: NeckSpec) -> Neck3D:
+	var key := _neck_key()
+	if is_instance_valid(_cached_neck) and _cached_key == key and _cached_neck.get_parent() == null:
+		return _cached_neck
+	if is_instance_valid(_cached_neck) and _cached_neck.get_parent() == null:
+		_cached_neck.free()
+	var n := Neck3D.new()
+	n.build(neck_spec)
+	_cached_neck = n
+	_cached_key = key
+	return n
+
+
+static func _release_neck(n: Neck3D) -> void:
+	if n == null or not is_instance_valid(n):
+		return
+	if n == _cached_neck and _cached_key == _neck_key():
+		n.get_parent().remove_child(n)     # zostaje w pamięci do następnego otwarcia
+	elif n == _cached_neck:
+		_cached_neck = null
+
+
+# Rozgrzewka (ekran startowy): budowa gryfu wg bieżących ustawień i jedno narysowanie poza ekranem.
+static func warm_up(host: Node) -> void:
+	var neck_spec := NeckSpec.from_settings()
+	if not NeckSpec.is_3d(str(App.setting(&"neck_view"))):
+		return
+	var vp := SubViewport.new()
+	vp.own_world_3d = true
+	vp.transparent_bg = true
+	vp.size = Vector2i(640, 160)
+	vp.msaa_3d = mini(Graphics.msaa_mode(), Viewport.MSAA_4X) as Viewport.MSAA
+	vp.render_target_update_mode = SubViewport.UPDATE_ONCE
+	host.add_child(vp)
+	var n := _take_neck(neck_spec)
+	vp.add_child(n)
+	n.set_notes(demo_notes(neck_spec))
+	n.fit_camera(Vector2(vp.size), Rect2(40, 20, 590, 130), float(App.setting(&"neck_tilt")), float(App.setting(&"neck_fov")))
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	vp.remove_child(n)
+	vp.queue_free()
+
+
 func _on_resized() -> void:
 	if _vp and size.x > 1 and size.y > 1:
-		_vp.size = Vector2i(size)
-		_neck.fit_camera(size, _region_3d(), float(App.setting(&"neck_tilt")), float(App.setting(&"neck_fov")))
+		_vp.size = Vector2i(size * SS)
+		var r := _region_3d()
+		_neck.fit_camera(size * SS, Rect2(r.position * SS, r.size * SS), float(App.setting(&"neck_tilt")),
+				float(App.setting(&"neck_fov")))
 		_render()
 	queue_redraw()
 
@@ -109,13 +184,10 @@ func _render() -> void:
 		_vp.render_target_update_mode = SubViewport.UPDATE_ONCE
 
 
-# Prostokąt gryfu w obrazie 3D (bez kolumny nazw strun i wiersza numerów progów); u leworęcznych
-# obraz jest odbity, więc kolumna nazw – po drugiej stronie.
+# Prostokąt gryfu w obrazie 3D (bez kolumny nazw strun i wiersza numerów progów). U leworęcznych
+# obraz jest odbity w poziomie, więc ten sam prostokąt trafia na ekranie na drugą stronę kolumny nazw.
 func _region_3d() -> Rect2:
-	var r := Rect2(GUTTER, TOP, size.x - GUTTER - PAD, size.y - TOP - PAD)
-	if _lefty:
-		r.position.x = size.x - r.end.x
-	return r
+	return Rect2(GUTTER, TOP, size.x - GUTTER - PAD, size.y - TOP - PAD)
 
 
 # Odbicie współrzędnej x dla leworęcznych.
@@ -124,7 +196,7 @@ func _mx(x: float) -> float:
 
 
 func _p3(p: Vector3) -> Vector2:
-	var v := _neck.project(p)
+	var v := _neck.project(p) / SS
 	return Vector2(_mx(v.x), v.y)
 
 
@@ -168,21 +240,21 @@ func _draw_3d() -> void:
 	for s in spec.strings:
 		_string_label(_p3(Vector3(0, spec.string_y(s, 0.0), spec.string_z(s, 0.0))).y, s)
 	for m in _neck.markers():
-		var c := _p3(m.pos + Vector3(0, m.r * 0.42, 0))
-		var edge := _p3(m.pos + Vector3(m.r, m.r * 0.22, 0))
+		var c := _p3(m.pos + Vector3(0, m.r * 0.58, 0))
+		var edge := _p3(m.pos + Vector3(m.r, m.r * 0.16, 0))
 		var r_px := absf(edge.x - c.x)
 		var root: bool = m.note.get("root", false)
-		var col := Color("#1A1204") if root else Color("#04201E")
+		var col := NeckSpec.text_color(root)
 		if m.note.get("dim", false):
 			col.a = 0.5
-		_text_c(c, str(m.note.get("text", "")), maxi(int(r_px * 1.15), 6), col)
+		_text_c(c, str(m.note.get("text", "")), maxi(int(r_px * 1.3), 6), col)
 
 
 # Znacznik w schematach: płaski krążek z ciemną obwódką.
 func _marker(c: Vector2, r: float, note: Dictionary) -> void:
 	var root: bool = note.get("root", false)
-	var base := NeckSpec.ORANGE if root else NeckSpec.TEAL
-	var fg := Color("#1A1204") if root else Color("#04201E")
+	var base := NeckSpec.note_color(root)
+	var fg := NeckSpec.text_color(root)
 	if note.get("dim", false):
 		base = base.lerp(Color("#1A1F2E"), 0.7)
 		fg.a = 0.5

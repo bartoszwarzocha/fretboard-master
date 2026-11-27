@@ -74,7 +74,9 @@ func _report_time(what: String, t0: int) -> void:
 # Pomiar czasów otwarcia ekranów: FretboardMaster.exe -- --measure-screens
 # (każdy ekran dwa razy: pierwsze i kolejne otwarcie; zakładki ustawień z gryfem osobno).
 func _measure_screens() -> void:
-	await get_tree().create_timer(4.0).timeout
+	while App.current_screen == &"splash":
+		await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(1.5).timeout
 	for _pass in 2:
 		for id in [&"menu", &"settings", &"metronome", &"tuning", &"encyclopedia", &"about", &"menu"]:
 			App.go(id)

@@ -111,10 +111,10 @@ func build(neck: NeckSpec) -> void:
 	_strings()
 	_marker_mesh = _make_marker_mesh()
 	_rims = _multimesh(_flat_material(Color("#0B0F1C"), 0.6))
-	var mat := _flat_material(Color.WHITE, 0.4)
+	var mat := _flat_material(Color.WHITE, 0.22)
 	mat.vertex_color_use_as_albedo = true
 	mat.vertex_color_is_srgb = true
-	mat.metallic_specular = 0.35
+	mat.metallic_specular = 0.75
 	_discs = _multimesh(mat)
 	cam = Camera3D.new()
 	cam.keep_aspect = Camera3D.KEEP_WIDTH
@@ -172,9 +172,9 @@ func set_notes(notes: Array) -> void:
 		var m: Dictionary = _markers[i]
 		var r: float = m.r
 		var p: Vector3 = m.pos
-		mm_r.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * 1.13, r * 0.6, r * 1.13)), p - Vector3(0, 0.25, 0)))
+		mm_r.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * 1.12, r * 0.6, r * 1.12)), p - Vector3(0, 0.25, 0)))
 		mm_d.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r, r, r)), p))
-		var col: Color = (NeckSpec.ORANGE if m.note.get("root", false) else NeckSpec.TEAL).darkened(0.12)
+		var col: Color = NeckSpec.note_color(m.note.get("root", false)).darkened(0.12)
 		if m.note.get("dim", false):
 			col = col.lerp(Color("#1A1F2E"), 0.7)
 		mm_d.set_instance_color(i, col)
@@ -363,7 +363,7 @@ func _inlays() -> void:
 		var cx := (spec.xf(f - 1) + spec.xf(f)) * 0.5
 		var cell := spec.xf(f) - spec.xf(f - 1)
 		match spec.inlays:
-			"dots": _disc_flat(st, Vector3(cx, 0, 0), 3.0)
+			"dots": _disc_flat(st, Vector3(cx, 0, 0), 2.6)
 			"blocks": _block(st, cx, cell, 0.0)
 			_: _block(st, cx, cell, 0.22)
 	for f in spec.double_dot_frets():
@@ -371,7 +371,7 @@ func _inlays() -> void:
 		var mid := spec.strings / 2
 		for s in [mid - 2, mid]:
 			var z := (spec.string_z(s, cx) + spec.string_z(s + 1, cx)) * 0.5
-			_disc_flat(st, Vector3(cx, 0, z), 3.0)
+			_disc_flat(st, Vector3(cx, 0, z), 2.6)
 	var m := _shader_material(PEARL_SHADER)
 	if spec.wood == NeckSpec.WOODS.maple:
 		m.set_shader_parameter("tint", Color("#1A1714"))
@@ -469,14 +469,14 @@ func _multimesh(mat: Material) -> MultiMeshInstance3D:
 	return mmi
 
 
-# Krążek o promieniu 1: bok 0–0,22, lekko wypukła czasza do 0,42.
+# Krążek o promieniu 1: bok 0–0,16, wypukła czasza do 0,58 (połysk z góry podkreśla wypukłość).
 func _make_marker_mesh() -> ArrayMesh:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var seg := 40
 	var rings := 8
-	var side_h := 0.22
-	var dome := 0.20
+	var side_h := 0.16
+	var dome := 0.42
 	for k in seg:
 		var a0 := TAU * k / seg
 		var a1 := TAU * (k + 1) / seg

@@ -506,7 +506,19 @@ msgid "Gold"
 msgstr "Золотые"
 
 msgid "Inlays"
-msgstr "Маркеры"
+msgstr "Инкрустации"
+
+msgid "Note markers"
+msgstr "Метки нот"
+
+msgid "Root markers"
+msgstr "Метки тоники"
+
+msgid "Text on markers"
+msgstr "Надпись на метках"
+
+msgid "Default colour"
+msgstr "Цвет по умолчанию"
 
 msgid "Dots"
 msgstr "Точки"

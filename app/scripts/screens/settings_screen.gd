@@ -311,6 +311,10 @@ func _build_guitar() -> void:
 				["bronze", "Bronze"], ["black", "Black"]])
 	_select(&"inlays", "Inlays", [["auto", "As on the selected guitar"], ["dots", "Dots"], ["blocks", "Blocks"],
 			["trapezoids", "Trapezoids"], ["none", "None"]])
+	# Kolory znaczników dźwięków (A = domyślny: turkus, tonika pomarańczowa, ciemny napis).
+	_colors(&"marker_color", "Note markers", "Default colour", ["5AA9FF", "7BD88F", "B98CFF", "E8ECF6"])
+	_colors(&"marker_root_color", "Root markers", "Default colour", ["FF7A59", "FF5A6E", "F2D15C", "E8ECF6"])
+	_colors(&"marker_text_color", "Text on markers", "Default colour", ["0B0F1E", "FFFFFF"])
 
 
 func _build_graphics() -> void:

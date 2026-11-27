@@ -105,7 +105,7 @@ static func from_settings() -> NeckSpec:
 	s.w12 = s.g.w12 + (sp_nut + sp_br) * 0.5 * extra
 	s.R = s.g.R
 	s.x_end = s.xf(s.frets) + 0.55 * (s.xf(s.frets + 1) - s.xf(s.frets))
-	s.marker_r = 0.42 * sp_nut
+	s.marker_r = 0.5 * sp_nut
 	return s
 
 
@@ -158,17 +158,20 @@ func string_material(s: int) -> String:
 		_: return "nickel" if s < 3 else "nickelw"
 
 
-# Położenie znacznika dźwięku (środek krążka) na osi x: przy progu, jak w makiecie;
+# Położenie znacznika dźwięku (środek krążka) na osi x: na środku pola między progami;
 # pusta struna – przed siodełkiem.
 func marker_x(f: int) -> float:
 	if f == 0:
 		return -NUT_LEN - marker_r - 3.0
-	var cell := xf(f) - xf(f - 1)
-	return xf(f) - minf(maxf(marker_r * 1.3, 0.27 * cell), 0.5 * cell)
+	return (xf(f - 1) + xf(f)) * 0.5
 
 
 func marker_radius(f: int) -> float:
-	return marker_r if f == 0 else minf(marker_r, 0.47 * (xf(f) - xf(f - 1)))
+	return marker_r if f == 0 else minf(marker_r, 0.5 * (xf(f) - xf(f - 1)) - spec_fret_r())
+
+
+func spec_fret_r() -> float:
+	return float(g.fret_r) + 0.4
 
 
 # Progi z pojedynczą wkładką oraz progi z podwójną (kropki) – dla wybranego wzoru.
@@ -181,6 +184,19 @@ func double_dot_frets() -> Array:
 	if inlays != "dots":
 		return []
 	return [12, 24].filter(func(f: int) -> bool: return f <= frets)
+
+
+# Kolory znaczników z ustawień (Gitara i strój → Wygląd gryfu); "" = domyślny.
+static func note_color(root: bool) -> Color:
+	var hex := str(App.setting(&"marker_root_color" if root else &"marker_color"))
+	return Color(hex) if not hex.is_empty() else (ORANGE if root else TEAL)
+
+
+static func text_color(root: bool) -> Color:
+	var hex := str(App.setting(&"marker_text_color"))
+	if not hex.is_empty():
+		return Color(hex)
+	return Color("#1A1204") if root else Color("#04201E")
 
 
 # Nazwa pustej struny do opisu (najwyższa struna małą literą, gdy powtarza nazwę najniższej).

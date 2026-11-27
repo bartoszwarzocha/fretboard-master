@@ -20,6 +20,7 @@ const DEFAULTS := {
 		&"tuning": "standard", &"strings": 6, &"frets": 22, &"left_handed": false, &"a4": 440.0,
 		&"neck_view": "electric_3d", &"fretboard_wood": "auto", &"fret_metal": "auto",
 		&"inlays": "auto", &"string_color": "auto",
+		&"marker_color": "", &"marker_root_color": "", &"marker_text_color": "",
 	},
 	&"look": {
 		&"theme": "night", &"accent": "", &"bg_mode": "pattern", &"bg_color": "", &"bg_color2": "1D2A55",

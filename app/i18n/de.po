@@ -506,7 +506,19 @@ msgid "Gold"
 msgstr "Gold"
 
 msgid "Inlays"
-msgstr "Inlays"
+msgstr "Einlagen"
+
+msgid "Note markers"
+msgstr "Tonmarkierungen"
+
+msgid "Root markers"
+msgstr "Grundton-Markierungen"
+
+msgid "Text on markers"
+msgstr "Text auf Markierungen"
+
+msgid "Default colour"
+msgstr "Standardfarbe"
 
 msgid "Dots"
 msgstr "Punkte"
