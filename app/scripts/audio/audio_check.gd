@@ -3,7 +3,7 @@
 # Działa tylko, gdy zakładka „Dźwięk i MIDI” jest otwarta – potem węzeł jest usuwany razem z nią.
 # Docelowo (sterowniki ASIO/WDM-KS, bufor w próbkach) zastąpi to rdzeń audio w C++ (PortAudio);
 # tu używany jest dźwięk Godota (WASAPI).
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name AudioCheck
 extends Node
 

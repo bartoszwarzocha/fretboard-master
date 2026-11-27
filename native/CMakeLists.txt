@@ -1,5 +1,5 @@
 # Fretboard Master – rdzeń C++ (GDExtension)
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 cmake_minimum_required(VERSION 3.22)
 project(fbm_core LANGUAGES C CXX)
 

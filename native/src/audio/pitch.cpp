@@ -1,5 +1,5 @@
 // Fretboard Master – rozpoznawanie wysokości dźwięku (zob. pitch.h).
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #include "pitch.h"
 
 #include <algorithm>

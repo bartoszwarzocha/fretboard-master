@@ -1,6 +1,6 @@
 # Fretboard Master – nazwy dźwięków. Korzysta z rdzenia C++ (FbmCore), a gdy biblioteka
 # nie jest zbudowana – z identycznej implementacji zapasowej w GDScripcie.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name NoteNames
 extends RefCounted
 

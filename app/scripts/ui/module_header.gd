@@ -1,6 +1,6 @@
 # Fretboard Master – nagłówek ekranów modułów: logo (pole zastępcze), zakładki modułów,
 # przycisk ustawień. Klawisz Esc wraca do menu głównego.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name ModuleHeader
 extends PanelContainer
 

@@ -1,6 +1,6 @@
 # Fretboard Master – ikona z jednego znaku czcionki symboli, wyśrodkowana według faktycznego
 # obrysu glifu (a nie metryk czcionki, które dla symboli muzycznych bywają przesunięte).
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name IconGlyph
 extends Control
 

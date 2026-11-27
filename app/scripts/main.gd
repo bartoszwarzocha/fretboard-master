@@ -1,6 +1,6 @@
 # Fretboard Master – okno główne: wyświetla jeden ekran naraz. Ekran nieaktywny jest usuwany
 # z drzewa, więc nie zużywa czasu procesora ani wywołań rysowania.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends Control
 
 const SplashScreen := preload("res://scripts/screens/splash_screen.gd")

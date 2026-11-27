@@ -2,7 +2,7 @@
 // kanał 10) i pojedyncze dźwięki MIDI (np. dźwięk próbny). Taktowanie z dokładnością do próbki:
 // zdarzenia są wyliczane w wątku dźwięku, w trakcie wypełniania bufora wyjściowego.
 // Niezależny od Godota i PortAudio – można go testować bez karty dźwiękowej (render do pamięci).
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #pragma once
 
 #include <array>

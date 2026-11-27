@@ -1,7 +1,7 @@
 // Fretboard Master – rdzeń audio widoczny w Godocie jako singleton „FbmAudio”: wyjście dźwięku przez
 // PortAudio (ASIO, WASAPI, WDM-KS; na Linuksie ALSA) z buforem w próbkach i sekwencer (metronom,
 // automat perkusyjny, dźwięki MIDI z wbudowanego syntezatora SoundFont).
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #pragma once
 
 #include "input_ring.h"

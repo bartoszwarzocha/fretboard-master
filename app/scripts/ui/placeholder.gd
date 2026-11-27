@@ -1,6 +1,6 @@
 # Fretboard Master – pole zastępcze dla grafiki, którą dostarczy autor.
 # Pokazuje przeznaczenie, docelową ścieżkę pliku i wymiary. Rysowane jednym _draw.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name Placeholder
 extends Control
 

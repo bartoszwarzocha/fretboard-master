@@ -2,7 +2,7 @@
 # brzmienie, akcenty) i automat perkusyjny MIDI (siatka kroków, wzorce, zestawy perkusyjne GS),
 # stopniowe przyspieszanie i wystukiwanie tempa. Dźwięk i taktowanie – rdzeń audio w C++ (FbmAudio);
 # ekran tylko ustawia parametry i co klatkę odczytuje słyszany właśnie krok (wtedy, gdy metronom gra).
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends ModuleScreen
 
 const METRES := ["2/4", "3/4", "4/4", "6/8", "7/8"]

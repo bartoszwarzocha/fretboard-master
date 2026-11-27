@@ -1,6 +1,6 @@
 # Fretboard Master – kafelek modułu w menu głównym (przycisk z ikoną, nazwą i opisem).
 # Ilustracja 3D (ikona modułu albo gitara) – miejsce MenuArt, rysowane we wspólnej scenie MenuStage3D.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name ModuleTile
 extends Button
 

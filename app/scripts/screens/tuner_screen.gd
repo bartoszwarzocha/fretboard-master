@@ -2,7 +2,7 @@
 # widoki liniowy, analogowy i cyfrowy, stroje, strój odniesienia A4 i kamerton (dźwięk wzorcowy A4
 # albo wybranej struny). Wejście gitary i rozpoznawanie wysokości (MPM) – rdzeń audio w C++ (FbmAudio);
 # ekran ok. 30 razy na sekundę odczytuje rozpoznany dźwięk i tylko go pokazuje.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends ModuleScreen
 
 # Stroje z makiety: identyfikator ustawienia „Strój”, nazwa, dźwięki pustych strun (MIDI, od 6. struny).

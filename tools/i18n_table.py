@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Fretboard Master – źródło tłumaczeń. Uruchom: python tools/i18n_table.py  →  app/i18n/*.po, fbm.pot
-Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone."""
+Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone."""
 import os
 
 LANGS = ["pl", "de", "es", "ru"]

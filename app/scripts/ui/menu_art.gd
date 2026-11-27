@@ -1,7 +1,7 @@
 # Fretboard Master – miejsce na ilustrację 3D w kafelku menu (gitara albo ikona modułu).
 # Sam nic nie renderuje: rysuje swój wycinek wspólnego obrazu sceny menu (MenuStage3D), więc
 # animacje kafelka (skala, przezroczystość) działają na ilustrację bez dodatkowych kosztów.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name MenuArt
 extends Control
 

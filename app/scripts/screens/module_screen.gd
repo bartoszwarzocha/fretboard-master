@@ -1,6 +1,6 @@
 # Fretboard Master – ekran modułu: nagłówek z nawigacją i treść. Na razie tylko pole
 # „Moduł w przygotowaniu” – logika modułów powstanie w kolejnych etapach.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name ModuleScreen
 extends Control
 

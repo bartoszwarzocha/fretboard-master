@@ -1,6 +1,6 @@
 # Fretboard Master – ekran startowy: całkowicie czarny, logo firmy, „przedstawia”, logo programu.
 # Bez klikania; logo programu nadlatuje z oddali, po 3 s przejście do menu głównego.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends Control
 
 const DURATION := 3.0

@@ -8,7 +8,7 @@
 #  • Gitara: powolny obrót wokół własnej osi; własne światło (warstwa 2) – bez odblasków.
 #  • Jeden takt (_process) dla wszystkich modeli. Gdy nic się nie rusza (brak gitary, mysz w
 #    spoczynku), takt staje, a obraz jest odświeżany tylko po zmianie.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name MenuStage3D
 extends Node
 

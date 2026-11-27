@@ -3,7 +3,7 @@
 # Wejście z ekranu startowego (intro_from): logo firmy i programu odjeżdżają z miejsc, w których
 # były na ekranie startowym, na swoje miejsca w menu; kafelki pojawiają się w losowej kolejności,
 # szybko się przybliżając. Całość trwa ok. 1,15 s; potem żaden węzeł nie jest przetwarzany.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends Control
 
 const MOVE_TIME := 1.0                    # przejazd logo
@@ -132,7 +132,7 @@ func _ready() -> void:
 	_company.scale = Vector2.ONE * (MENU_COMPANY.y / SPLASH_COMPANY.y)
 	_company_slot.add_child(_company)
 	var copyright := Label.new()
-	copyright.text = "© 2026 BW Digital Systems & Publishing"
+	copyright.text = "© 2026 BW Digital Systems and Publishing – Bartosz Warzocha"
 	copyright.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	copyright.theme_type_variation = &"Muted"
 	copyright.size_flags_vertical = Control.SIZE_SHRINK_CENTER

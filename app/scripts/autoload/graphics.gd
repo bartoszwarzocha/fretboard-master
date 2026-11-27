@@ -3,7 +3,7 @@
 # dane wydajności w stopce.
 # Zasada: każdy efekt kosztuje tylko wtedy, gdy jest włączony – korekcja obrazu i dane wydajności
 # istnieją w drzewie wyłącznie przy wartościach innych niż domyślne.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends Node
 
 # Profile jakości: klucze ustawiane razem. Zmiana jednego z nich ręcznie = profil „własny”.

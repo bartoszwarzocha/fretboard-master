@@ -1,5 +1,5 @@
 // Fretboard Master – klasa rdzenia widoczna w Godocie
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #pragma once
 
 #include <godot_cpp/classes/object.hpp>

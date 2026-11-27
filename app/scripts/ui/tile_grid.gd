@@ -1,6 +1,6 @@
 # Fretboard Master – siatka kafelków menu głównego: 3 kolumny × 3 wiersze, pierwszy kafelek
 # (Encyklopedia) zajmuje dwa wiersze, tak jak w makiecie.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name TileGrid
 extends Container
 

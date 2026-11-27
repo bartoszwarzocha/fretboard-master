@@ -1,6 +1,6 @@
 // Fretboard Master – korekcja obrazu: jasność, kontrast, gamma. Warstwa istnieje tylko wtedy,
 // gdy któraś wartość różni się od domyślnej (inaczej nie kosztuje nic).
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 shader_type canvas_item;
 render_mode unshaded, blend_disabled;
 

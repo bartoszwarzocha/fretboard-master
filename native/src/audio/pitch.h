@@ -1,7 +1,7 @@
 // Fretboard Master – rozpoznawanie wysokości dźwięku metodą McLeoda (MPM, znormalizowana funkcja
 // różnicowa kwadratów). Dobra dla gitary: odporna na silne wyższe harmoniczne, bez błędów oktawy
 // typowych dla prostej autokorelacji.
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #pragma once
 
 #include <vector>

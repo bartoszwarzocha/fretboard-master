@@ -1,5 +1,5 @@
 // Fretboard Master – rejestracja klas GDExtension
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #include "register_types.h"
 
 #include "audio/fbm_audio.h"

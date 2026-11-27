@@ -6,7 +6,7 @@
 # „ustawienia-…”, zostaną użyte zamiast niej.
 # Optymalizacja: plik wczytywany raz; warstwy każdej ikony scalane w jedną siatkę z trzema
 # powierzchniami (tafla, obwódka, symbol) – 3 wywołania rysowania na ikonę, materiały wspólne.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name ModuleIcon3D
 extends RefCounted
 

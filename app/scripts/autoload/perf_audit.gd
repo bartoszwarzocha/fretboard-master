@@ -2,7 +2,7 @@
 #  • F3 – dane wydajności w stopce okna (FPS, karta graficzna, wywołania rysowania, obiekty, prymitywy, pamięć wideo).
 #  • Uruchomienie z argumentem „-- --perf-audit” przechodzi przez wszystkie ekrany, mierzy je
 #    i porównuje z budżetami z res://perf/budgets.cfg. Przekroczenie = kod wyjścia 1 (do CI).
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends Node
 
 const BUDGETS_PATH := "res://perf/budgets.cfg"

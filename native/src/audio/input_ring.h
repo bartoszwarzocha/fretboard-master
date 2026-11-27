@@ -2,7 +2,7 @@
 // czytających). Każda próbka ma bezwzględny numer, liczony od otwarcia strumienia; przy strumieniu
 // dwukierunkowym ten sam numer ma próbka wyjścia z tego samego wywołania, co pozwala zgrać nagranie
 // z metronomem (przyszły looper) po odjęciu opóźnienia wejścia i wyjścia.
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #pragma once
 
 #include <algorithm>

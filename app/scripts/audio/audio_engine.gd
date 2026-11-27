@@ -2,7 +2,7 @@
 # ustawień (sterownik, urządzenie, bufor w próbkach), wczytanie brzmień SoundFont, głośność.
 # Wyjście otwiera się przy pierwszym użyciu i otwiera ponownie po zmianie ustawień dźwięku.
 # Gdy rdzeń nie jest zbudowany (sam GDScript), available() zwraca false.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name AudioEngine
 extends RefCounted
 

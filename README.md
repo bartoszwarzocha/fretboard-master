@@ -2,7 +2,7 @@
 
 Program do nauki gry na gitarze. Godot 4.7 (renderer Compatibility/OpenGL) + rdzeń C++ (GDExtension).
 
-© 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Program zamknięty, freeware –
+© 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Program zamknięty, freeware –
 zob. [LICENSE.md](LICENSE.md) i [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## Struktura

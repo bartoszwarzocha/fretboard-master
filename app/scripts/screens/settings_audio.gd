@@ -3,7 +3,7 @@
 # głośność, dźwięk próbny, odsłuch, bufor, opóźnienie i jego pomiar) oraz instrument MIDI.
 # Sterowniki ASIO i WDM-KS oraz bufor w próbkach obsłuży rdzeń audio w C++ (PortAudio) – do tego czasu
 # wybór jest zapamiętywany, a dźwięk idzie przez WASAPI (pastylka stanu mówi to wprost).
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name SettingsAudio
 extends VBoxContainer
 

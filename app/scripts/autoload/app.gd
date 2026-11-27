@@ -1,5 +1,5 @@
 # Fretboard Master – stan programu: ustawienia, moduły, nawigacja między ekranami.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends Node
 
 signal screen_requested(screen_id: StringName)

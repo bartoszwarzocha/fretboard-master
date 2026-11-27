@@ -1,5 +1,5 @@
 # Fretboard Master – okno „O programie”: wersja, prawa autorskie, licencja, składniki innych autorów.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends ModuleScreen
 
 const COMPONENTS := [
@@ -49,7 +49,7 @@ func _build_content() -> void:
 	facts.add_theme_constant_override("h_separation", 32)
 	facts.add_theme_constant_override("v_separation", 8)
 	col.add_child(facts)
-	_fact(facts, "Copyright", "© 2026 BW Digital Systems & Publishing", false)
+	_fact(facts, "Copyright", "© 2026 BW Digital Systems and Publishing – Bartosz Warzocha", false)
 	_fact(facts, "Licence", "Freeware – proprietary licence", true)
 	_core = _fact(facts, "C++ core", "", false)
 	var show := Button.new()

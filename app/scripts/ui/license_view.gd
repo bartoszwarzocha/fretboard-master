@@ -2,7 +2,7 @@
 # i składniki innych autorów z ich licencjami. Treść z plików res://legal/*.txt – kopii LICENSE.md
 # i THIRD-PARTY-NOTICES.md z katalogu głównego (tools/sync_legal.py) – oraz z informacji silnika
 # Godot o jego licencji i składnikach (Engine.get_license_text, get_copyright_info, get_license_info).
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name LicenseView
 extends PanelContainer
 

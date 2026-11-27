@@ -2,7 +2,7 @@
 # Gitara stoi pod ukosem i powoli obraca się wokół własnej osi (od główki do korpusu). Materiały
 # takie jak w pliku; światło bez odblasków (specular 0), bez cieni. Rysowana we wspólnej scenie
 # menu (MenuStage3D) – tutaj tylko wybór i przygotowanie modelu.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name GuitarModel3D
 extends RefCounted
 

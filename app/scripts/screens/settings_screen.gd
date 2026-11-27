@@ -2,7 +2,7 @@
 # od razu (podgląd na żywo) i trafia do pliku ustawień; „Przywróć domyślne” przywraca jedną zakładkę.
 # Zakładka jest budowana od nowa tylko wtedy, gdy zmiana pokazuje lub ukrywa inne pola
 # (np. tryb tła) – zwykła zmiana wartości niczego nie przebudowuje.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends Control
 
 const LANGUAGE_NAMES := {"": "System language", "en": "English", "pl": "Polski", "de": "Deutsch",

@@ -1,6 +1,6 @@
 # Fretboard Master – logo firmy BW Digital Systems & Publishing (białe, z przezroczystością).
 # Kolor nadaje modulate: na ekranie startowym biały, w pozostałych – kolor tekstu bieżącego motywu.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name CompanyLogo
 extends TextureRect
 

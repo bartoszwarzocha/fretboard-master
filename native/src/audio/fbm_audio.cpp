@@ -1,5 +1,5 @@
 // Fretboard Master – rdzeń audio (zob. fbm_audio.h).
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #include "fbm_audio.h"
 
 #include <godot_cpp/core/class_db.hpp>

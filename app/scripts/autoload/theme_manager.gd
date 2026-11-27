@@ -1,6 +1,6 @@
 # Fretboard Master – motywy kolorystyczne i kroje. Cały wygląd interfejsu powstaje tutaj,
 # w jednym zasobie Theme przypisanym do głównego okna (bez domyślnego wyglądu Godota).
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends Node
 
 signal theme_changed

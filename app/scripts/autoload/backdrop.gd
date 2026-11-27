@@ -4,7 +4,7 @@
 # rysowania. Cząsteczki i efekty istnieją w drzewie tylko wtedy, gdy są włączone.
 # Tło ruchome i cząsteczki wymagają stałego odświeżania obrazu – is_live() mówi o tym modułowi
 # Graphics, który wtedy wyłącza tryb oszczędny procesora.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 extends CanvasLayer
 
 signal live_changed

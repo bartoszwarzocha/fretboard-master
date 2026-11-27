@@ -1,7 +1,7 @@
 // Fretboard Master – tło okna: kolor jednolity, gradient, desenie proceduralne albo własny obraz.
 // Jeden przebieg na klatkę (rysowany tylko, gdy okno się odświeża). Desenie są liczone w shaderze –
 // bez tekstur, więc nie zajmują pamięci i skalują się bez utraty jakości.
-// Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+// Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 shader_type canvas_item;
 render_mode unshaded, blend_disabled;
 

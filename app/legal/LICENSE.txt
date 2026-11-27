@@ -1,13 +1,13 @@
 # Fretboard Master – Licencja użytkownika końcowego (freeware)
 
-Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 
 *English version below.*
 
 ## Wersja polska
 
 ### 1. Postanowienia ogólne
-Niniejsza licencja określa zasady korzystania z programu Fretboard Master wraz z jego dokumentacją, plikami danych, grafiką i dźwiękami (dalej „Program”). Program jest własnością BW Digital Systems & Publishing – Bartosz Warzocha (dalej „Licencjodawca”) i jest chroniony prawem autorskim. Instalacja lub użycie Programu oznacza akceptację niniejszej licencji. Jeżeli nie akceptujesz jej warunków, nie instaluj Programu i nie korzystaj z niego.
+Niniejsza licencja określa zasady korzystania z programu Fretboard Master wraz z jego dokumentacją, plikami danych, grafiką i dźwiękami (dalej „Program”). Program jest własnością BW Digital Systems and Publishing – Bartosz Warzocha (dalej „Licencjodawca”) i jest chroniony prawem autorskim. Instalacja lub użycie Programu oznacza akceptację niniejszej licencji. Jeżeli nie akceptujesz jej warunków, nie instaluj Programu i nie korzystaj z niego.
 
 ### 2. Udzielenie licencji
 Licencjodawca udziela Ci nieodpłatnej, niewyłącznej i nieprzenoszalnej licencji na instalowanie i używanie Programu na dowolnej liczbie własnych urządzeń, do celów prywatnych, edukacyjnych i zawodowych. Program nie jest sprzedawany – udostępnia się go wyłącznie na zasadach licencji.
@@ -47,18 +47,18 @@ Licencjodawca może zmienić warunki licencji dla kolejnych wersji Programu. Do 
 Licencja podlega prawu polskiemu. Spory rozstrzyga sąd właściwy dla siedziby Licencjodawcy, z zastrzeżeniem bezwzględnie obowiązujących przepisów chroniących konsumentów.
 
 ### 12. Kontakt
-BW Digital Systems & Publishing – Bartosz Warzocha.
+BW Digital Systems and Publishing – Bartosz Warzocha.
 
 ---
 
 ## English version
 
-Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. All rights reserved.
+Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. All rights reserved.
 
 If the two language versions differ, the Polish version prevails.
 
 ### 1. General
-This licence governs the use of Fretboard Master together with its documentation, data files, graphics and sounds (the "Software"). The Software is owned by BW Digital Systems & Publishing – Bartosz Warzocha (the "Licensor") and is protected by copyright law. By installing or using the Software you accept this licence. If you do not accept its terms, do not install or use the Software.
+This licence governs the use of Fretboard Master together with its documentation, data files, graphics and sounds (the "Software"). The Software is owned by BW Digital Systems and Publishing – Bartosz Warzocha (the "Licensor") and is protected by copyright law. By installing or using the Software you accept this licence. If you do not accept its terms, do not install or use the Software.
 
 ### 2. Grant of licence
 The Licensor grants you a free of charge, non-exclusive, non-transferable licence to install and use the Software on any number of your own devices for private, educational and professional purposes. The Software is licensed, not sold.
@@ -98,4 +98,4 @@ The Licensor may change the terms of this licence for later versions of the Soft
 This licence is governed by Polish law. Disputes shall be settled by the court competent for the Licensor's registered office, subject to mandatory consumer protection laws.
 
 ### 12. Contact
-BW Digital Systems & Publishing – Bartosz Warzocha.
+BW Digital Systems and Publishing – Bartosz Warzocha.

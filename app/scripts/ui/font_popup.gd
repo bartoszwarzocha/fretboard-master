@@ -1,7 +1,7 @@
 # Fretboard Master – okno wyboru czcionki systemowej: pole wyszukiwania i lista nazw, każda zapisana
 # swoją czcionką. Czcionki wczytywane są dopiero dla pozycji widocznych na liście (systemowych bywa
 # kilkaset – wczytanie wszystkich naraz spowalniałoby otwarcie okna).
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name FontPopup
 extends PopupPanel
 

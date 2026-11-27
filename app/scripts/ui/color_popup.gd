@@ -1,7 +1,7 @@
 # Fretboard Master – własne okno wyboru koloru w stylu programu: pole nasycenie/jasność, pasek barwy,
 # podgląd i kod HEX. Wszystkie napisy przechodzą przez tłumaczenia (wbudowany próbnik Godota ma
 # etykiety, których nie da się przetłumaczyć). Kolor trafia do ustawień dopiero po „OK”.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name ColorPopup
 extends PopupPanel
 

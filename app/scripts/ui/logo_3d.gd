@@ -11,7 +11,7 @@
 # Optymalizacja: 22 siatki modelu są przy pierwszym użyciu scalane w JEDNĄ siatkę z czterema
 # powierzchniami (po jednej na kolor) – 4 wywołania rysowania zamiast 22; siatka i materiały są
 # współdzielone przez wszystkie wystąpienia logo. Bez cieni, jedno światło kierunkowe.
-# Copyright © 2026 BW Digital Systems & Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
+# Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 class_name Logo3D
 extends SubViewportContainer
 
