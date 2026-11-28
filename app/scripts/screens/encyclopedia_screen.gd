@@ -21,11 +21,15 @@ var _mode := "names"
 var _from := 5
 var _to := 9
 var _query := ""
+var _variants: Array = []     # superpozycje w zakresie (Superposition) – od najwygodniejszej
+var _variant := 0
+var _style := ""              # "3nps" po gotowym zakresie „3 dźwięki na strunę”
 
 var _fb: FretboardView
 var _title: Label
 var _range_text: Label
 var _modes_box: HBoxContainer
+var _variants_box: HBoxContainer
 var _from_label: Label
 var _to_label: Label
 var _search: LineEdit
@@ -76,6 +80,12 @@ func _build_content() -> void:
 	_range_text.size_flags_vertical = Control.SIZE_SHRINK_END
 	head.add_child(_range_text)
 	head.add_child(_spacer())
+	_variants_box = HBoxContainer.new()
+	_variants_box.add_theme_constant_override("separation", 8)
+	head.add_child(_variants_box)
+	var g := Control.new()
+	g.custom_minimum_size.x = 10
+	head.add_child(g)
 	_modes_box = HBoxContainer.new()
 	head.add_child(_modes_box)
 
@@ -145,6 +155,7 @@ func _select(kind: String, entry: Dictionary, pc := -1) -> void:
 	_entry = entry
 	if pc >= 0:
 		_pc = pc
+	_variant = 0
 	_save_state()
 	_stop_playing()
 	_refresh_all()
@@ -164,7 +175,6 @@ func _refresh_all() -> void:
 	_fill_list()
 	_build_detail()
 	_update_neck()
-	_update_staff()
 
 
 # --- Gryf ----------------------------------------------------------------------------
@@ -181,7 +191,18 @@ func _update_neck() -> void:
 		var p := Theory.pc(_notes[i])
 		if not by_pc.has(p):
 			by_pc[p] = i
-	var base := maxi(_from, 1)
+	# Superpozycje w zakresie; dźwięki skali w zakresie spoza wybranego wariantu – przyciemnione.
+	_variants = Superposition.variants(spec.open_midi, by_pc, _from, _to, _style)
+	_variant = clampi(_variant, 0, maxi(_variants.size() - 1, 0))
+	var chosen := {}
+	var hand := 99
+	var top := -1
+	if not _variants.is_empty():
+		for n in _variants[_variant]:
+			chosen[Vector2i(n.s, n.f)] = true
+			if n.f > 0:
+				hand = mini(hand, n.f)
+				top = maxi(top, n.f)
 	var out := []
 	for s in spec.strings:
 		for f in spec.frets + 1:
@@ -189,32 +210,53 @@ func _update_neck() -> void:
 			if not by_pc.has(p):
 				continue
 			var i: int = by_pc[p]
+			var in_range := f >= _from and f <= _to
+			var in_var := chosen.has(Vector2i(s, f)) or (chosen.is_empty() and in_range)
 			var text := ""
 			match _mode:
 				"names": text = Theory.note_name(_notes[i], App.notation())
 				"intervals": text = _degree_label(str(_degrees[i]))
 				"degrees": text = ROMAN[(Theory.parse_degree(str(_degrees[i]))[0] - 1) % 7]
 				"fingers":
-					if f >= _from and f <= _to:
-						text = "0" if f == 0 else str(clampi(f - base + 1, 1, 4))
-			out.append({"s": s, "f": f, "text": text, "root": i == 0})
+					if in_var:
+						var h := hand if hand < 99 else maxi(_from, 1)
+						text = "0" if f == 0 else str(clampi(f - h + 1, 1, 4))
+			out.append({"s": s, "f": f, "text": text, "root": i == 0, "dim": in_range and not in_var})
 	_fb.set_notes(out)
 	_title.text = _title_text()
 	_range_text.text = tr("practice range: frets %d–%d, all strings") % [_from, _to]
 	if _from_label:
 		_from_label.text = str(_from)
 		_to_label.text = str(_to)
+	_build_variants()
+	_stop_playing()
+	_update_staff()
+
+
+func _build_variants() -> void:
+	_clear(_variants_box)
+	if _variants.is_empty():
+		return
+	_variants_box.add_child(_small_label("Variants:"))
+	var items := []
+	for i in _variants.size():
+		items.append([str(i), str(i + 1)])
+	_variants_box.add_child(_segmented(items, str(_variant), func(v):
+		_variant = int(v)
+		_update_neck()))
 
 
 func _set_range(a: int, b: int) -> void:
 	var last := _fb.spec.frets if _fb.spec else 24
 	_from = clampi(a, 0, last)
 	_to = clampi(b, _from, last)
+	_variant = 0
 	App.set_settings({&"enc_from": _from, &"enc_to": _to})
 	_update_neck()
 
 
 func _on_fret_clicked(f: int) -> void:
+	_style = ""
 	if absi(f - _from) <= absi(f - _to):
 		_set_range(mini(f, _to), _to)
 	else:
@@ -234,18 +276,18 @@ func _range_row() -> Control:
 	lead.custom_minimum_size.x = FretboardView.GUTTER - 10
 	row.add_child(lead)
 	row.add_child(_small_label("From fret"))
-	row.add_child(_arrow_button(-1, func(): _set_range(_from - 1, _to)))
+	row.add_child(_arrow_button(-1, func(): _manual_range(_from - 1, _to)))
 	_from_label = _value_label()
 	row.add_child(_from_label)
-	row.add_child(_arrow_button(1, func(): _set_range(mini(_from + 1, _to), _to)))
+	row.add_child(_arrow_button(1, func(): _manual_range(mini(_from + 1, _to), _to)))
 	var g := Control.new()
 	g.custom_minimum_size.x = 14
 	row.add_child(g)
 	row.add_child(_small_label("To fret"))
-	row.add_child(_arrow_button(-1, func(): _set_range(_from, maxi(_to - 1, _from))))
+	row.add_child(_arrow_button(-1, func(): _manual_range(_from, maxi(_to - 1, _from))))
 	_to_label = _value_label()
 	row.add_child(_to_label)
-	row.add_child(_arrow_button(1, func(): _set_range(_from, _to + 1)))
+	row.add_child(_arrow_button(1, func(): _manual_range(_from, _to + 1)))
 	var g2 := Control.new()
 	g2.custom_minimum_size.x = 14
 	row.add_child(g2)
@@ -258,10 +300,10 @@ func _range_row() -> Control:
 	row.add_child(sr)
 	row.add_child(_spacer())
 	row.add_child(_small_label("Preset ranges:"))
-	row.add_child(_pill_button(tr("Position"), func(): _preset(4)))
-	row.add_child(_pill_button(tr("CAGED"), func(): _preset(3)))
-	row.add_child(_pill_button(tr("3 notes per string"), func(): _preset(6)))
-	row.add_child(_pill_button(tr("Whole neck"), func(): _set_range(0, _fb.spec.frets)))
+	row.add_child(_pill_button(tr("Position"), func(): _preset(4, "")))
+	row.add_child(_pill_button(tr("CAGED"), func(): _preset(3, "")))
+	row.add_child(_pill_button(tr("3 notes per string"), func(): _preset(6, "3nps")))
+	row.add_child(_pill_button(tr("Whole neck"), func(): _manual_range(0, _fb.spec.frets)))
 	return row
 
 
@@ -271,7 +313,13 @@ func _shift(d: int) -> void:
 
 
 # Gotowe zakresy jak w makiecie: od progu przed toniką na najniższej strunie, o zadanej szerokości.
-func _preset(width: int) -> void:
+func _manual_range(a: int, b: int) -> void:
+	_style = ""
+	_set_range(a, b)
+
+
+func _preset(width: int, style: String) -> void:
+	_style = style
 	var spec := _fb.spec
 	var e := posmod(_pc - spec.open_midi[spec.strings - 1], 12)
 	var a := maxi(e - 1, 0)
@@ -751,7 +799,7 @@ func _chord_chip(c: Dictionary) -> Button:
 
 func _staff_card() -> Control:
 	var card := PanelContainer.new()
-	card.custom_minimum_size.x = 600
+	card.custom_minimum_size.x = 680
 	card.add_theme_stylebox_override("panel", ThemeManager.box(Color("F4F1EA"), Color.TRANSPARENT, ThemeManager.radius_card(), 0, 18, 14))
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 4)
@@ -783,29 +831,45 @@ func _staff_card() -> Control:
 	return card
 
 
-# Nuty do pięciolinii i do odsłuchu. Skala: od toniki w oktawie razkreślnej w górę, z toniką oktawę
-# wyżej; arpeggio – to samo; akord – rozłożony, kreska taktowa i współbrzmienie.
+# Nuty do pięciolinii i do odsłuchu. Z superpozycją – jej dźwięki w prawdziwej wysokości (zapis
+# gitarowy: oktawę wyżej niż brzmi), odsłuch w górę i w dół z podświetleniem na gryfie i pięciolinii.
+# Bez superpozycji (zakres za szeroki lub pusty): skala od toniki w oktawie razkreślnej z toniką
+# oktawę wyżej. Akord – dodatkowo kreska taktowa i współbrzmienie.
+# _play_seq: [[midi…], indeks nuty na pięciolinii, pole gryfu (struna, próg)]
 func _update_staff() -> void:
 	var tl: int = _tonic.l
-	var written := []    # [{step, l, a, oct, root, midi}]
+	var by_pc := {}
 	for i in _notes.size():
-		var num: int = Theory.parse_degree(str(_degrees[i]))[0]
-		written.append(_written(_notes[i], 4 * 7 + tl + num - 1, i == 0))
-	var fifths := 0
+		if not by_pc.has(Theory.pc(_notes[i])):
+			by_pc[Theory.pc(_notes[i])] = i
+	var fifths := Theory.key_fifths(_entry, _tonic) if _kind == "scale" else 0
+	var notes := []    # [{step, note, root, midi, cell}]
+	if not _variants.is_empty():
+		for n in _variants[_variant]:
+			var i: int = by_pc[posmod(n.midi, 12)]
+			var w := _written_midi(_notes[i], n.midi, i == 0)
+			w["cell"] = Vector2i(n.s, n.f)
+			notes.append(w)
+	else:
+		for i in _notes.size():
+			var num: int = Theory.parse_degree(str(_degrees[i]))[0]
+			notes.append(_written(_notes[i], 4 * 7 + tl + num - 1, i == 0))
+		if _kind != "chord":
+			notes.append(_written(_tonic, 4 * 7 + tl + 7, true))
 	var items := []
 	var seq := []
-	if _kind == "scale":
-		fifths = Theory.key_fifths(_entry, _tonic)
-	var notes := written.duplicate()
-	if _kind != "chord":
-		notes.append(_written(_tonic, 4 * 7 + tl + 7, true))
 	var accs := _measure_accidentals(notes, fifths)
 	for i in notes.size():
 		var n: Dictionary = notes[i]
 		items.append({"heads": [{"step": n.step, "acc": accs[i], "root": n.root}],
 				"label": Theory.note_name(n.note, App.notation())})
-		seq.append([[n.midi], i])
+		seq.append([[n.midi], i, n.get("cell", Vector2i(-1, -1))])
+	var down_from := notes.size() - 2
 	if _kind == "chord":
+		var written := []
+		for i in _notes.size():
+			var num: int = Theory.parse_degree(str(_degrees[i]))[0]
+			written.append(_written(_notes[i], 4 * 7 + tl + num - 1, i == 0))
 		items.append({"bar": true})
 		var stack_acc := _measure_accidentals(written, 0)
 		var heads := []
@@ -814,12 +878,20 @@ func _update_staff() -> void:
 			heads.append({"step": written[i].step, "acc": stack_acc[i], "root": written[i].root})
 			all.append(written[i].midi)
 		items.append({"heads": heads, "label": Theory.note_name(_tonic, App.notation()) + str(_entry.get("symbol", ""))})
-		seq.append([all, items.size() - 1])
-	else:
-		for i in range(notes.size() - 2, -1, -1):
-			seq.append([[notes[i].midi], i])
+		if _variants.is_empty():
+			seq.append([all, items.size() - 1, Vector2i(-1, -1)])
+			down_from = -1
+	for i in range(down_from, -1, -1):
+		seq.append([[notes[i].midi], i, notes[i].get("cell", Vector2i(-1, -1))])
 	_play_seq = seq
 	_staff.set_data(items, fifths)
+
+
+# Dźwięk o danej wysokości (MIDI brzmiące) w pisowni skali; zapis gitarowy – oktawę wyżej.
+func _written_midi(note: Dictionary, midi: int, root: bool) -> Dictionary:
+	var w := midi + 12
+	var octave: int = (w - Theory.LETTER_PC[note.l] - int(note.a)) / 12 - 1
+	return {"step": octave * 7 + int(note.l) - STEP_BASE, "note": note, "root": root, "midi": midi}
 
 
 func _written(note: Dictionary, diatonic: int, root: bool) -> Dictionary:
@@ -868,6 +940,7 @@ func _play_step() -> void:
 		for m in step[0]:
 			c.play_note(int(App.setting(&"midi_instrument")), int(m), 0.8, 2.0 if last or step[0].size() > 1 else 0.9)
 	_staff.set_playing(step[1])
+	_fb.set_playing(step[2])
 	_play_i += 1
 
 
@@ -876,6 +949,8 @@ func _stop_playing() -> void:
 		_play_timer.stop()
 	if _staff:
 		_staff.set_playing(-1)
+	if _fb:
+		_fb.set_playing(Vector2i(-1, -1))
 
 
 # --- Elementy -------------------------------------------------------------------------

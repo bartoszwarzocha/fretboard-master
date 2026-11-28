@@ -1393,6 +1393,9 @@ msgstr "лад"
 msgid "Staff"
 msgstr "Нотный стан"
 
+msgid "Variants:"
+msgstr "Варианты:"
+
 msgid "treble clef"
 msgstr "скрипичный ключ"
 

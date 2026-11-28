@@ -1393,6 +1393,9 @@ msgstr "Bund"
 msgid "Staff"
 msgstr "Notensystem"
 
+msgid "Variants:"
+msgstr "Varianten:"
+
 msgid "treble clef"
 msgstr "Violinschlüssel"
 

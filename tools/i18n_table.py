@@ -510,6 +510,7 @@ T = {
  "Whole neck": ("Cały gryf", "Ganzes Griffbrett", "Todo el mástil", "Весь гриф"),
  "fret": ("próg", "Bund", "traste", "лад"),
  "Staff": ("Pięciolinia", "Notensystem", "Pentagrama", "Нотный стан"),
+ "Variants:": ("Warianty:", "Varianten:", "Variantes:", "Варианты:"),
  "treble clef": ("klucz wiolinowy", "Violinschlüssel", "clave de sol", "скрипичный ключ"),
  "treble clef, octave lower (guitar)": ("klucz wiolinowy oktawowy (gitarowy)", "Violinschlüssel, oktaviert (Gitarre)", "clave de sol octava baja (guitarra)", "скрипичный ключ с октавой ниже (гитарный)"),
 }

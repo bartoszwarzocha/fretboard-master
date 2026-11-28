@@ -1392,6 +1392,9 @@ msgstr ""
 msgid "Staff"
 msgstr ""
 
+msgid "Variants:"
+msgstr ""
+
 msgid "treble clef"
 msgstr ""
 

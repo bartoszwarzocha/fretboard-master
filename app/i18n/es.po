@@ -1393,6 +1393,9 @@ msgstr "traste"
 msgid "Staff"
 msgstr "Pentagrama"
 
+msgid "Variants:"
+msgstr "Variantes:"
+
 msgid "treble clef"
 msgstr "clave de sol"
 

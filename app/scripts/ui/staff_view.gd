@@ -10,6 +10,7 @@ extends Control
 const G_CLEF := 0xE050
 const G_CLEF_8VB := 0xE052
 const HEAD_WHOLE := 0xE0A2
+const HEAD_BLACK := 0xE0A4    # przy wielu nutach (superpozycja na dwie oktawy i więcej) – węższe główki
 const ACC_GLYPH := {-2: 0xE264, -1: 0xE260, 0: 0xE261, 1: 0xE262, 2: 0xE263}
 # Miejsca znaków przykluczowych w kluczu wiolinowym (stopnie od E4): krzyżyki F C G D A E H, bemole H E A D G C F.
 const SHARP_STEPS := [8, 5, 9, 6, 3, 7, 4]
@@ -55,11 +56,22 @@ func _glyph_w(cp: int, sp: float) -> float:
 func _draw() -> void:
 	if size.x < 40 or size.y < 40:
 		return
-	# Odstęp linii: wysokość mieści dwie linie dodane nad i pod pięciolinią oraz podpisy.
-	# – oraz szerokość: klucz, znaki przykluczowe i ok. 3,4 odstępu linii na nutę (ze znakiem przygodnym).
-	var units := 5.5 + mini(absi(fifths), 7) * 1.1 + maxi(items.size(), 8) * 3.7
-	var sp := clampf(minf(size.y / 15.0, size.x / units), 6.0, 17.0)
-	var bottom := size.y * 0.5 + sp * 2.6     # dolna linia (E4)
+	# Odstęp linii dobrany do wysokości (nuty z liniami dodanymi i podpisy) i szerokości (klucz, znaki
+	# przykluczowe i miejsce na każdą nutę ze znakiem przygodnym).
+	var min_step := 0
+	var max_step := 8
+	for it in items:
+		for h in it.get("heads", []):
+			min_step = mini(min_step, h.step)
+			max_step = maxi(max_step, h.step)
+	var black := items.size() > 10
+	var above := maxf(0.0, (max_step - 8) * 0.5) + 1.4
+	var label_off := maxf(3.6, -min_step * 0.5 + 2.4)
+	var units_h := above + 4.0 + label_off + 1.0
+	var units := 5.5 + mini(absi(fifths), 7) * 1.1 + maxi(items.size(), 8) * (2.5 if black else 3.7)
+	var sp := clampf(minf(size.y / units_h, size.x / units), 5.0, 17.0)
+	var top_y := (size.y - units_h * sp) * 0.5
+	var bottom := top_y + (above + 4.0) * sp     # dolna linia (E4)
 	var y_of := func(step: int) -> float: return bottom - step * sp * 0.5
 	var x0 := sp * 0.6
 	var x1 := size.x - sp * 0.6
@@ -82,7 +94,8 @@ func _draw() -> void:
 	if items.is_empty():
 		return
 	# Nuty – równe odstępy na pozostałej szerokości (z miejscem na znaki przygodne).
-	var head_w := _glyph_w(HEAD_WHOLE, sp)
+	var head_cp := HEAD_BLACK if black else HEAD_WHOLE
+	var head_w := _glyph_w(head_cp, sp)
 	var slot := minf((x1 - x - sp) / items.size(), sp * 5.0)
 	var font := ThemeManager.font_body_bold
 	var fsz := maxi(int(sp * 1.05), 10)
@@ -139,10 +152,10 @@ func _draw() -> void:
 		for j in heads.size():
 			var h: Dictionary = heads[j]
 			var ink := PLAYING if col_on else (ROOT_INK if h.root else INK)
-			_glyph(HEAD_WHOLE, Vector2(hx + (head_w if shifted[j] else 0.0), y_of.call(h.step)), sp, ink)
+			_glyph(head_cp, Vector2(hx + (head_w if shifted[j] else 0.0), y_of.call(h.step)), sp, ink)
 		var label: String = it.get("label", "")
 		if not label.is_empty():
 			var root: bool = heads[0].root
 			var lc := PLAYING if col_on else (ROOT_LABEL if root else LABEL)
 			var w := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, fsz).x
-			draw_string(font, Vector2(cx - w * 0.5, bottom + sp * 3.6), label, HORIZONTAL_ALIGNMENT_LEFT, -1, fsz, lc)
+			draw_string(font, Vector2(cx - w * 0.5, bottom + sp * label_off), label, HORIZONTAL_ALIGNMENT_LEFT, -1, fsz, lc)

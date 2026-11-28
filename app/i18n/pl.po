@@ -1393,6 +1393,9 @@ msgstr "próg"
 msgid "Staff"
 msgstr "Pięciolinia"
 
+msgid "Variants:"
+msgstr "Warianty:"
+
 msgid "treble clef"
 msgstr "klucz wiolinowy"
 

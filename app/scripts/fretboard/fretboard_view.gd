@@ -33,6 +33,7 @@ const SHADE := Color(0.02, 0.03, 0.07, 0.62)   # przyciemnienie poza zakresem
 var spec: NeckSpec
 var interactive := false    # sterowanie myszą (Encyklopedia, Ćwiczenia)
 var selected := Vector2i(-1, -1)   # zaznaczony dźwięk: (struna, próg)
+var playing := Vector2i(-1, -1)    # dźwięk odtwarzany (Encyklopedia – odsłuch) – podświetlenie
 var demo := false           # przykładowa skala (podgląd w ustawieniach) – odtwarzana po każdej zmianie
 var ruler := false          # linijka progów z zakresem pod gryfem (zamiast numerów progów nad nim)
 var fret_range := Vector2i(-1, -1)   # zakres progów (od, do); (-1, -1) – cały gryf bez przyciemnienia
@@ -315,6 +316,17 @@ func _store_cells(pos_fn: Callable, r: float) -> void:
 			_cells[Vector2i(s, f)] = pos_fn.call(s, f)
 	if selected.x >= 0 and _cells.has(selected):
 		draw_arc(_cells[selected], r + 4.0, 0, TAU, 40, ThemeManager.color("text"), 2.5, true)
+	if playing.x >= 0 and _cells.has(playing):
+		var c: Vector2 = _cells[playing]
+		draw_circle(c, r + 9.0, Color(ThemeManager.color("focus"), 0.22))
+		draw_arc(c, r + 5.0, 0, TAU, 40, ThemeManager.color("focus"), 3.5, true)
+
+
+# Podświetlenie odtwarzanego dźwięku – tylko nakładka 2D, bez ponownego rysowania sceny 3D.
+func set_playing(p: Vector2i) -> void:
+	if playing != p:
+		playing = p
+		queue_redraw()
 
 
 func _render() -> void:
