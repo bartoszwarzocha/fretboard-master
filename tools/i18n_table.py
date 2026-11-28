@@ -511,6 +511,8 @@ T = {
  "fret": ("próg", "Bund", "traste", "лад"),
  "Staff": ("Pięciolinia", "Notensystem", "Pentagrama", "Нотный стан"),
  "Variants:": ("Warianty:", "Varianten:", "Variantes:", "Варианты:"),
+ "Scale shapes": ("Superpozycje", "Griffmuster", "Digitaciones", "Аппликатуры"),
+ "Three octaves": ("Trzy oktawy", "Drei Oktaven", "Tres octavas", "Три октавы"),
  "treble clef": ("klucz wiolinowy", "Violinschlüssel", "clave de sol", "скрипичный ключ"),
  "treble clef, octave lower (guitar)": ("klucz wiolinowy oktawowy (gitarowy)", "Violinschlüssel, oktaviert (Gitarre)", "clave de sol octava baja (guitarra)", "скрипичный ключ с октавой ниже (гитарный)"),
 }

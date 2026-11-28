@@ -1396,6 +1396,12 @@ msgstr "Pięciolinia"
 msgid "Variants:"
 msgstr "Warianty:"
 
+msgid "Scale shapes"
+msgstr "Superpozycje"
+
+msgid "Three octaves"
+msgstr "Trzy oktawy"
+
 msgid "treble clef"
 msgstr "klucz wiolinowy"
 

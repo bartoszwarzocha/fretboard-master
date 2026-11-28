@@ -1395,6 +1395,12 @@ msgstr ""
 msgid "Variants:"
 msgstr ""
 
+msgid "Scale shapes"
+msgstr ""
+
+msgid "Three octaves"
+msgstr ""
+
 msgid "treble clef"
 msgstr ""
 

@@ -1396,6 +1396,12 @@ msgstr "Notensystem"
 msgid "Variants:"
 msgstr "Varianten:"
 
+msgid "Scale shapes"
+msgstr "Griffmuster"
+
+msgid "Three octaves"
+msgstr "Drei Oktaven"
+
 msgid "treble clef"
 msgstr "Violinschlüssel"
 

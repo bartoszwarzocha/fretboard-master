@@ -37,6 +37,7 @@ var playing := Vector2i(-1, -1)    # dźwięk odtwarzany (Encyklopedia – odsł
 var demo := false           # przykładowa skala (podgląd w ustawieniach) – odtwarzana po każdej zmianie
 var ruler := false          # linijka progów z zakresem pod gryfem (zamiast numerów progów nad nim)
 var fret_range := Vector2i(-1, -1)   # zakres progów (od, do); (-1, -1) – cały gryf bez przyciemnienia
+var shifts: Array = []      # przesunięcia ręki (superpozycje): [[Vector2i z, Vector2i do]] – strzałki
 var _notes: Array = []
 var _view := ""
 var _lefty := false
@@ -314,12 +315,57 @@ func _store_cells(pos_fn: Callable, r: float) -> void:
 	for s in spec.strings:
 		for f in spec.frets + 1:
 			_cells[Vector2i(s, f)] = pos_fn.call(s, f)
+	if not shifts.is_empty():
+		_draw_shifts(r)
 	if selected.x >= 0 and _cells.has(selected):
 		draw_arc(_cells[selected], r + 4.0, 0, TAU, 40, ThemeManager.color("text"), 2.5, true)
 	if playing.x >= 0 and _cells.has(playing):
 		var c: Vector2 = _cells[playing]
 		draw_circle(c, r + 9.0, Color(ThemeManager.color("focus"), 0.22))
 		draw_arc(c, r + 5.0, 0, TAU, 40, ThemeManager.color("focus"), 3.5, true)
+
+
+func set_shifts(p: Array) -> void:
+	shifts = p
+	queue_redraw()
+
+
+# Strzałka przesunięcia ręki: od krawędzi znacznika do krawędzi następnego, łukiem.
+func _draw_shifts(r: float) -> void:
+	var col := ThemeManager.color("focus")
+	for sh in shifts:
+		if not (_cells.has(sh[0]) and _cells.has(sh[1])):
+			continue
+		var a: Vector2 = _cells[sh[0]]
+		var b: Vector2 = _cells[sh[1]]
+		var d := b - a
+		if d.length() < r * 2.5:
+			continue
+		# Łuk wygięty do środka gryfu – przy skrajnych strunach nie wychodzi poza widok.
+		var n := Vector2(d.y, -d.x).normalized()
+		var mid := (a + b) * 0.5
+		var inner: Vector2 = _cells.get(Vector2i(spec.strings / 2, sh[1].y), mid)
+		if n.dot(inner - mid) < 0.0:
+			n = -n
+		var bend := n * minf(d.length() * 0.18, r * 1.1)
+		var pts := PackedVector2Array()
+		for i in 21:
+			var t := lerpf(0.0, 1.0, i / 20.0)
+			pts.append(a.lerp(b, t) + bend * 4.0 * t * (1.0 - t))
+		# Obcięcie łuku do krawędzi znaczników.
+		var keep := PackedVector2Array()
+		for q in pts:
+			if q.distance_to(a) > r + 3.0 and q.distance_to(b) > r + 6.0:
+				keep.append(q)
+		if keep.size() < 2:
+			continue
+		draw_polyline(keep, Color("#070A14", 0.6), 5.5, true)
+		draw_polyline(keep, col, 3.0, true)
+		var tip := keep[keep.size() - 1]
+		var dir := (tip - keep[keep.size() - 2]).normalized()
+		var side := Vector2(-dir.y, dir.x)
+		var head := PackedVector2Array([tip + dir * 7.0, tip - dir * 4.0 + side * 6.0, tip - dir * 4.0 - side * 6.0])
+		draw_colored_polygon(head, col)
 
 
 # Podświetlenie odtwarzanego dźwięku – tylko nakładka 2D, bez ponownego rysowania sceny 3D.

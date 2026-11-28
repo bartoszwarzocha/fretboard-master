@@ -1396,6 +1396,12 @@ msgstr "Нотный стан"
 msgid "Variants:"
 msgstr "Варианты:"
 
+msgid "Scale shapes"
+msgstr "Аппликатуры"
+
+msgid "Three octaves"
+msgstr "Три октавы"
+
 msgid "treble clef"
 msgstr "скрипичный ключ"
 

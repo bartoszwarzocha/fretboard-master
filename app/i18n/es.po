@@ -1396,6 +1396,12 @@ msgstr "Pentagrama"
 msgid "Variants:"
 msgstr "Variantes:"
 
+msgid "Scale shapes"
+msgstr "Digitaciones"
+
+msgid "Three octaves"
+msgstr "Tres octavas"
+
 msgid "treble clef"
 msgstr "clave de sol"
 

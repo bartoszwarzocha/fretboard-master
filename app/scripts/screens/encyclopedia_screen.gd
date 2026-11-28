@@ -24,12 +24,14 @@ var _query := ""
 var _variants: Array = []     # superpozycje w zakresie (Superposition) – od najwygodniejszej
 var _variant := 0
 var _style := ""              # "3nps" po gotowym zakresie „3 dźwięki na strunę”
+var _shapes := false          # superpozycje włączone (przełącznik) – warianty, przesunięcia ręki
 
 var _fb: FretboardView
 var _title: Label
 var _range_text: Label
 var _modes_box: HBoxContainer
 var _variants_box: HBoxContainer
+var _shapes_box: HBoxContainer
 var _from_label: Label
 var _to_label: Label
 var _search: LineEdit
@@ -80,6 +82,8 @@ func _build_content() -> void:
 	_range_text.size_flags_vertical = Control.SIZE_SHRINK_END
 	head.add_child(_range_text)
 	head.add_child(_spacer())
+	_shapes_box = HBoxContainer.new()
+	head.add_child(_shapes_box)
 	_variants_box = HBoxContainer.new()
 	_variants_box.add_theme_constant_override("separation", 8)
 	head.add_child(_variants_box)
@@ -129,6 +133,7 @@ func _load_state() -> void:
 	_mode = str(App.setting(&"enc_mode"))
 	_from = int(App.setting(&"enc_from"))
 	_to = int(App.setting(&"enc_to"))
+	_shapes = bool(App.setting(&"enc_shapes"))
 	_entry = _entry_for_kind(_kind)
 
 
@@ -192,17 +197,22 @@ func _update_neck() -> void:
 		if not by_pc.has(p):
 			by_pc[p] = i
 	# Superpozycje w zakresie; dźwięki skali w zakresie spoza wybranego wariantu – przyciemnione.
-	_variants = Superposition.variants(spec.open_midi, by_pc, _from, _to, _style)
+	_variants = Superposition.variants(spec.open_midi, by_pc, _from, _to, _style) if _shapes else []
 	_variant = clampi(_variant, 0, maxi(_variants.size() - 1, 0))
+	# Wariant: komórki, pozycje ręki (najniższy próg z palcem w każdej pozycji) i przesunięcia ręki.
 	var chosen := {}
-	var hand := 99
-	var top := -1
+	var hands := {}
+	var shifts := []
 	if not _variants.is_empty():
-		for n in _variants[_variant]:
-			chosen[Vector2i(n.s, n.f)] = true
+		var v: Array = _variants[_variant]
+		for i in v.size():
+			var n: Dictionary = v[i]
+			chosen[Vector2i(n.s, n.f)] = n.pos
 			if n.f > 0:
-				hand = mini(hand, n.f)
-				top = maxi(top, n.f)
+				hands[n.pos] = mini(hands.get(n.pos, 99), n.f)
+			if i > 0 and n.pos != v[i - 1].pos:
+				shifts.append([Vector2i(v[i - 1].s, v[i - 1].f), Vector2i(n.s, n.f)])
+	_fb.set_shifts(shifts)
 	var out := []
 	for s in spec.strings:
 		for f in spec.frets + 1:
@@ -219,7 +229,7 @@ func _update_neck() -> void:
 				"degrees": text = ROMAN[(Theory.parse_degree(str(_degrees[i]))[0] - 1) % 7]
 				"fingers":
 					if in_var:
-						var h := hand if hand < 99 else maxi(_from, 1)
+						var h: int = hands.get(chosen.get(Vector2i(s, f), -1), maxi(_from, 1))
 						text = "0" if f == 0 else str(clampi(f - h + 1, 1, 4))
 			out.append({"s": s, "f": f, "text": text, "root": i == 0, "dim": in_range and not in_var})
 	_fb.set_notes(out)
@@ -228,9 +238,26 @@ func _update_neck() -> void:
 	if _from_label:
 		_from_label.text = str(_from)
 		_to_label.text = str(_to)
+	_build_shapes()
 	_build_variants()
 	_stop_playing()
 	_update_staff()
+
+
+# Przełącznik superpozycji: włączenie od razu zawęża zakres do jednej pozycji (5 progów).
+func _build_shapes() -> void:
+	_clear(_shapes_box)
+	var b := _chip_button(tr("Scale shapes"), _shapes)
+	b.custom_minimum_size.y = 38
+	b.pressed.connect(func():
+		_shapes = not _shapes
+		App.set_setting(&"enc_shapes", _shapes)
+		if _shapes:
+			_preset(4, "")
+		else:
+			_style = ""
+			_update_neck())
+	_shapes_box.add_child(b)
 
 
 func _build_variants() -> void:
@@ -302,7 +329,8 @@ func _range_row() -> Control:
 	row.add_child(_small_label("Preset ranges:"))
 	row.add_child(_pill_button(tr("Position"), func(): _preset(4, "")))
 	row.add_child(_pill_button(tr("CAGED"), func(): _preset(3, "")))
-	row.add_child(_pill_button(tr("3 notes per string"), func(): _preset(6, "3nps")))
+	row.add_child(_pill_button(tr("3 notes per string"), func(): _preset(6, "3nps", true)))
+	row.add_child(_pill_button(tr("Three octaves"), _three_octaves))
 	row.add_child(_pill_button(tr("Whole neck"), func(): _manual_range(0, _fb.spec.frets)))
 	return row
 
@@ -318,12 +346,28 @@ func _manual_range(a: int, b: int) -> void:
 	_set_range(a, b)
 
 
-func _preset(width: int, style: String) -> void:
+func _preset(width: int, style: String, shapes := false) -> void:
 	_style = style
+	_enable_shapes(shapes)
 	var spec := _fb.spec
 	var e := posmod(_pc - spec.open_midi[spec.strings - 1], 12)
 	var a := maxi(e - 1, 0)
 	_set_range(a, a + width)
+
+
+# Trzy oktawy od toniki na najniższej strunie: progi od toniki do toniki + 12, z przesunięciami ręki.
+func _three_octaves() -> void:
+	_style = ""
+	_enable_shapes(true)
+	var spec := _fb.spec
+	var e := posmod(_pc - spec.open_midi[spec.strings - 1], 12)
+	_set_range(e, e + 12)
+
+
+func _enable_shapes(on: bool) -> void:
+	if on and not _shapes:
+		_shapes = true
+		App.set_setting(&"enc_shapes", true)
 
 
 # --- Opis dźwięków na gryfie --------------------------------------------------------
