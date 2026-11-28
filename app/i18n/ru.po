@@ -1405,6 +1405,102 @@ msgstr "Три октавы"
 msgid "Full octaves"
 msgstr "Полные октавы"
 
+msgid "Help"
+msgstr "Справка"
+
+msgid "Back"
+msgstr "Назад"
+
+msgid "Next"
+msgstr "Далее"
+
+msgid "Finish"
+msgstr "Готово"
+
+msgid "Step %d of %d"
+msgstr "Шаг %d из %d"
+
+msgid "zoom"
+msgstr "масштаб"
+
+msgid "move"
+msgstr "сдвиг"
+
+msgid "rotate"
+msgstr "поворот"
+
+msgid "Welcome to the Encyclopedia"
+msgstr "Добро пожаловать в энциклопедию"
+
+msgid "In a few steps you will learn how to find a scale and practise it on the neck. Example: the C Dorian scale in a position from the 8th fret."
+msgstr "За несколько шагов вы узнаете, как найти гамму и отработать её на грифе. Пример: до дорийский лад в позиции с 8-го лада."
+
+msgid "1. Choose a scale"
+msgstr "1. Выберите гамму"
+
+msgid "Pick the type (scales, arpeggios or chords) and an item from the list – here: Dorian. You can also search by name or by notes, e.g. „C D Eb F”."
+msgstr "Выберите тип (гаммы, арпеджио или аккорды) и пункт списка – здесь: дорийский. Можно искать и по названию или по нотам, например «C D Eb F»."
+
+msgid "2. Choose the tonic"
+msgstr "2. Выберите тонику"
+
+msgid "The tonic is the note the scale starts from – here: C. The card below shows the formula, the notes and the chords in the scale."
+msgstr "Тоника – звук, с которого начинается гамма, здесь: до. Карточка ниже показывает строение, звуки и аккорды гаммы."
+
+msgid "3. The neck"
+msgstr "3. Гриф"
+
+msgid "The neck shows every note of the scale. The tonic is red. Use the mouse: wheel – zoom, left button – move, right button – rotate."
+msgstr "На грифе показаны все звуки гаммы. Тоника – красная. Мышь: колесо – масштаб, левая кнопка – сдвиг, правая – поворот."
+
+msgid "4. Set the fret range"
+msgstr "4. Задайте диапазон ладов"
+
+msgid "Set the range with the arrows, by clicking the ruler under the neck, or with a preset. Here: frets 8–12 – one position of the hand."
+msgstr "Диапазон задаётся стрелками, щелчком по линейке под грифом или готовым диапазоном. Здесь: лады 8–12 – одна позиция руки."
+
+msgid "5. Scale shapes"
+msgstr "5. Аппликатуры"
+
+msgid "„Scale shapes” lays the scale out so that every pitch is played once, from the lowest to the highest. „Full octaves” keeps it from tonic to tonic. Wider ranges show hand shifts with arrows."
+msgstr "«Аппликатуры» раскладывают гамму так, чтобы каждый звук сыграть один раз, от низкого к высокому. «Полные октавы» ограничивают её от тоники до тоники. В широких диапазонах стрелки показывают смену позиции."
+
+msgid "6. Variants"
+msgstr "6. Варианты"
+
+msgid "The same notes can be played in several ways. Variant 1 is the most comfortable; try the others."
+msgstr "Одни и те же звуки можно сыграть по-разному. Вариант 1 – самый удобный, попробуйте и остальные."
+
+msgid "7. What the markers show"
+msgstr "7. Что показывают метки"
+
+msgid "Choose the labels: pitches, intervals, scale degrees or fingering (1 – index finger … 4 – little finger). Here: fingering."
+msgstr "Выберите подписи: звуки, интервалы, ступени или аппликатура (1 – указательный … 4 – мизинец). Здесь: аппликатура."
+
+msgid "8. Listen"
+msgstr "8. Прослушайте"
+
+msgid "„Listen” plays the variant up and down. The notes light up one by one on the neck and on the staff."
+msgstr "«Прослушать» играет вариант вверх и вниз. Звуки по очереди подсвечиваются на грифе и на нотном стане."
+
+msgid "9. The staff"
+msgstr "9. Нотный стан"
+
+msgid "The staff shows the scale in its key, with the key signature and the note names."
+msgstr "Нотный стан показывает гамму в её тональности – с ключевыми знаками и названиями звуков."
+
+msgid "10. Play along"
+msgstr "10. Сыграйте"
+
+msgid "Play single notes on your guitar: the note you play lights up on the neck – green when it belongs to the scale, orange when it does not."
+msgstr "Играйте отдельные звуки на гитаре: сыгранный звук подсветится на грифе – зелёным, если он входит в гамму, оранжевым, если нет."
+
+msgid "That's it!"
+msgstr "Вот и всё!"
+
+msgid "You can bring this guide back at any time with the „?” button at the top of the window."
+msgstr "Это руководство можно открыть в любой момент кнопкой «?» вверху окна."
+
 msgid "treble clef"
 msgstr "скрипичный ключ"
 

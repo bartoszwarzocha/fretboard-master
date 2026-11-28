@@ -5,11 +5,13 @@ class_name ModuleHeader
 extends PanelContainer
 
 var active: StringName
+var help := Callable()       # pomoc ekranu (samouczek) – przycisk „?” tylko, gdy ekran ją ma
 
 
-static func create(p_active: StringName) -> ModuleHeader:
+static func create(p_active: StringName, p_help := Callable()) -> ModuleHeader:
 	var h := ModuleHeader.new()
 	h.active = p_active
+	h.help = p_help
 	return h
 
 
@@ -71,6 +73,15 @@ func _ready() -> void:
 	gap2.custom_minimum_size.x = 8
 	row.add_child(gap2)
 
+	if help.is_valid():
+		var hb := Button.new()
+		hb.theme_type_variation = &"NavButton"
+		hb.text = "?"
+		hb.tooltip_text = "Help"
+		hb.add_theme_font_override("font", ThemeManager.font_body_bold)
+		hb.add_theme_font_size_override("font_size", 22)
+		hb.pressed.connect(help)
+		row.add_child(hb)
 	var settings := Button.new()
 	settings.theme_type_variation = &"NavButton"
 	settings.text = "⚙"

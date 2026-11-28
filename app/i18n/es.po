@@ -1405,6 +1405,102 @@ msgstr "Tres octavas"
 msgid "Full octaves"
 msgstr "Octavas completas"
 
+msgid "Help"
+msgstr "Ayuda"
+
+msgid "Back"
+msgstr "Atrás"
+
+msgid "Next"
+msgstr "Siguiente"
+
+msgid "Finish"
+msgstr "Terminar"
+
+msgid "Step %d of %d"
+msgstr "Paso %d de %d"
+
+msgid "zoom"
+msgstr "zoom"
+
+msgid "move"
+msgstr "mover"
+
+msgid "rotate"
+msgstr "girar"
+
+msgid "Welcome to the Encyclopedia"
+msgstr "Bienvenido a la Enciclopedia"
+
+msgid "In a few steps you will learn how to find a scale and practise it on the neck. Example: the C Dorian scale in a position from the 8th fret."
+msgstr "En unos pasos aprenderás a encontrar una escala y practicarla en el mástil. Ejemplo: la escala dórica de Do en la posición desde el traste 8."
+
+msgid "1. Choose a scale"
+msgstr "1. Elige una escala"
+
+msgid "Pick the type (scales, arpeggios or chords) and an item from the list – here: Dorian. You can also search by name or by notes, e.g. „C D Eb F”."
+msgstr "Elige el tipo (escalas, arpegios o acordes) y un elemento de la lista; aquí: dórica. También puedes buscar por nombre o por notas, p. ej. «C D Eb F»."
+
+msgid "2. Choose the tonic"
+msgstr "2. Elige la tónica"
+
+msgid "The tonic is the note the scale starts from – here: C. The card below shows the formula, the notes and the chords in the scale."
+msgstr "La tónica es la nota con la que empieza la escala; aquí: Do. La ficha de abajo muestra la fórmula, las notas y los acordes de la escala."
+
+msgid "3. The neck"
+msgstr "3. El mástil"
+
+msgid "The neck shows every note of the scale. The tonic is red. Use the mouse: wheel – zoom, left button – move, right button – rotate."
+msgstr "El mástil muestra todas las notas de la escala. La tónica es roja. Ratón: rueda – zoom, botón izquierdo – mover, derecho – girar."
+
+msgid "4. Set the fret range"
+msgstr "4. Ajusta el rango de trastes"
+
+msgid "Set the range with the arrows, by clicking the ruler under the neck, or with a preset. Here: frets 8–12 – one position of the hand."
+msgstr "Ajusta el rango con las flechas, haciendo clic en la regla bajo el mástil o con un rango predefinido. Aquí: trastes 8–12, una posición de la mano."
+
+msgid "5. Scale shapes"
+msgstr "5. Digitaciones"
+
+msgid "„Scale shapes” lays the scale out so that every pitch is played once, from the lowest to the highest. „Full octaves” keeps it from tonic to tonic. Wider ranges show hand shifts with arrows."
+msgstr "«Digitaciones» coloca la escala para tocar cada nota una vez, de la más grave a la más aguda. «Octavas completas» la limita de tónica a tónica. En rangos amplios, las flechas muestran los cambios de posición."
+
+msgid "6. Variants"
+msgstr "6. Variantes"
+
+msgid "The same notes can be played in several ways. Variant 1 is the most comfortable; try the others."
+msgstr "Las mismas notas se pueden tocar de varias maneras. La variante 1 es la más cómoda; prueba también las demás."
+
+msgid "7. What the markers show"
+msgstr "7. Qué muestran los marcadores"
+
+msgid "Choose the labels: pitches, intervals, scale degrees or fingering (1 – index finger … 4 – little finger). Here: fingering."
+msgstr "Elige las etiquetas: notas, intervalos, grados o digitación (1 – índice … 4 – meñique). Aquí: digitación."
+
+msgid "8. Listen"
+msgstr "8. Escucha"
+
+msgid "„Listen” plays the variant up and down. The notes light up one by one on the neck and on the staff."
+msgstr "«Escuchar» reproduce la variante en sentido ascendente y descendente. Las notas se iluminan una a una en el mástil y en el pentagrama."
+
+msgid "9. The staff"
+msgstr "9. El pentagrama"
+
+msgid "The staff shows the scale in its key, with the key signature and the note names."
+msgstr "El pentagrama muestra la escala en su tonalidad, con la armadura y los nombres de las notas."
+
+msgid "10. Play along"
+msgstr "10. Toca"
+
+msgid "Play single notes on your guitar: the note you play lights up on the neck – green when it belongs to the scale, orange when it does not."
+msgstr "Toca notas sueltas en la guitarra: la nota tocada se ilumina en el mástil, en verde si pertenece a la escala y en naranja si no."
+
+msgid "That's it!"
+msgstr "¡Eso es todo!"
+
+msgid "You can bring this guide back at any time with the „?” button at the top of the window."
+msgstr "Puedes volver a abrir esta guía en cualquier momento con el botón «?» en la parte superior de la ventana."
+
 msgid "treble clef"
 msgstr "clave de sol"
 

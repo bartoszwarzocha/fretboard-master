@@ -27,6 +27,13 @@ var _style := ""              # "3nps" po gotowym zakresie „3 dźwięki na str
 var _shapes := false          # superpozycje włączone (przełącznik) – warianty, przesunięcia ręki
 var _octaves := true          # superpozycje tylko w pełnych oktawach (od toniki do toniki)
 var _hear_timer: Timer
+# Fragmenty interfejsu wskazywane w samouczku.
+var _catalog_card: Control
+var _tonic_row: Control
+var _listen_btn: Control
+var _staff_box: Control
+var _range_box: Control
+var _tutorial: TutorialOverlay
 var _heard_hist: Array = []   # ostatnie odczyty (MIDI) – mediana bez skoków
 var _heard_t := 0.0           # czas ostatniego pewnego odczytu (s)
 
@@ -53,6 +60,7 @@ var _play_timer: Timer
 func _init() -> void:
 	module_id = &"encyclopedia"
 	content_margin = Vector2(32, 20)
+	help = _start_tutorial
 
 
 func _build_content() -> void:
@@ -115,21 +123,24 @@ func _build_content() -> void:
 	_fb.note_picked.connect(_on_note_picked)
 	_fb.fret_clicked.connect(_on_fret_clicked)
 	neck_col.add_child(_fb)
-	neck_col.add_child(_range_row())
+	_range_box = _range_row()
+	neck_col.add_child(_range_box)
 
 	# --- Katalog, karta, pięciolinia ---
 	var bottom := HBoxContainer.new()
 	bottom.add_theme_constant_override("separation", 18)
 	bottom.custom_minimum_size.y = 430
 	content.add_child(bottom)
-	bottom.add_child(_catalog())
+	_catalog_card = _catalog()
+	bottom.add_child(_catalog_card)
 	var card := _card(22)
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(card)
 	_detail = VBoxContainer.new()
 	_detail.add_theme_constant_override("separation", 12)
 	card.add_child(_detail)
-	bottom.add_child(_staff_card())
+	_staff_box = _staff_card()
+	bottom.add_child(_staff_box)
 
 	_refresh_all()
 
@@ -669,6 +680,7 @@ func _build_detail() -> void:
 	var trow := HBoxContainer.new()
 	trow.add_theme_constant_override("separation", 5)
 	_detail.add_child(trow)
+	_tonic_row = trow
 	var tl := _small_label("Tonic" if _kind == "scale" else "Root")
 	tl.custom_minimum_size.x = 80
 	trow.add_child(tl)
@@ -738,6 +750,7 @@ func _build_detail() -> void:
 	actions.add_child(practise)
 	var listen := _action_button("Listen")
 	listen.pressed.connect(_listen)
+	_listen_btn = listen
 	actions.add_child(listen)
 	var plan := _action_button("+ Add to plan")
 	plan.disabled = true
@@ -978,6 +991,79 @@ func _measure_accidentals(notes: Array, fifths: int) -> Array:
 			out.append(a)
 			state[key] = a
 	return out
+
+
+# --- Samouczek (przycisk „?” w nagłówku) ---------------------------------------------
+# Krok po kroku na przykładzie: C dorycka w superpozycji od 8. progu.
+
+func _start_tutorial() -> void:
+	if _tutorial and is_instance_valid(_tutorial):
+		return
+	_stop_playing()
+	_tutorial = TutorialOverlay.new()
+	_tutorial.steps = [
+		{"title": "Welcome to the Encyclopedia",
+			"text": "In a few steps you will learn how to find a scale and practise it on the neck. Example: the C Dorian scale in a position from the 8th fret."},
+		{"title": "1. Choose a scale",
+			"text": "Pick the type (scales, arpeggios or chords) and an item from the list – here: Dorian. You can also search by name or by notes, e.g. „C D Eb F”.",
+			"target": func(): return _catalog_card,
+			"action": func(): _tutorial_select()},
+		{"title": "2. Choose the tonic",
+			"text": "The tonic is the note the scale starts from – here: C. The card below shows the formula, the notes and the chords in the scale.",
+			"target": func(): return _tonic_row},
+		{"title": "3. The neck",
+			"text": "The neck shows every note of the scale. The tonic is red. Use the mouse: wheel – zoom, left button – move, right button – rotate.",
+			"target": func(): return _fb},
+		{"title": "4. Set the fret range",
+			"text": "Set the range with the arrows, by clicking the ruler under the neck, or with a preset. Here: frets 8–12 – one position of the hand.",
+			"target": func(): return _range_box,
+			"action": func(): _manual_range(8, 12)},
+		{"title": "5. Scale shapes",
+			"text": "„Scale shapes” lays the scale out so that every pitch is played once, from the lowest to the highest. „Full octaves” keeps it from tonic to tonic. Wider ranges show hand shifts with arrows.",
+			"target": func(): return _shapes_box,
+			"action": func(): _tutorial_shapes()},
+		{"title": "6. Variants",
+			"text": "The same notes can be played in several ways. Variant 1 is the most comfortable; try the others.",
+			"target": func(): return _variants_box},
+		{"title": "7. What the markers show",
+			"text": "Choose the labels: pitches, intervals, scale degrees or fingering (1 – index finger … 4 – little finger). Here: fingering.",
+			"target": func(): return _modes_box,
+			"action": func(): _tutorial_mode("fingers")},
+		{"title": "8. Listen",
+			"text": "„Listen” plays the variant up and down. The notes light up one by one on the neck and on the staff.",
+			"target": func(): return _listen_btn},
+		{"title": "9. The staff",
+			"text": "The staff shows the scale in its key, with the key signature and the note names.",
+			"target": func(): return _staff_box},
+		{"title": "10. Play along",
+			"text": "Play single notes on your guitar: the note you play lights up on the neck – green when it belongs to the scale, orange when it does not.",
+			"target": func(): return _fb},
+		{"title": "That's it!",
+			"text": "You can bring this guide back at any time with the „?” button at the top of the window."},
+	]
+	add_child(_tutorial)
+
+
+func _tutorial_select() -> void:
+	var e := Theory.scale("dorian")
+	if not e.is_empty():
+		_select("scale", e, 0)
+
+
+func _tutorial_shapes() -> void:
+	_shapes = true
+	_octaves = true
+	_style = ""
+	App.set_settings({&"enc_shapes": true, &"enc_octaves": true})
+	_variant = 0
+	_update_neck()
+
+
+func _tutorial_mode(m: String) -> void:
+	_mode = m
+	App.set_setting(&"enc_mode", _mode)
+	_build_modes()
+	_update_neck()
 
 
 # --- Granie na gitarze ---------------------------------------------------------------

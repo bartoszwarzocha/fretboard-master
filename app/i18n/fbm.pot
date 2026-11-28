@@ -1404,6 +1404,102 @@ msgstr ""
 msgid "Full octaves"
 msgstr ""
 
+msgid "Help"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "Finish"
+msgstr ""
+
+msgid "Step %d of %d"
+msgstr ""
+
+msgid "zoom"
+msgstr ""
+
+msgid "move"
+msgstr ""
+
+msgid "rotate"
+msgstr ""
+
+msgid "Welcome to the Encyclopedia"
+msgstr ""
+
+msgid "In a few steps you will learn how to find a scale and practise it on the neck. Example: the C Dorian scale in a position from the 8th fret."
+msgstr ""
+
+msgid "1. Choose a scale"
+msgstr ""
+
+msgid "Pick the type (scales, arpeggios or chords) and an item from the list – here: Dorian. You can also search by name or by notes, e.g. „C D Eb F”."
+msgstr ""
+
+msgid "2. Choose the tonic"
+msgstr ""
+
+msgid "The tonic is the note the scale starts from – here: C. The card below shows the formula, the notes and the chords in the scale."
+msgstr ""
+
+msgid "3. The neck"
+msgstr ""
+
+msgid "The neck shows every note of the scale. The tonic is red. Use the mouse: wheel – zoom, left button – move, right button – rotate."
+msgstr ""
+
+msgid "4. Set the fret range"
+msgstr ""
+
+msgid "Set the range with the arrows, by clicking the ruler under the neck, or with a preset. Here: frets 8–12 – one position of the hand."
+msgstr ""
+
+msgid "5. Scale shapes"
+msgstr ""
+
+msgid "„Scale shapes” lays the scale out so that every pitch is played once, from the lowest to the highest. „Full octaves” keeps it from tonic to tonic. Wider ranges show hand shifts with arrows."
+msgstr ""
+
+msgid "6. Variants"
+msgstr ""
+
+msgid "The same notes can be played in several ways. Variant 1 is the most comfortable; try the others."
+msgstr ""
+
+msgid "7. What the markers show"
+msgstr ""
+
+msgid "Choose the labels: pitches, intervals, scale degrees or fingering (1 – index finger … 4 – little finger). Here: fingering."
+msgstr ""
+
+msgid "8. Listen"
+msgstr ""
+
+msgid "„Listen” plays the variant up and down. The notes light up one by one on the neck and on the staff."
+msgstr ""
+
+msgid "9. The staff"
+msgstr ""
+
+msgid "The staff shows the scale in its key, with the key signature and the note names."
+msgstr ""
+
+msgid "10. Play along"
+msgstr ""
+
+msgid "Play single notes on your guitar: the note you play lights up on the neck – green when it belongs to the scale, orange when it does not."
+msgstr ""
+
+msgid "That's it!"
+msgstr ""
+
+msgid "You can bring this guide back at any time with the „?” button at the top of the window."
+msgstr ""
+
 msgid "treble clef"
 msgstr ""
 

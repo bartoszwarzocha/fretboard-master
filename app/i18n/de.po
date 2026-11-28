@@ -1405,6 +1405,102 @@ msgstr "Drei Oktaven"
 msgid "Full octaves"
 msgstr "Ganze Oktaven"
 
+msgid "Help"
+msgstr "Hilfe"
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "Next"
+msgstr "Weiter"
+
+msgid "Finish"
+msgstr "Fertig"
+
+msgid "Step %d of %d"
+msgstr "Schritt %d von %d"
+
+msgid "zoom"
+msgstr "Zoom"
+
+msgid "move"
+msgstr "verschieben"
+
+msgid "rotate"
+msgstr "drehen"
+
+msgid "Welcome to the Encyclopedia"
+msgstr "Willkommen in der Enzyklopädie"
+
+msgid "In a few steps you will learn how to find a scale and practise it on the neck. Example: the C Dorian scale in a position from the 8th fret."
+msgstr "In wenigen Schritten lernst du, eine Tonleiter zu finden und auf dem Griffbrett zu üben. Beispiel: C-Dorisch in der Lage ab dem 8. Bund."
+
+msgid "1. Choose a scale"
+msgstr "1. Tonleiter wählen"
+
+msgid "Pick the type (scales, arpeggios or chords) and an item from the list – here: Dorian. You can also search by name or by notes, e.g. „C D Eb F”."
+msgstr "Wähle die Art (Tonleitern, Arpeggien oder Akkorde) und einen Eintrag aus der Liste – hier: Dorisch. Du kannst auch nach Namen oder Tönen suchen, z. B. „C D Es F”."
+
+msgid "2. Choose the tonic"
+msgstr "2. Grundton wählen"
+
+msgid "The tonic is the note the scale starts from – here: C. The card below shows the formula, the notes and the chords in the scale."
+msgstr "Der Grundton ist der Ton, mit dem die Tonleiter beginnt – hier: C. Die Karte darunter zeigt Aufbau, Töne und Akkorde der Tonleiter."
+
+msgid "3. The neck"
+msgstr "3. Das Griffbrett"
+
+msgid "The neck shows every note of the scale. The tonic is red. Use the mouse: wheel – zoom, left button – move, right button – rotate."
+msgstr "Das Griffbrett zeigt alle Töne der Tonleiter. Der Grundton ist rot. Maus: Rad – Zoom, linke Taste – verschieben, rechte Taste – drehen."
+
+msgid "4. Set the fret range"
+msgstr "4. Bundbereich festlegen"
+
+msgid "Set the range with the arrows, by clicking the ruler under the neck, or with a preset. Here: frets 8–12 – one position of the hand."
+msgstr "Den Bereich stellst du mit den Pfeilen, per Klick auf das Lineal unter dem Griffbrett oder mit einem fertigen Bereich ein. Hier: Bünde 8–12 – eine Lage der Hand."
+
+msgid "5. Scale shapes"
+msgstr "5. Griffmuster"
+
+msgid "„Scale shapes” lays the scale out so that every pitch is played once, from the lowest to the highest. „Full octaves” keeps it from tonic to tonic. Wider ranges show hand shifts with arrows."
+msgstr "„Griffmuster” legt die Tonleiter so an, dass jeder Ton einmal gespielt wird, vom tiefsten zum höchsten. „Ganze Oktaven” begrenzt sie auf Grundton bis Grundton. In größeren Bereichen zeigen Pfeile die Lagenwechsel."
+
+msgid "6. Variants"
+msgstr "6. Varianten"
+
+msgid "The same notes can be played in several ways. Variant 1 is the most comfortable; try the others."
+msgstr "Dieselben Töne lassen sich auf mehrere Arten spielen. Variante 1 ist die bequemste – probiere auch die anderen."
+
+msgid "7. What the markers show"
+msgstr "7. Was die Markierungen zeigen"
+
+msgid "Choose the labels: pitches, intervals, scale degrees or fingering (1 – index finger … 4 – little finger). Here: fingering."
+msgstr "Wähle die Beschriftung: Töne, Intervalle, Stufen oder Fingersatz (1 – Zeigefinger … 4 – kleiner Finger). Hier: Fingersatz."
+
+msgid "8. Listen"
+msgstr "8. Anhören"
+
+msgid "„Listen” plays the variant up and down. The notes light up one by one on the neck and on the staff."
+msgstr "„Anhören” spielt die Variante auf- und abwärts. Die Töne leuchten nacheinander auf dem Griffbrett und im Notensystem auf."
+
+msgid "9. The staff"
+msgstr "9. Das Notensystem"
+
+msgid "The staff shows the scale in its key, with the key signature and the note names."
+msgstr "Das Notensystem zeigt die Tonleiter in ihrer Tonart – mit Vorzeichen und Tonnamen."
+
+msgid "10. Play along"
+msgstr "10. Spiel mit"
+
+msgid "Play single notes on your guitar: the note you play lights up on the neck – green when it belongs to the scale, orange when it does not."
+msgstr "Spiele einzelne Töne auf der Gitarre: Der gespielte Ton leuchtet auf dem Griffbrett – grün, wenn er zur Tonleiter gehört, orange, wenn nicht."
+
+msgid "That's it!"
+msgstr "Das war's!"
+
+msgid "You can bring this guide back at any time with the „?” button at the top of the window."
+msgstr "Diese Anleitung rufst du jederzeit mit der Schaltfläche „?” oben im Fenster wieder auf."
+
 msgid "treble clef"
 msgstr "Violinschlüssel"
 

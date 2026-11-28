@@ -64,6 +64,78 @@ func _ready() -> void:
 		if key in KEYS:
 			_rebuild())
 	_rebuild()
+	if interactive:
+		_hint = _MouseHint.new()
+		_hint.modulate.a = 0.0
+		add_child(_hint)
+		_place_hint()
+		mouse_entered.connect(_fade_hint.bind(1.0))
+		mouse_exited.connect(_fade_hint.bind(0.0))
+
+
+# Podpowiedź sterowania myszą (Encyklopedia, Ćwiczenia): w prawym górnym rogu gryfu, pojawia się
+# płynnie po najechaniu na gryf. Osobny węzeł – zanikanie zmienia tylko jego modulate.
+var _hint: Control
+var _hint_tween: Tween
+
+
+func _fade_hint(a: float) -> void:
+	if _hint == null:
+		return
+	if _hint_tween:
+		_hint_tween.kill()
+	_hint_tween = create_tween()
+	_hint_tween.tween_property(_hint, "modulate:a", a, 0.25)
+
+
+func _place_hint() -> void:
+	if _hint:
+		var hs := _hint.get_combined_minimum_size()
+		_hint.size = hs
+		_hint.position = Vector2(size.x - hs.x - 12.0, 6.0)
+
+
+class _MouseHint extends Control:
+	const ITEMS := [["wheel", "zoom"], ["left", "move"], ["right", "rotate"]]
+	const W := 16.0
+	const H := 24.0
+
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _get_minimum_size() -> Vector2:
+		var f := ThemeManager.font_body
+		var w := 0.0
+		for it in ITEMS:
+			w += W + 6.0 + f.get_string_size(tr(it[1]), HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x + 16.0
+		return Vector2(w + 12.0, H + 12.0)
+
+	func _draw() -> void:
+		var f := ThemeManager.font_body
+		var bg := Color("#070A14", 0.72)
+		draw_rect(Rect2(Vector2.ZERO, size), bg)
+		var ink := Color("#E8ECF6", 0.9)
+		var acc := ThemeManager.color("accent")
+		var x := 8.0
+		var y := 6.0
+		for it in ITEMS:
+			var r := Rect2(x, y, W, H)
+			# Korpus myszy: obrys, podział przycisków, zaznaczony przycisk lub kółko.
+			var top := r.position.y + H * 0.42
+			var cx := r.position.x + W * 0.5
+			match it[0]:
+				"left":
+					draw_rect(Rect2(r.position, Vector2(W * 0.5, H * 0.42)), acc)
+				"right":
+					draw_rect(Rect2(Vector2(cx, r.position.y), Vector2(W * 0.5, H * 0.42)), acc)
+			draw_rect(r, ink, false, 1.5)
+			draw_line(Vector2(r.position.x, top), Vector2(r.end.x, top), ink, 1.5)
+			draw_line(Vector2(cx, r.position.y), Vector2(cx, top), ink, 1.5)
+			if it[0] == "wheel":
+				draw_rect(Rect2(cx - 2.0, r.position.y + 3.0, 4.0, 7.0), acc)
+			var t: String = tr(it[1])
+			draw_string(f, Vector2(r.end.x + 6.0, y + H * 0.5 + 5.0), t, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, ink)
+			x = r.end.x + 6.0 + f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x + 16.0
 
 
 func set_notes(notes: Array) -> void:
@@ -208,6 +280,7 @@ static func warm_up(host: Node) -> void:
 
 
 func _on_resized() -> void:
+	_place_hint()
 	if _vp and size.x > 1 and size.y > 1:
 		_vp.size = Vector2i(size * SS)
 		# Duży obraz (Encyklopedia – gryf na całą szerokość): nadpróbkowanie 2× już wygładza krawędzie,
