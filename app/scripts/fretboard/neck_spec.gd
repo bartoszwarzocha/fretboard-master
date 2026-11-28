@@ -10,6 +10,8 @@ const TEAL := Color("#3FD0C9")
 const ORANGE := Color("#F5B544")
 const MARKER := Color("#4B5263")     # domyślny znacznik dźwięku – ciemnoszary
 const MARKER_ROOT := Color("#D63A3A")    # domyślny znacznik toniki – czerwony
+const RIM := Color("#E8ECF6")        # obwódka znacznika aktywnego (jasna – wyraźny kontrast)
+const RIM_DIM := Color("#0B0F1C")    # obwódka znacznika nieaktywnego
 const BOARD_T := 6.0          # grubość podstrunnicy
 const NUT_LEN := 4.5          # długość siodełka
 
@@ -196,7 +198,7 @@ static func note_color(root: bool) -> Color:
 
 # Znacznik przygaszony (dźwięk skali poza zakresem lub wariantem) – zbliżony do tła gryfu.
 static func dim_color(col: Color) -> Color:
-	return col.lerp(Color("#1A1F2E"), 0.72)
+	return col.lerp(Color("#1A1F2E"), 0.8)
 
 
 static func text_color(root: bool) -> Color:

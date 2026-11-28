@@ -98,6 +98,8 @@ func _build_content() -> void:
 	head.add_child(_shapes_box)
 	_variants_box = HBoxContainer.new()
 	_variants_box.add_theme_constant_override("separation", 8)
+	# Stała szerokość – przełączniki obok nie zmieniają miejsca przy innej liczbie wariantów.
+	_variants_box.custom_minimum_size.x = 330
 	head.add_child(_variants_box)
 	var g := Control.new()
 	g.custom_minimum_size.x = 10
@@ -433,9 +435,8 @@ func _catalog() -> Control:
 	_list.focus_mode = Control.FOCUS_NONE
 	_list.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_list.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
-	var sel := ThemeManager.box(ThemeManager.color("selected"), Color.TRANSPARENT, 8, 0, 10, 4)
-	sel.border_color = ThemeManager.color("accent")
-	sel.border_width_left = 3
+	# Zaznaczenie – cały wiersz tłem w kolorze akcentu (bez paska z lewej, który zasłaniał nazwę).
+	var sel := ThemeManager.box(Color(ThemeManager.color("accent"), 0.24), Color(ThemeManager.color("accent"), 0.55), 8, 1, 10, 4)
 	for k in ["selected", "selected_focus"]:
 		_list.add_theme_stylebox_override(k, sel)
 	_list.add_theme_stylebox_override("hovered", ThemeManager.box(ThemeManager.color("surface_2"), Color.TRANSPARENT, 8, 0, 10, 4))
@@ -738,13 +739,6 @@ func _build_detail() -> void:
 	var listen := _action_button("Listen")
 	listen.pressed.connect(_listen)
 	actions.add_child(listen)
-	var fing := _action_button("Fingering")
-	fing.pressed.connect(func():
-		_mode = "fingers"
-		App.set_setting(&"enc_mode", _mode)
-		_build_modes()
-		_update_neck())
-	actions.add_child(fing)
 	var plan := _action_button("+ Add to plan")
 	plan.disabled = true
 	plan.tooltip_text = tr("Available with the Practice plan module.")
@@ -997,7 +991,7 @@ func _hear() -> void:
 	var core := AudioEngine.ensure_open()
 	var now := Time.get_ticks_msec() / 1000.0
 	if core == null or not core.input_ok() or _play_timer.time_left > 0.0:
-		_fb.set_heard(Vector2i(-1, -1), false)
+		_fb.set_heard(Vector2i(-1, -1), false, "")
 		return
 	var p: Dictionary = core.pitch()
 	if float(p.hz) > 0.0 and float(p.clarity) >= HEAR_CLARITY:
@@ -1013,10 +1007,10 @@ func _hear() -> void:
 		for n in _notes:
 			if Theory.pc(n) == posmod(midi, 12):
 				in_scale = true
-		_fb.set_heard(_heard_cell(midi), in_scale)
+		_fb.set_heard(_heard_cell(midi), in_scale, NoteNames.note_name(midi, App.notation()))
 	elif now - _heard_t > HEAR_HOLD:
 		_heard_hist.clear()
-		_fb.set_heard(Vector2i(-1, -1), false)
+		_fb.set_heard(Vector2i(-1, -1), false, "")
 
 
 # Miejsce zagranego dźwięku: z bieżącego wariantu superpozycji, inaczej najbliżej środka zakresu.

@@ -111,8 +111,10 @@ func build(neck: NeckSpec) -> void:
 	_strings()
 	_marker_mesh = _make_marker_mesh()
 	# Znaczniki płaskie, bez oświetlenia – kolor dokładnie jak w ustawieniach, bez odblasku.
-	var rim_mat := _flat_material(Color("#0B0F1C"), 1.0)
+	var rim_mat := _flat_material(Color.WHITE, 1.0)
 	rim_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	rim_mat.vertex_color_use_as_albedo = true
+	rim_mat.vertex_color_is_srgb = true
 	_rims = _multimesh(rim_mat)
 	var mat := _flat_material(Color.WHITE, 1.0)
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -195,10 +197,14 @@ func set_notes(notes: Array) -> void:
 		var r: float = m.r
 		var p: Vector3 = m.pos
 		# Krążek powiększony o dawną szerokość obwódki (×1,12); obwódka – cienki pierścień.
-		mm_r.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * 1.2, r * 0.9, r * 1.2)), p - Vector3(0, 0.05, 0)))
-		mm_d.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * 1.12, r, r * 1.12)), p))
+		# Aktywny: krążek ×1,12 z jasną obwódką; nieaktywny: mniejszy, ciemny, z ciemną obwódką.
+		var dim: bool = m.note.get("dim", false)
+		var k := 0.8 if dim else 1.12
+		mm_r.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * (k + 0.1), r * 0.9, r * (k + 0.1))), p - Vector3(0, 0.05, 0)))
+		mm_r.set_instance_color(i, NeckSpec.RIM_DIM if dim else NeckSpec.RIM)
+		mm_d.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * k, r, r * k)), p))
 		var col: Color = NeckSpec.note_color(m.note.get("root", false))
-		if m.note.get("dim", false):
+		if dim:
 			col = NeckSpec.dim_color(col)
 		mm_d.set_instance_color(i, col)
 

@@ -39,6 +39,8 @@ var ruler := false          # linijka progów z zakresem pod gryfem (zamiast num
 var fret_range := Vector2i(-1, -1)   # zakres progów (od, do); (-1, -1) – cały gryf bez przyciemnienia
 var heard := Vector2i(-1, -1)      # dźwięk zagrany na gitarze (Encyklopedia) – podświetlenie z poświatą
 var heard_ok := true               # w skali (zielony) albo poza nią (pomarańczowy)
+var heard_text := ""
+var _heard_r := 10.0
 var shifts: Array = []      # przesunięcia ręki (superpozycje): [[Vector2i z, Vector2i do]] – strzałki
 var _notes: Array = []
 var _view := ""
@@ -313,6 +315,7 @@ func _pick(p: Vector2) -> void:
 
 # Pola wszystkich strun i progów na ekranie (pos_fn jak dla znaczników) + obwódka zaznaczenia.
 func _store_cells(pos_fn: Callable, r: float) -> void:
+	_heard_r = r
 	_cells.clear()
 	for s in spec.strings:
 		for f in spec.frets + 1:
@@ -321,23 +324,17 @@ func _store_cells(pos_fn: Callable, r: float) -> void:
 		_draw_shifts(r)
 	if selected.x >= 0 and _cells.has(selected):
 		draw_arc(_cells[selected], r + 4.0, 0, TAU, 40, ThemeManager.color("text"), 2.5, true)
-	if heard.x >= 0 and _cells.has(heard):
-		var hc: Vector2 = _cells[heard]
-		var g := Color("#4CD964") if heard_ok else Color("#FF9A3C")
-		# Poświata – pierścienie na zewnątrz krążka (napis pozostaje czytelny).
-		for k in 4:
-			draw_arc(hc, r * 1.12 + 7.0 + k * 4.0, 0, TAU, 40, Color(g, 0.34 - k * 0.08), 4.0, true)
-		draw_arc(hc, r * 1.12 + 3.0, 0, TAU, 40, g, 4.0, true)
 	if playing.x >= 0 and _cells.has(playing):
 		var c: Vector2 = _cells[playing]
 		draw_circle(c, r + 9.0, Color(ThemeManager.color("focus"), 0.22))
 		draw_arc(c, r + 5.0, 0, TAU, 40, ThemeManager.color("focus"), 3.5, true)
 
 
-func set_heard(p: Vector2i, ok: bool) -> void:
-	if heard != p or (p.x >= 0 and heard_ok != ok):
+func set_heard(p: Vector2i, ok: bool, text := "") -> void:
+	if heard != p or (p.x >= 0 and (heard_ok != ok or heard_text != text)):
 		heard = p
 		heard_ok = ok
+		heard_text = text
 		queue_redraw()
 
 
@@ -395,6 +392,24 @@ func _draw_shifts(r: float) -> void:
 	RenderingServer.canvas_item_add_triangle_array(get_canvas_item(), idx, heads, cols)
 
 
+# Dźwięk zagrany na gitarze – na wierzchu, po przyciemnieniu zakresu.
+func _draw_heard(r: float) -> void:
+	if heard.x < 0 or not _cells.has(heard):
+		return
+	# Pełne koło z poświatą w miejscu dźwięku (promień z odstępu strun w tym miejscu – działa też
+	# w perspektywie 3D) i nazwa dźwięku na wierzchu.
+	var hc: Vector2 = _cells[heard]
+	var g := Color("#4CD964") if heard_ok else Color("#FF9A3C")
+	var rr := r * 1.12
+	var nb := Vector2i(heard.x + (1 if heard.x == 0 else -1), heard.y)
+	if _cells.has(nb):
+		rr = maxf(rr, (_cells[nb] - hc).length() * 0.46)
+	for k in 4:
+		draw_circle(hc, rr + 4.0 + k * 4.0, Color(g, 0.18 - k * 0.04))
+	draw_circle(hc, rr + 1.0, g)
+	_text_c(hc, heard_text, maxi(int(rr * 1.05), 8), Color("#08130B") if heard_ok else Color("#1E0F02"))
+
+
 # Podświetlenie odtwarzanego dźwięku – tylko nakładka 2D, bez ponownego rysowania sceny 3D.
 func set_playing(p: Vector2i) -> void:
 	if playing != p:
@@ -449,6 +464,7 @@ func _draw() -> void:
 	_draw_range_shade()
 	if ruler:
 		_draw_ruler()
+	_draw_heard(_heard_r)
 
 
 func _font() -> Font:
@@ -487,7 +503,7 @@ func _draw_3d() -> void:
 		var col := NeckSpec.text_color(root)
 		if m.note.get("dim", false):
 			col.a = 0.3
-		_text_c(c, str(m.note.get("text", "")), maxi(int(r_px * 1.3), 6), col)
+		_text_c(c, str(m.note.get("text", "")), maxi(int(r_px * (1.0 if m.note.get("dim", false) else 1.3)), 6), col)
 	var r0 := absf(_p3(Vector3(spec.marker_x(1) + spec.marker_r, 0, 0)).x - _p3(Vector3(spec.marker_x(1), 0, 0)).x)
 	_store_cells(func(s, f):
 		var x := spec.marker_x(f)
@@ -518,14 +534,14 @@ func _schema_notes(pos_fn: Callable, r_fn: Callable) -> void:
 	# Wszystkie krążki (obwódki i wypełnienia) jako jedna siatka trójkątów – jedno wywołanie.
 	var pts := PackedVector2Array()
 	var cols := PackedColorArray()
-	var rim := Color("#070A14")
+	# Aktywne: jasna obwódka i pełny krążek; nieaktywne: mniejsze, ciemne, bez obwódki.
 	for m in shown:
-		_disc(pts, cols, m[1], m[2] * 1.12 + 1.2, rim)
+		var dim: bool = m[0].get("dim", false)
+		_disc(pts, cols, m[1], m[2] * (0.8 if dim else 1.12) + 2.0, NeckSpec.RIM_DIM if dim else NeckSpec.RIM)
 	for m in shown:
+		var dim: bool = m[0].get("dim", false)
 		var base := NeckSpec.note_color(m[0].get("root", false))
-		if m[0].get("dim", false):
-			base = NeckSpec.dim_color(base)
-		_disc(pts, cols, m[1], m[2] * 1.12, base)
+		_disc(pts, cols, m[1], m[2] * (0.8 if dim else 1.12), NeckSpec.dim_color(base) if dim else base)
 	if not pts.is_empty():
 		var idx := PackedInt32Array()
 		idx.resize(pts.size())
@@ -536,7 +552,7 @@ func _schema_notes(pos_fn: Callable, r_fn: Callable) -> void:
 		var fg := NeckSpec.text_color(m[0].get("root", false))
 		if m[0].get("dim", false):
 			fg.a = 0.3
-		_text_c(m[1], str(m[0].get("text", "")), maxi(int(m[2] * 1.15), 6), fg)
+		_text_c(m[1], str(m[0].get("text", "")), maxi(int(m[2] * (0.9 if m[0].get("dim", false) else 1.15)), 6), fg)
 	_store_cells(pos_fn, r_fn.call(1))
 
 
