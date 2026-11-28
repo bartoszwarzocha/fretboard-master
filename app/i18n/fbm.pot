@@ -1401,6 +1401,9 @@ msgstr ""
 msgid "Three octaves"
 msgstr ""
 
+msgid "Full octaves"
+msgstr ""
+
 msgid "treble clef"
 msgstr ""
 

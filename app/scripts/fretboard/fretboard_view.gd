@@ -37,6 +37,8 @@ var playing := Vector2i(-1, -1)    # dźwięk odtwarzany (Encyklopedia – odsł
 var demo := false           # przykładowa skala (podgląd w ustawieniach) – odtwarzana po każdej zmianie
 var ruler := false          # linijka progów z zakresem pod gryfem (zamiast numerów progów nad nim)
 var fret_range := Vector2i(-1, -1)   # zakres progów (od, do); (-1, -1) – cały gryf bez przyciemnienia
+var heard := Vector2i(-1, -1)      # dźwięk zagrany na gitarze (Encyklopedia) – podświetlenie z poświatą
+var heard_ok := true               # w skali (zielony) albo poza nią (pomarańczowy)
 var shifts: Array = []      # przesunięcia ręki (superpozycje): [[Vector2i z, Vector2i do]] – strzałki
 var _notes: Array = []
 var _view := ""
@@ -319,10 +321,24 @@ func _store_cells(pos_fn: Callable, r: float) -> void:
 		_draw_shifts(r)
 	if selected.x >= 0 and _cells.has(selected):
 		draw_arc(_cells[selected], r + 4.0, 0, TAU, 40, ThemeManager.color("text"), 2.5, true)
+	if heard.x >= 0 and _cells.has(heard):
+		var hc: Vector2 = _cells[heard]
+		var g := Color("#4CD964") if heard_ok else Color("#FF9A3C")
+		# Poświata – pierścienie na zewnątrz krążka (napis pozostaje czytelny).
+		for k in 4:
+			draw_arc(hc, r * 1.12 + 7.0 + k * 4.0, 0, TAU, 40, Color(g, 0.34 - k * 0.08), 4.0, true)
+		draw_arc(hc, r * 1.12 + 3.0, 0, TAU, 40, g, 4.0, true)
 	if playing.x >= 0 and _cells.has(playing):
 		var c: Vector2 = _cells[playing]
 		draw_circle(c, r + 9.0, Color(ThemeManager.color("focus"), 0.22))
 		draw_arc(c, r + 5.0, 0, TAU, 40, ThemeManager.color("focus"), 3.5, true)
+
+
+func set_heard(p: Vector2i, ok: bool) -> void:
+	if heard != p or (p.x >= 0 and heard_ok != ok):
+		heard = p
+		heard_ok = ok
+		queue_redraw()
 
 
 func set_shifts(p: Array) -> void:
@@ -333,6 +349,8 @@ func set_shifts(p: Array) -> void:
 # Strzałka przesunięcia ręki: od krawędzi znacznika do krawędzi następnego, łukiem.
 func _draw_shifts(r: float) -> void:
 	var col := ThemeManager.color("focus")
+	var arcs := []                       # łuki – po jednej łamanej (draw_multiline rozbija na setki obiektów)
+	var heads := PackedVector2Array()    # groty – trójkąty w jednym wywołaniu
 	for sh in shifts:
 		if not (_cells.has(sh[0]) and _cells.has(sh[1])):
 			continue
@@ -348,24 +366,33 @@ func _draw_shifts(r: float) -> void:
 		if n.dot(inner - mid) < 0.0:
 			n = -n
 		var bend := n * minf(d.length() * 0.18, r * 1.1)
-		var pts := PackedVector2Array()
-		for i in 21:
-			var t := lerpf(0.0, 1.0, i / 20.0)
-			pts.append(a.lerp(b, t) + bend * 4.0 * t * (1.0 - t))
-		# Obcięcie łuku do krawędzi znaczników.
+		# Łuk obcięty do krawędzi znaczników.
 		var keep := PackedVector2Array()
-		for q in pts:
+		for i in 21:
+			var t := i / 20.0
+			var q := a.lerp(b, t) + bend * 4.0 * t * (1.0 - t)
 			if q.distance_to(a) > r + 3.0 and q.distance_to(b) > r + 6.0:
 				keep.append(q)
 		if keep.size() < 2:
 			continue
-		draw_polyline(keep, Color("#070A14", 0.6), 5.5, true)
-		draw_polyline(keep, col, 3.0, true)
+		arcs.append(keep)
 		var tip := keep[keep.size() - 1]
 		var dir := (tip - keep[keep.size() - 2]).normalized()
 		var side := Vector2(-dir.y, dir.x)
-		var head := PackedVector2Array([tip + dir * 7.0, tip - dir * 4.0 + side * 6.0, tip - dir * 4.0 - side * 6.0])
-		draw_colored_polygon(head, col)
+		heads.append_array([tip + dir * 7.0, tip - dir * 4.0 + side * 6.0, tip - dir * 4.0 - side * 6.0])
+	if arcs.is_empty():
+		return
+	for k in arcs:
+		draw_polyline(k, Color("#070A14", 0.6), 5.5, true)
+	for k in arcs:
+		draw_polyline(k, col, 3.0, true)
+	var cols := PackedColorArray()
+	cols.resize(heads.size())
+	cols.fill(col)
+	var idx := PackedInt32Array()
+	for i in heads.size():
+		idx.append(i)
+	RenderingServer.canvas_item_add_triangle_array(get_canvas_item(), idx, heads, cols)
 
 
 # Podświetlenie odtwarzanego dźwięku – tylko nakładka 2D, bez ponownego rysowania sceny 3D.
@@ -452,13 +479,14 @@ func _draw_3d() -> void:
 	for s in spec.strings:
 		_string_label(_p3(Vector3(0, spec.string_y(s, 0.0), spec.string_z(s, 0.0))).y, s)
 	for m in _neck.markers():
-		var c := _p3(m.pos + Vector3(0, m.r * 0.58, 0))
+		# Środek wierzchu płaskiego krążka (wysokość 0,16 r) – tekst dokładnie na środku.
+		var c := _p3(m.pos + Vector3(0, m.r * 0.16, 0))
 		var edge := _p3(m.pos + Vector3(m.r, m.r * 0.16, 0))
 		var r_px := absf(edge.x - c.x)
 		var root: bool = m.note.get("root", false)
 		var col := NeckSpec.text_color(root)
 		if m.note.get("dim", false):
-			col.a = 0.5
+			col.a = 0.3
 		_text_c(c, str(m.note.get("text", "")), maxi(int(r_px * 1.3), 6), col)
 	var r0 := absf(_p3(Vector3(spec.marker_x(1) + spec.marker_r, 0, 0)).x - _p3(Vector3(spec.marker_x(1), 0, 0)).x)
 	_store_cells(func(s, f):
@@ -467,23 +495,48 @@ func _draw_3d() -> void:
 		return _p3(Vector3(x, spec.string_y(s, xs), spec.string_z(s, xs))), r0)
 
 
-# Znacznik w schematach: płaski krążek z ciemną obwódką.
-func _marker(c: Vector2, r: float, note: Dictionary) -> void:
-	var root: bool = note.get("root", false)
-	var base := NeckSpec.note_color(root)
-	var fg := NeckSpec.text_color(root)
-	if note.get("dim", false):
-		base = base.lerp(Color("#1A1F2E"), 0.7)
-		fg.a = 0.5
-	draw_circle(c, r + 1.6, Color("#070A14"))
-	draw_circle(c, r, base)
-	_text_c(c, str(note.get("text", "")), maxi(int(r * 1.15), 6), fg)
+# Znaczniki w schematach: płaskie krążki z ciemną obwódką. Najpierw wszystkie krążki, potem wszystkie
+# napisy – kolejne polecenia tego samego rodzaju łączą się w partie (mniej draw calli niż na przemian).
+const DISC_SEGS := 28
+
+
+func _disc(pts: PackedVector2Array, cols: PackedColorArray, c: Vector2, r: float, col: Color) -> void:
+	var prev := c + Vector2(r, 0)
+	for i in range(1, DISC_SEGS + 1):
+		var a := TAU * i / DISC_SEGS
+		var q := c + Vector2(cos(a), sin(a)) * r
+		pts.append_array([c, prev, q])
+		cols.append_array([col, col, col])
+		prev = q
 
 
 func _schema_notes(pos_fn: Callable, r_fn: Callable) -> void:
+	var shown := []
 	for n in _notes:
 		if n.s >= 0 and n.s < spec.strings and n.f >= 0 and n.f <= spec.frets:
-			_marker(pos_fn.call(n.s, n.f), r_fn.call(n.f), n)
+			shown.append([n, pos_fn.call(n.s, n.f), r_fn.call(n.f)])
+	# Wszystkie krążki (obwódki i wypełnienia) jako jedna siatka trójkątów – jedno wywołanie.
+	var pts := PackedVector2Array()
+	var cols := PackedColorArray()
+	var rim := Color("#070A14")
+	for m in shown:
+		_disc(pts, cols, m[1], m[2] * 1.12 + 1.2, rim)
+	for m in shown:
+		var base := NeckSpec.note_color(m[0].get("root", false))
+		if m[0].get("dim", false):
+			base = NeckSpec.dim_color(base)
+		_disc(pts, cols, m[1], m[2] * 1.12, base)
+	if not pts.is_empty():
+		var idx := PackedInt32Array()
+		idx.resize(pts.size())
+		for i in pts.size():
+			idx[i] = i
+		RenderingServer.canvas_item_add_triangle_array(get_canvas_item(), idx, pts, cols)
+	for m in shown:
+		var fg := NeckSpec.text_color(m[0].get("root", false))
+		if m[0].get("dim", false):
+			fg.a = 0.3
+		_text_c(m[1], str(m[0].get("text", "")), maxi(int(m[2] * 1.15), 6), fg)
 	_store_cells(pos_fn, r_fn.call(1))
 
 
@@ -569,12 +622,15 @@ func _draw_grid() -> void:
 		[top + mid - sp, top + mid + sp])
 	for n in range(1, spec.frets + 1):
 		draw_line(Vector2(_mx(x0 + cw * n), top - 12), Vector2(_mx(x0 + cw * n), top + h + 12), SCH_FRET, 2.0)
-		_fret_label(Vector2(_mx(x0 + cw * (n - 0.5)), top - 24), n)
 	draw_rect(Rect2(_lx(x0 - 6, 6), top - 12, 6, h + 24), SCH_NUT)
 	for s in spec.strings:
 		var y := top + sp * s
 		draw_line(Vector2(_mx(x0 - 40), y), Vector2(_mx(x0 + cw * spec.frets), y), SCH_STRING, THICK[s])
-		_string_label(y, s)
+	# Napisy po liniach – w jednej partii.
+	for n in range(1, spec.frets + 1):
+		_fret_label(Vector2(_mx(x0 + cw * (n - 0.5)), top - 24), n)
+	for s in spec.strings:
+		_string_label(top + sp * s, s)
 	var r := minf(sp * 0.36, cw * 0.4)
 	_schema_notes(func(s, f): return Vector2(_mx(x0 - 26 if f == 0 else x0 + cw * (f - 0.5)), top + sp * s),
 		func(_f): return r)
@@ -601,12 +657,16 @@ func _draw_shape() -> void:
 	for n in range(1, spec.frets + 1):
 		var x := spec.xf(n)
 		draw_line(Vector2(X.call(x), Z.call(-spec.half_w(x))), Vector2(X.call(x), Z.call(spec.half_w(x))), SCH_FRET, 2.0, true)
-		_fret_label(Vector2(X.call((spec.xf(n - 1) + x) * 0.5), Z.call(-spec.half_w(x)) - 12), n)
 	var nx: float = X.call(0.0)
 	draw_rect(Rect2(nx - 7 if not _lefty else nx, Z.call(-spec.half_w(0.0)), 7, spec.half_w(0.0) * 2.0 * k), SCH_NUT)
 	for s in spec.strings:
 		draw_line(Vector2(X.call(0.0), Z.call(spec.string_z(s, 0.0))), Vector2(X.call(xend), Z.call(spec.string_z(s, xend))),
 			SCH_STRING, THICK[s], true)
+	# Napisy po liniach – w jednej partii.
+	for n in range(1, spec.frets + 1):
+		var x := spec.xf(n)
+		_fret_label(Vector2(X.call((spec.xf(n - 1) + x) * 0.5), Z.call(-spec.half_w(x)) - 12), n)
+	for s in spec.strings:
 		_string_label(Z.call(spec.string_z(s, 0.0)), s)
 	var rpx := spec.marker_r * k
 	_schema_notes(func(s, f):

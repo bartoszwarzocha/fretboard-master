@@ -1402,6 +1402,9 @@ msgstr "Griffmuster"
 msgid "Three octaves"
 msgstr "Drei Oktaven"
 
+msgid "Full octaves"
+msgstr "Ganze Oktaven"
+
 msgid "treble clef"
 msgstr "Violinschlüssel"
 

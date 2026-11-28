@@ -8,6 +8,8 @@ extends RefCounted
 
 const TEAL := Color("#3FD0C9")
 const ORANGE := Color("#F5B544")
+const MARKER := Color("#4B5263")     # domyślny znacznik dźwięku – ciemnoszary
+const MARKER_ROOT := Color("#D63A3A")    # domyślny znacznik toniki – czerwony
 const BOARD_T := 6.0          # grubość podstrunnicy
 const NUT_LEN := 4.5          # długość siodełka
 
@@ -189,14 +191,19 @@ func double_dot_frets() -> Array:
 # Kolory znaczników z ustawień (Gitara i strój → Wygląd gryfu); "" = domyślny.
 static func note_color(root: bool) -> Color:
 	var hex := str(App.setting(&"marker_root_color" if root else &"marker_color"))
-	return Color(hex) if not hex.is_empty() else (ORANGE if root else TEAL)
+	return Color(hex) if not hex.is_empty() else (MARKER_ROOT if root else MARKER)
+
+
+# Znacznik przygaszony (dźwięk skali poza zakresem lub wariantem) – zbliżony do tła gryfu.
+static func dim_color(col: Color) -> Color:
+	return col.lerp(Color("#1A1F2E"), 0.72)
 
 
 static func text_color(root: bool) -> Color:
 	var hex := str(App.setting(&"marker_text_color"))
 	if not hex.is_empty():
 		return Color(hex)
-	return Color("#1A1204") if root else Color("#04201E")
+	return Color.WHITE
 
 
 # Nazwa pustej struny do opisu (najwyższa struna małą literą, gdy powtarza nazwę najniższej).

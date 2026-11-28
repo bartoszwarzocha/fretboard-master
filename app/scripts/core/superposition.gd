@@ -26,13 +26,15 @@ var _three := false
 
 
 # open_midi: dźwięki pustych strun (indeks 0 = struna najwyższa), pcs: {wysokość 0–11: true}.
-static func variants(open_midi: Array, pcs: Dictionary, from: int, to: int, style := "") -> Array:
+# root: wysokość toniki (0–11) – gdy podana, tylko pełne oktawy: od najniższej do najwyższej toniki
+# w zakresie (przy mniej niż oktawie – wszystkie dźwięki).
+static func variants(open_midi: Array, pcs: Dictionary, from: int, to: int, style := "", root := -1) -> Array:
 	if to < from:
 		return []
-	return Superposition.new()._solve(open_midi, pcs, from, to, style == "3nps")
+	return Superposition.new()._solve(open_midi, pcs, from, to, style == "3nps", root)
 
 
-func _solve(open_midi: Array, pcs: Dictionary, from: int, to: int, three: bool) -> Array:
+func _solve(open_midi: Array, pcs: Dictionary, from: int, to: int, three: bool, root: int) -> Array:
 	var strings := open_midi.size()
 	_three = three
 	var by_pitch := {}
@@ -45,6 +47,10 @@ func _solve(open_midi: Array, pcs: Dictionary, from: int, to: int, three: bool) 
 				by_pitch[m].append(Vector2i(s, f))
 	var pitches: Array = by_pitch.keys()
 	pitches.sort()
+	if root >= 0:
+		var roots := pitches.filter(func(m): return posmod(m, 12) == root)
+		if roots.size() >= 2:
+			pitches = pitches.filter(func(m): return m >= roots[0] and m <= roots[roots.size() - 1])
 	if pitches.is_empty():
 		return []
 	# Stan: [struna, początek pozycji, koniec pozycji, dźwięki na strunie, numer pozycji]; pozycja -1 –

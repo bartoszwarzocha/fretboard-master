@@ -110,11 +110,14 @@ func build(neck: NeckSpec) -> void:
 	_inlays()
 	_strings()
 	_marker_mesh = _make_marker_mesh()
-	_rims = _multimesh(_flat_material(Color("#0B0F1C"), 0.6))
-	var mat := _flat_material(Color.WHITE, 0.22)
+	# Znaczniki płaskie, bez oświetlenia – kolor dokładnie jak w ustawieniach, bez odblasku.
+	var rim_mat := _flat_material(Color("#0B0F1C"), 1.0)
+	rim_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_rims = _multimesh(rim_mat)
+	var mat := _flat_material(Color.WHITE, 1.0)
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.vertex_color_use_as_albedo = true
 	mat.vertex_color_is_srgb = true
-	mat.metallic_specular = 0.75
 	_discs = _multimesh(mat)
 	cam = Camera3D.new()
 	cam.keep_aspect = Camera3D.KEEP_WIDTH
@@ -191,11 +194,12 @@ func set_notes(notes: Array) -> void:
 		var m: Dictionary = _markers[i]
 		var r: float = m.r
 		var p: Vector3 = m.pos
-		mm_r.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * 1.12, r * 0.6, r * 1.12)), p - Vector3(0, 0.25, 0)))
-		mm_d.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r, r, r)), p))
-		var col: Color = NeckSpec.note_color(m.note.get("root", false)).darkened(0.12)
+		# Krążek powiększony o dawną szerokość obwódki (×1,12); obwódka – cienki pierścień.
+		mm_r.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * 1.2, r * 0.9, r * 1.2)), p - Vector3(0, 0.05, 0)))
+		mm_d.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * 1.12, r, r * 1.12)), p))
+		var col: Color = NeckSpec.note_color(m.note.get("root", false))
 		if m.note.get("dim", false):
-			col = col.lerp(Color("#1A1F2E"), 0.7)
+			col = NeckSpec.dim_color(col)
 		mm_d.set_instance_color(i, col)
 
 
@@ -495,7 +499,7 @@ func _make_marker_mesh() -> ArrayMesh:
 	var seg := 40
 	var rings := 8
 	var side_h := 0.16
-	var dome := 0.42
+	var dome := 0.0               # płaski krążek
 	for k in seg:
 		var a0 := TAU * k / seg
 		var a1 := TAU * (k + 1) / seg

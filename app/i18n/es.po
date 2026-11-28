@@ -1402,6 +1402,9 @@ msgstr "Digitaciones"
 msgid "Three octaves"
 msgstr "Tres octavas"
 
+msgid "Full octaves"
+msgstr "Octavas completas"
+
 msgid "treble clef"
 msgstr "clave de sol"
 

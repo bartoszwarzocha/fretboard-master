@@ -1402,6 +1402,9 @@ msgstr "Аппликатуры"
 msgid "Three octaves"
 msgstr "Три октавы"
 
+msgid "Full octaves"
+msgstr "Полные октавы"
+
 msgid "treble clef"
 msgstr "скрипичный ключ"
 

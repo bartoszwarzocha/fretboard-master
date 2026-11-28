@@ -25,6 +25,10 @@ var _variants: Array = []     # superpozycje w zakresie (Superposition) – od n
 var _variant := 0
 var _style := ""              # "3nps" po gotowym zakresie „3 dźwięki na strunę”
 var _shapes := false          # superpozycje włączone (przełącznik) – warianty, przesunięcia ręki
+var _octaves := true          # superpozycje tylko w pełnych oktawach (od toniki do toniki)
+var _hear_timer: Timer
+var _heard_hist: Array = []   # ostatnie odczyty (MIDI) – mediana bez skoków
+var _heard_t := 0.0           # czas ostatniego pewnego odczytu (s)
 
 var _fb: FretboardView
 var _title: Label
@@ -59,6 +63,14 @@ func _build_content() -> void:
 	_play_timer.wait_time = NOTE_GAP
 	_play_timer.timeout.connect(_play_step)
 	add_child(_play_timer)
+	# Granie na gitarze: odczyt wysokości z wejścia audio (rdzeń tunera) co 40 ms – Timer zamiast _process.
+	_hear_timer = Timer.new()
+	_hear_timer.wait_time = HEAR_POLL
+	_hear_timer.timeout.connect(_hear)
+	add_child(_hear_timer)
+	var core := AudioEngine.ensure_open()
+	if core and core.input_ok():
+		_hear_timer.start()
 
 	# --- Gryf ---
 	var neck_card := PanelContainer.new()
@@ -123,6 +135,8 @@ func _build_content() -> void:
 func _exit_tree() -> void:
 	if _play_timer:
 		_play_timer.stop()
+	if _hear_timer:
+		_hear_timer.stop()
 
 
 # --- Stan ----------------------------------------------------------------------------
@@ -134,6 +148,7 @@ func _load_state() -> void:
 	_from = int(App.setting(&"enc_from"))
 	_to = int(App.setting(&"enc_to"))
 	_shapes = bool(App.setting(&"enc_shapes"))
+	_octaves = bool(App.setting(&"enc_octaves"))
 	_entry = _entry_for_kind(_kind)
 
 
@@ -197,7 +212,8 @@ func _update_neck() -> void:
 		if not by_pc.has(p):
 			by_pc[p] = i
 	# Superpozycje w zakresie; dźwięki skali w zakresie spoza wybranego wariantu – przyciemnione.
-	_variants = Superposition.variants(spec.open_midi, by_pc, _from, _to, _style) if _shapes else []
+	_variants = Superposition.variants(spec.open_midi, by_pc, _from, _to, _style,
+			_pc if _octaves else -1) if _shapes else []
 	_variant = clampi(_variant, 0, maxi(_variants.size() - 1, 0))
 	# Wariant: komórki, pozycje ręki (najniższy próg z palcem w każdej pozycji) i przesunięcia ręki.
 	var chosen := {}
@@ -258,6 +274,15 @@ func _build_shapes() -> void:
 			_style = ""
 			_update_neck())
 	_shapes_box.add_child(b)
+	if _shapes:
+		var o := _chip_button(tr("Full octaves"), _octaves)
+		o.custom_minimum_size.y = 38
+		o.pressed.connect(func():
+			_octaves = not _octaves
+			App.set_setting(&"enc_octaves", _octaves)
+			_variant = 0
+			_update_neck())
+		_shapes_box.add_child(o)
 
 
 func _build_variants() -> void:
@@ -865,8 +890,7 @@ func _staff_card() -> Control:
 		_clef.add_theme_stylebox_override(st, StyleBoxEmpty.new())
 	_clef.item_selected.connect(func(i: int):
 		App.set_setting(&"enc_clef", "treble_8vb" if i == 1 else "treble")
-		_staff.clef_8vb = i == 1
-		_staff.queue_redraw())
+		_staff.clef_8vb = i == 1)
 	head.add_child(_clef)
 	_staff = StaffView.new()
 	_staff.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -960,6 +984,57 @@ func _measure_accidentals(notes: Array, fifths: int) -> Array:
 			out.append(a)
 			state[key] = a
 	return out
+
+
+# --- Granie na gitarze ---------------------------------------------------------------
+
+const HEAR_POLL := 0.04
+const HEAR_HOLD := 0.3        # podświetlenie trwa jeszcze chwilę po wybrzmieniu
+const HEAR_CLARITY := 0.85    # tylko wyraźne pojedyncze dźwięki
+
+
+func _hear() -> void:
+	var core := AudioEngine.ensure_open()
+	var now := Time.get_ticks_msec() / 1000.0
+	if core == null or not core.input_ok() or _play_timer.time_left > 0.0:
+		_fb.set_heard(Vector2i(-1, -1), false)
+		return
+	var p: Dictionary = core.pitch()
+	if float(p.hz) > 0.0 and float(p.clarity) >= HEAR_CLARITY:
+		var a4 := clampf(float(App.setting(&"a4")), 400.0, 480.0)
+		_heard_hist.append(roundi(69.0 + 12.0 * log(float(p.hz) / a4) / log(2.0)))
+		if _heard_hist.size() > 3:
+			_heard_hist.remove_at(0)
+		_heard_t = now
+		var sorted := _heard_hist.duplicate()
+		sorted.sort()
+		var midi: int = sorted[sorted.size() / 2]
+		var in_scale := false
+		for n in _notes:
+			if Theory.pc(n) == posmod(midi, 12):
+				in_scale = true
+		_fb.set_heard(_heard_cell(midi), in_scale)
+	elif now - _heard_t > HEAR_HOLD:
+		_heard_hist.clear()
+		_fb.set_heard(Vector2i(-1, -1), false)
+
+
+# Miejsce zagranego dźwięku: z bieżącego wariantu superpozycji, inaczej najbliżej środka zakresu.
+func _heard_cell(midi: int) -> Vector2i:
+	if not _variants.is_empty():
+		for n in _variants[_variant]:
+			if n.midi == midi:
+				return Vector2i(n.s, n.f)
+	var spec := _fb.spec
+	var best := Vector2i(-1, -1)
+	var dist := 1e9
+	var mid := (_from + _to) * 0.5
+	for s in spec.strings:
+		var f: int = midi - spec.open_midi[s]
+		if f >= 0 and f <= spec.frets and absf(f - mid) < dist:
+			dist = absf(f - mid)
+			best = Vector2i(s, f)
+	return best
 
 
 # --- Odsłuch -------------------------------------------------------------------------

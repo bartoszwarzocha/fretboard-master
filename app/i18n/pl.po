@@ -1402,6 +1402,9 @@ msgstr "Superpozycje"
 msgid "Three octaves"
 msgstr "Trzy oktawy"
 
+msgid "Full octaves"
+msgstr "Pełne oktawy"
+
 msgid "treble clef"
 msgstr "klucz wiolinowy"
 
