@@ -393,6 +393,8 @@ func _store_cells(pos_fn: Callable, r: float) -> void:
 	for s in spec.strings:
 		for f in spec.frets + 1:
 			_cells[Vector2i(s, f)] = pos_fn.call(s, f)
+	if not barre.is_empty():
+		_draw_barre(r)
 	if not shifts.is_empty():
 		_draw_shifts(r)
 	if selected.x >= 0 and _cells.has(selected):
@@ -409,6 +411,29 @@ func set_heard(p: Vector2i, ok: bool, text := "") -> void:
 		heard_ok = ok
 		heard_text = text
 		queue_redraw()
+
+
+var barre := {}     # belka barré chwytu: {f, from_s, to_s}
+
+
+func set_barre(b: Dictionary) -> void:
+	if barre != b:
+		barre = b
+		queue_redraw()
+
+
+# Belka barré: półprzezroczysty pasek z zaokrąglonymi końcami w poprzek strun na progu chwytu.
+func _draw_barre(r: float) -> void:
+	var a := Vector2i(barre.from_s, barre.f)
+	var b := Vector2i(barre.to_s, barre.f)
+	if not (_cells.has(a) and _cells.has(b)):
+		return
+	var pa: Vector2 = _cells[a]
+	var pb: Vector2 = _cells[b]
+	var d := (pb - pa).normalized()
+	var w := r * 1.5
+	var col := Color("#E8ECF6", 0.38)
+	draw_line(pa - d * r, pb + d * r, col, w * 2.0, true)
 
 
 func set_shifts(p: Array) -> void:

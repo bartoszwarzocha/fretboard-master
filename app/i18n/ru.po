@@ -1408,6 +1408,15 @@ msgstr "Полные октавы"
 msgid "Help"
 msgstr "Справка"
 
+msgid "Chord shapes"
+msgstr "Аппликатуры"
+
+msgid "Barre"
+msgstr "Баррэ"
+
+msgid "Positions:"
+msgstr "Позиции:"
+
 msgid "Back"
 msgstr "Назад"
 

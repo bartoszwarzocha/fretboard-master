@@ -1407,6 +1407,15 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+msgid "Chord shapes"
+msgstr ""
+
+msgid "Barre"
+msgstr ""
+
+msgid "Positions:"
+msgstr ""
+
 msgid "Back"
 msgstr ""
 

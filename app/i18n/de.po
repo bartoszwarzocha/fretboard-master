@@ -1408,6 +1408,15 @@ msgstr "Ganze Oktaven"
 msgid "Help"
 msgstr "Hilfe"
 
+msgid "Chord shapes"
+msgstr "Griffe"
+
+msgid "Barre"
+msgstr "Barré"
+
+msgid "Positions:"
+msgstr "Lagen:"
+
 msgid "Back"
 msgstr "Zurück"
 

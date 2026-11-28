@@ -1408,6 +1408,15 @@ msgstr "Octavas completas"
 msgid "Help"
 msgstr "Ayuda"
 
+msgid "Chord shapes"
+msgstr "Posturas"
+
+msgid "Barre"
+msgstr "Cejilla"
+
+msgid "Positions:"
+msgstr "Posiciones:"
+
 msgid "Back"
 msgstr "Atrás"
 

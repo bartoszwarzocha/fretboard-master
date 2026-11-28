@@ -26,6 +26,7 @@ var _variant := 0
 var _style := ""              # "3nps" po gotowym zakresie „3 dźwięki na strunę”
 var _shapes := false          # superpozycje włączone (przełącznik) – warianty, przesunięcia ręki
 var _octaves := true          # superpozycje tylko w pełnych oktawach (od toniki do toniki)
+var _barre := true            # chwyty akordów: belka barré na gryfie
 var _hear_timer: Timer
 # Fragmenty interfejsu wskazywane w samouczku.
 var _catalog_card: Control
@@ -107,7 +108,7 @@ func _build_content() -> void:
 	_variants_box = HBoxContainer.new()
 	_variants_box.add_theme_constant_override("separation", 8)
 	# Stała szerokość – przełączniki obok nie zmieniają miejsca przy innej liczbie wariantów.
-	_variants_box.custom_minimum_size.x = 330
+	_variants_box.custom_minimum_size.x = 400
 	head.add_child(_variants_box)
 	var g := Control.new()
 	g.custom_minimum_size.x = 10
@@ -162,6 +163,7 @@ func _load_state() -> void:
 	_to = int(App.setting(&"enc_to"))
 	_shapes = bool(App.setting(&"enc_shapes"))
 	_octaves = bool(App.setting(&"enc_octaves"))
+	_barre = bool(App.setting(&"enc_barre"))
 	_entry = _entry_for_kind(_kind)
 
 
@@ -224,12 +226,37 @@ func _update_neck() -> void:
 		var p := Theory.pc(_notes[i])
 		if not by_pc.has(p):
 			by_pc[p] = i
-	# Superpozycje w zakresie; dźwięki skali w zakresie spoza wybranego wariantu – przyciemnione.
-	_variants = Superposition.variants(spec.open_midi, by_pc, _from, _to, _style,
-			_pc if _octaves else -1) if _shapes else []
+	# Superpozycje w zakresie (akordy – chwyty na całym gryfie, od najniższej pozycji); dźwięki skali
+	# w zakresie spoza wybranego wariantu – przyciemnione.
+	var shape := {}
+	if _shapes and _kind == "chord":
+		var fifth := -1
+		for i in _degrees.size():
+			if str(_degrees[i]) == "5":
+				fifth = Theory.pc(_notes[i])
+		var chord_shapes := ChordShapes.shapes(spec.open_midi, spec.frets, by_pc, _pc, fifth)
+		_variant = clampi(_variant, 0, maxi(chord_shapes.size() - 1, 0))
+		_variants = []
+		for sh in chord_shapes:
+			var v := []
+			for c in sh.cells:
+				v.append({"s": c.s, "f": c.f, "midi": c.midi, "pos": 0, "finger": c.finger})
+			_variants.append(v)
+		if not chord_shapes.is_empty():
+			shape = chord_shapes[_variant]
+			# Zakres – pozycja ręki chwytu (przy siodełku: progi 0–4).
+			var lo: int = shape.fret
+			_from = lo
+			_to = mini(lo + 4 if lo == 0 else lo + ChordShapes.SPAN, spec.frets)
+			_fb.set_range(_from, _to)
+	else:
+		_variants = Superposition.variants(spec.open_midi, by_pc, _from, _to, _style,
+				_pc if _octaves else -1) if _shapes else []
 	_variant = clampi(_variant, 0, maxi(_variants.size() - 1, 0))
+	_fb.set_barre(shape.get("barre", {}) if _barre else {})
 	# Wariant: komórki, pozycje ręki (najniższy próg z palcem w każdej pozycji) i przesunięcia ręki.
 	var chosen := {}
+	var fingers := {}             # chwyty akordów – palce z ułożenia ręki
 	var hands := {}
 	var shifts := []
 	if not _variants.is_empty():
@@ -237,6 +264,8 @@ func _update_neck() -> void:
 		for i in v.size():
 			var n: Dictionary = v[i]
 			chosen[Vector2i(n.s, n.f)] = n.pos
+			if n.has("finger"):
+				fingers[Vector2i(n.s, n.f)] = n.finger
 			if n.f > 0:
 				hands[n.pos] = mini(hands.get(n.pos, 99), n.f)
 			if i > 0 and n.pos != v[i - 1].pos:
@@ -259,8 +288,19 @@ func _update_neck() -> void:
 				"fingers":
 					if in_var:
 						var h: int = hands.get(chosen.get(Vector2i(s, f), -1), maxi(_from, 1))
-						text = "0" if f == 0 else str(clampi(f - h + 1, 1, 4))
+						text = "0" if f == 0 else str(fingers.get(Vector2i(s, f), clampi(f - h + 1, 1, 4)))
 			out.append({"s": s, "f": f, "text": text, "root": i == 0, "dim": in_range and not in_var})
+	# Struny wytłumione w chwycie – „×” przy siodełku.
+	for ms in shape.get("muted", []):
+		var found := false
+		for n in out:
+			if n.s == ms and n.f == 0:
+				n.text = "×"
+				n.dim = true
+				n.root = false
+				found = true
+		if not found:
+			out.append({"s": ms, "f": 0, "text": "×", "root": false, "dim": true})
 	_fb.set_notes(out)
 	_title.text = _title_text()
 	_range_text.text = tr("practice range: frets %d–%d, all strings") % [_from, _to]
@@ -276,18 +316,26 @@ func _update_neck() -> void:
 # Przełącznik superpozycji: włączenie od razu zawęża zakres do jednej pozycji (5 progów).
 func _build_shapes() -> void:
 	_clear(_shapes_box)
-	var b := _chip_button(tr("Scale shapes"), _shapes)
+	var b := _chip_button(tr("Chord shapes" if _kind == "chord" else "Scale shapes"), _shapes)
 	b.custom_minimum_size.y = 38
 	b.pressed.connect(func():
 		_shapes = not _shapes
 		App.set_setting(&"enc_shapes", _shapes)
-		if _shapes:
+		if _shapes and _kind != "chord":
 			_preset(4, "")
 		else:
 			_style = ""
 			_update_neck())
 	_shapes_box.add_child(b)
-	if _shapes:
+	if _shapes and _kind == "chord":
+		var bb := _chip_button(tr("Barre"), _barre)
+		bb.custom_minimum_size.y = 38
+		bb.pressed.connect(func():
+			_barre = not _barre
+			App.set_setting(&"enc_barre", _barre)
+			_update_neck())
+		_shapes_box.add_child(bb)
+	elif _shapes:
 		var o := _chip_button(tr("Full octaves"), _octaves)
 		o.custom_minimum_size.y = 38
 		o.pressed.connect(func():
@@ -302,7 +350,7 @@ func _build_variants() -> void:
 	_clear(_variants_box)
 	if _variants.is_empty():
 		return
-	_variants_box.add_child(_small_label("Variants:"))
+	_variants_box.add_child(_small_label("Positions:" if _kind == "chord" else "Variants:"))
 	var items := []
 	for i in _variants.size():
 		items.append([str(i), str(i + 1)])
@@ -941,10 +989,14 @@ func _update_staff() -> void:
 		seq.append([[n.midi], i, n.get("cell", Vector2i(-1, -1))])
 	var down_from := notes.size() - 2
 	if _kind == "chord":
+		# Współbrzmienie: dźwięki chwytu (przy chwytach) albo akord w położeniu zasadniczym.
 		var written := []
-		for i in _notes.size():
-			var num: int = Theory.parse_degree(str(_degrees[i]))[0]
-			written.append(_written(_notes[i], 4 * 7 + tl + num - 1, i == 0))
+		if not _variants.is_empty():
+			written = notes
+		else:
+			for i in _notes.size():
+				var num: int = Theory.parse_degree(str(_degrees[i]))[0]
+				written.append(_written(_notes[i], 4 * 7 + tl + num - 1, i == 0))
 		items.append({"bar": true})
 		var stack_acc := _measure_accidentals(written, 0)
 		var heads := []
@@ -953,9 +1005,8 @@ func _update_staff() -> void:
 			heads.append({"step": written[i].step, "acc": stack_acc[i], "root": written[i].root})
 			all.append(written[i].midi)
 		items.append({"heads": heads, "label": Theory.note_name(_tonic, App.notation()) + str(_entry.get("symbol", ""))})
-		if _variants.is_empty():
-			seq.append([all, items.size() - 1, Vector2i(-1, -1)])
-			down_from = -1
+		seq.append([all, items.size() - 1, Vector2i(-1, -1)])
+		down_from = -1
 	for i in range(down_from, -1, -1):
 		seq.append([[notes[i].midi], i, notes[i].get("cell", Vector2i(-1, -1))])
 	_play_seq = seq

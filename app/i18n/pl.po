@@ -1408,6 +1408,15 @@ msgstr "Pełne oktawy"
 msgid "Help"
 msgstr "Pomoc"
 
+msgid "Chord shapes"
+msgstr "Chwyty"
+
+msgid "Barre"
+msgstr "Barré"
+
+msgid "Positions:"
+msgstr "Pozycje:"
+
 msgid "Back"
 msgstr "Wstecz"
 
