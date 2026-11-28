@@ -1612,3 +1612,36 @@ msgstr "Записи раньше"
 msgid "Shifts looper recordings against the backing: + earlier, − later. Saved for this driver and devices."
 msgstr "Сдвигает записи лупера относительно аккомпанемента: + раньше, − позже. Сохраняется для этого драйвера и устройств."
 
+msgid "Save again"
+msgstr "Сохранить снова"
+
+msgid "Not enough free disk space to record – free up some space and try again."
+msgstr "Недостаточно места на диске для записи – освободите место и попробуйте снова."
+
+msgid "The audio device stopped responding – recording stopped."
+msgstr "Аудиоустройство перестало отвечать – запись остановлена."
+
+msgid "The audio input stopped responding – recording stopped."
+msgstr "Аудиовход перестал отвечать – запись остановлена."
+
+msgid "%s left"
+msgstr "осталось %s"
+
+msgid "%s left – the recording will stop at the end of a bar"
+msgstr "осталось %s – запись остановится в конце такта"
+
+msgid "The maximum recording length was reached – the recording was saved."
+msgstr "Достигнута максимальная длина записи – запись сохранена."
+
+msgid "The disk is almost full – recording stopped."
+msgstr "Диск почти заполнен – запись остановлена."
+
+msgid "Could not save the recording – the disk may be full. The recording is kept in memory: free up some space and press „Save again”."
+msgstr "Не удалось сохранить запись – возможно, диск заполнен. Запись сохранена в памяти: освободите место и нажмите «Сохранить снова»."
+
+msgid "Could not save the track list – the disk may be full."
+msgstr "Не удалось сохранить список дорожек – возможно, диск заполнен."
+
+msgid "(uncertain – results differ by %d ms, measure again)"
+msgstr "(неточно – измерения расходятся на %d мс, повторите)"
+

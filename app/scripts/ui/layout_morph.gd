@@ -70,6 +70,10 @@ func play() -> Tween:
 	return _tw
 
 
+func running() -> bool:
+	return _tw != null and _tw.is_valid() and _tw.is_running()
+
+
 func kill() -> void:
 	if _tw and _tw.is_valid():
 		_tw.kill()

@@ -9,6 +9,7 @@
 #include <portaudio.h>
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <vector>
 
@@ -48,6 +49,11 @@ struct FbmAudio::Stream {
     // Zegar strumienia: próbka `base_frame` trafia do przetwornika w chwili `base_dac` (czas strumienia).
     std::atomic<int64_t> base_frame{0};
     std::atomic<double> base_dac{0.0};
+    // Ostatnie wywołanie wyjścia: czas strumienia (currentTime) i czas zegara systemowego tej chwili –
+    // wątek główny liczy „teraz” bez wywoływania PortAudio (to mogłoby się zawiesić, gdy urządzenie
+    // zniknie) i wie, jak dawno strumień ostatnio działał.
+    std::atomic<double> base_now{0.0};
+    std::atomic<double> base_wall{0.0};
     fbm::Sequencer *seq = nullptr;
     // Wejście: w tym samym strumieniu (duplex) albo w osobnym `in_pa`.
     PaStream *in_pa = nullptr;
@@ -66,6 +72,10 @@ struct FbmAudio::Stream {
     std::atomic<int64_t> in_base_frame{0};
     std::atomic<double> in_base_adc{0.0};
 };
+
+static double wall_seconds() {
+    return std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
+}
 
 static int pa_callback(const void *input, void *output, unsigned long frames, const PaStreamCallbackTimeInfo *time,
         PaStreamCallbackFlags, void *user) {
@@ -88,7 +98,9 @@ static int pa_callback(const void *input, void *output, unsigned long frames, co
     if (time && time->outputBufferDacTime > 0.0) {
         s->base_dac.store(time->outputBufferDacTime, std::memory_order_relaxed);
         s->base_frame.store(first, std::memory_order_relaxed);
+        s->base_now.store(time->currentTime, std::memory_order_relaxed);
     }
+    s->base_wall.store(wall_seconds(), std::memory_order_relaxed);
     return paContinue;
 }
 
@@ -109,7 +121,7 @@ FbmAudio::FbmAudio() {
 
 FbmAudio::~FbmAudio() {
     close();
-    if (pa_ready_) {
+    if (pa_ready_ && !pa_dead_) {
         Pa_Terminate();
     }
 }
@@ -147,6 +159,7 @@ void FbmAudio::_bind_methods() {
     ClassDB::bind_method(D_METHOD("input_frame_at", "out_frame"), &FbmAudio::input_frame_at);
     ClassDB::bind_method(D_METHOD("timing_info"), &FbmAudio::timing_info);
     ClassDB::bind_method(D_METHOD("probe_click"), &FbmAudio::probe_click);
+    ClassDB::bind_method(D_METHOD("stream_age_ms"), &FbmAudio::stream_age_ms);
     ClassDB::bind_method(D_METHOD("looper_clear"), &FbmAudio::looper_clear);
     ClassDB::bind_method(D_METHOD("looper_add", "samples", "from", "to", "gain"), &FbmAudio::looper_add);
     ClassDB::bind_method(D_METHOD("looper_play", "offset", "length", "delay"), &FbmAudio::looper_play);
@@ -324,6 +337,15 @@ String FbmAudio::open(const String &api, const String &device, const String &in_
 }
 
 void FbmAudio::close() {
+    // Strumień, który od dawna nie dostaje wywołań (urządzenie odłączone), może zawiesić Pa_StopStream
+    // i Pa_Terminate na zawsze (sterownik czeka na znikające urządzenie). Taki strumień porzucamy –
+    // razem z jego danymi, bo wątek sterownika może jeszcze do nich sięgnąć – zamiast go zamykać.
+    if (stream_ && stream_age_ms() > 1000.0) {
+        stream_.release();
+        pa_dead_ = true;
+        api_ = "";
+        return;
+    }
     if (stream_ && stream_->pa) {
         Pa_StopStream(stream_->pa);
         Pa_CloseStream(stream_->pa);
@@ -474,8 +496,11 @@ int64_t FbmAudio::heard_frame() const {
     int64_t frame = sequencer_.frames_rendered();
     if (stream_) {
         const double dac = stream_->base_dac.load(std::memory_order_relaxed);
-        if (dac > 0.0) {
-            const double now = Pa_GetStreamTime(stream_->pa);
+        if (dac > 0.0 && stream_->base_now.load(std::memory_order_relaxed) > 0.0) {
+            // „Teraz” w czasie strumienia: ostatni currentTime + upływ zegara systemowego (najwyżej 0,5 s,
+            // gdy strumień stanął).
+            const double age = std::min(wall_seconds() - stream_->base_wall.load(std::memory_order_relaxed), 0.5);
+            const double now = stream_->base_now.load(std::memory_order_relaxed) + age;
             frame = stream_->base_frame.load(std::memory_order_relaxed) +
                     static_cast<int64_t>((now - dac) * stream_->rate);
         } else {
@@ -568,6 +593,14 @@ Dictionary FbmAudio::timing_info() const {
         d["timestamps_ms"] = 0.0;
     }
     return d;
+}
+
+double FbmAudio::stream_age_ms() const {
+    if (!stream_) {
+        return -1.0;
+    }
+    const double w = stream_->base_wall.load(std::memory_order_relaxed);
+    return w > 0.0 ? (wall_seconds() - w) * 1000.0 : 0.0;
 }
 
 int64_t FbmAudio::probe_click() {

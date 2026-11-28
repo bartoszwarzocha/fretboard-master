@@ -76,6 +76,8 @@ public:
     Dictionary timing_info() const;
     // Pomiar opóźnienia: krótki impuls na wyjściu; zwraca numer próbki wyjścia, w której zabrzmi.
     int64_t probe_click();
+    // Ile ms minęło od ostatniego wywołania wyjścia (urządzenie odłączone – rośnie; −1 – zamknięte).
+    double stream_age_ms() const;
 
     // --- looper (zob. looper.h) ---
     void looper_clear();
@@ -122,6 +124,7 @@ private:
     String input_error_;
     std::unique_ptr<Stream> stream_;
     bool pa_ready_ = false;
+    bool pa_dead_ = false;          // porzucony strumień odłączonego urządzenia – bez Pa_Terminate
     String api_;
 };
 

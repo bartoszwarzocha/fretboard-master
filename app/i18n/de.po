@@ -1612,3 +1612,36 @@ msgstr "Aufnahmen früher"
 msgid "Shifts looper recordings against the backing: + earlier, − later. Saved for this driver and devices."
 msgstr "Verschiebt Looper-Aufnahmen gegenüber der Begleitung: + früher, − später. Gespeichert für diesen Treiber und diese Geräte."
 
+msgid "Save again"
+msgstr "Erneut speichern"
+
+msgid "Not enough free disk space to record – free up some space and try again."
+msgstr "Nicht genug freier Speicherplatz für eine Aufnahme – gib etwas Platz frei und versuche es erneut."
+
+msgid "The audio device stopped responding – recording stopped."
+msgstr "Das Audiogerät reagiert nicht mehr – Aufnahme gestoppt."
+
+msgid "The audio input stopped responding – recording stopped."
+msgstr "Der Audioeingang reagiert nicht mehr – Aufnahme gestoppt."
+
+msgid "%s left"
+msgstr "noch %s"
+
+msgid "%s left – the recording will stop at the end of a bar"
+msgstr "noch %s – die Aufnahme stoppt am Taktende"
+
+msgid "The maximum recording length was reached – the recording was saved."
+msgstr "Maximale Aufnahmelänge erreicht – die Aufnahme wurde gespeichert."
+
+msgid "The disk is almost full – recording stopped."
+msgstr "Der Datenträger ist fast voll – Aufnahme gestoppt."
+
+msgid "Could not save the recording – the disk may be full. The recording is kept in memory: free up some space and press „Save again”."
+msgstr "Die Aufnahme konnte nicht gespeichert werden – der Datenträger ist evtl. voll. Sie bleibt im Speicher: gib Platz frei und drücke „Erneut speichern”."
+
+msgid "Could not save the track list – the disk may be full."
+msgstr "Die Spurliste konnte nicht gespeichert werden – der Datenträger ist evtl. voll."
+
+msgid "(uncertain – results differ by %d ms, measure again)"
+msgstr "(unsicher – Messungen weichen um %d ms ab, erneut messen)"
+

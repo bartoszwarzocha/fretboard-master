@@ -17,7 +17,11 @@ const KITS := [["Standard", 0], ["Room", 8], ["Power", 16], ["Jazz", 32], ["Brus
 const PRESETS := ["Rock", "Pop", "Shuffle", "Waltz", "Ballad 6/8"]
 const RED := Color("FF5A5F")
 const STOP := Color("FF7A59")
-const MAX_SECONDS := 600.0
+const MAX_SECONDS := 600.0            # najdłuższe nagranie (ok. 115 MB w pamięci i na dysku przy 48 kHz)
+const WARN_SECONDS := 30.0            # ostrzeżenie przed końcem dozwolonego czasu
+const DISK_RESERVE := 64 << 20        # tyle miejsca na dysku zostawiamy zawsze wolne (bajty)
+const MIN_SECONDS := 5.0              # mniej miejsca na nagranie – nie zaczynamy
+const STALL_MS := 1500                # wejście nie daje próbek tak długo – urządzenie odłączone albo zawieszone
 const REC_BARS := [0, 1, 2, 4, 8, 16]   # długość nagrania w taktach (0 – dowolna, do zatrzymania)
 const TOGGLE_GUARD_MS := 600            # po starcie albo końcu nagrania przycisk/R chwilę nie działa
 const PEAKS := 1024
@@ -44,6 +48,10 @@ var _selected := ""
 var _rec := {}                     # stan nagrywania (pusty – nie nagrywa)
 var _live_tick := 0
 var _toggle_at := -100000             # chwila ostatniego startu albo końca nagrania (ms)
+var _retry: Button                    # „Zapisz ponownie” – po nieudanym zapisie nagrania
+var _pending := {}                    # nagranie, którego nie udało się zapisać (rec + próbki)
+var _test_free := -1                  # tylko test (--looper-test): udawane wolne miejsce w bajtach
+var _test_fail := false               # tylko test: udawany błąd zapisu
 
 
 func _init(screen: Node) -> void:
@@ -121,6 +129,12 @@ func build(main: VBoxContainer, aside: VBoxContainer) -> void:
 	_error.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_error.visible = false
 	main.add_child(_error)
+	_retry = Button.new()
+	_retry.text = "Save again"
+	_retry.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_retry.visible = false
+	_retry.pressed.connect(_save_pending)
+	main.add_child(_retry)
 	_bottom = HBoxContainer.new()
 	_bottom.alignment = BoxContainer.ALIGNMENT_CENTER
 	_bottom.add_theme_constant_override("separation", 17)
@@ -415,6 +429,11 @@ func _start_record() -> void:
 	if not _core.input_ok():
 		_show_error(tr("Audio input unavailable – check the Sound and MIDI settings."))
 		return
+	var rate0: float = _core.sample_rate()
+	var limit := _space_seconds(rate0)
+	if limit < MIN_SECONDS:
+		_show_error(tr("Not enough free disk space to record – free up some space and try again."))
+		return
 	_show_error("")
 	var bpm: int = scr._bpm()
 	var metre: int = scr._metre()
@@ -434,7 +453,7 @@ func _start_record() -> void:
 		_core.looper_play(loop.x, loop.y, roundi(countin * _bar_frames(bpm, metre, rate)))
 	_core.start()
 	_rec = {"bpm": bpm, "metre": metre, "bed": bed, "rate": rate, "countin": countin,
-			"bars": rec_bars,
+			"bars": rec_bars, "limit": limit, "seen": Time.get_ticks_msec(), "checked": Time.get_ticks_msec(),
 			"out": -1, "next": -1, "buf": PackedFloat32Array()}
 	_toggle_at = Time.get_ticks_msec()
 	_live = _add_row({}, true)
@@ -444,6 +463,10 @@ func _start_record() -> void:
 
 
 func _poll_record(v: Dictionary) -> void:
+	# Strumień stoi (urządzenie odłączone, sterownik zawieszony): rdzeń dawno nie dostał wywołania.
+	if _core.has_method(&"stream_age_ms") and float(_core.stream_age_ms()) > STALL_MS:
+		_finish_record(false, tr("The audio device stopped responding – recording stopped."))
+		return
 	var cs := int(v.clock_start)
 	if int(_rec.next) < 0:
 		if cs < 0:
@@ -453,10 +476,19 @@ func _poll_record(v: Dictionary) -> void:
 		# Próbka wejścia z chwili, w której zabrzmi „raz” pierwszego taktu (opóźnienie wejścia i wyjścia,
 		# osobne zegary urządzeń, pomiar i ręczna korekta z ustawień dźwięku).
 		_rec.next = AudioEngine.input_frame_for(_core, out)
+	if not _core.is_open() or not _core.input_ok():
+		_finish_record(false, tr("The audio device stopped responding – recording stopped."))
+		return
 	var chunk: Variant = _core.input_read(int(_rec.next), 1 << 17)
 	if chunk == null:
-		_show_error(tr("Recording interrupted – the input was not read in time."))
-		_finish_record()
+		_finish_record(false, tr("Recording interrupted – the input was not read in time."))
+		return
+	var now := Time.get_ticks_msec()
+	if (chunk as PackedFloat32Array).size() > 0 or int(v.frame) < int(_rec.out):
+		_rec.seen = now
+	elif now - int(_rec.seen) > STALL_MS:
+		# Wejście przestało dawać próbki (urządzenie odłączone albo zawieszone).
+		_finish_record(false, tr("The audio input stopped responding – recording stopped."))
 		return
 	var buf: PackedFloat32Array = _rec.buf
 	buf.append_array(chunk)
@@ -472,7 +504,13 @@ func _poll_record(v: Dictionary) -> void:
 		status = tr("count-in: %d") % maxi(ceili((int(_rec.out) - heard) / beat), 1)
 	else:
 		var n := floori((heard - int(_rec.out)) / bar) + 1
-		status = tr("recording · bar %d of %d") % [mini(n, bars), bars] if bars > 0 else tr("recording · bar %d") % n
+		if bars > 0:
+			status = tr("recording · bar %d of %d") % [mini(n, bars), bars]
+		else:
+			# Dowolna długość: pozostały czas widoczny cały czas, ostatnie 30 s jako ostrzeżenie.
+			var left := maxf(_limit_frames() - (heard - int(_rec.out)), 0.0) / float(_rec.rate)
+			status = tr("recording · bar %d") % n + " · " + (tr("%s left – the recording will stop at the end of a bar")
+					if left <= WARN_SECONDS else tr("%s left")) % _clock(left)
 	_live.set_status(status)
 	_live_tick += 1
 	if _live_tick % 6 == 0 and buf.size() > 0:
@@ -482,15 +520,46 @@ func _poll_record(v: Dictionary) -> void:
 		_live.wave.peak_frames = buf.size()
 		_live.wave.trim = Vector2i(0, buf.size())
 		_live.wave.queue_redraw()
-	# Zadana liczba taktów: koniec dokładnie na granicy taktu, nagranie przycięte co do próbki.
-	var target := roundi(bars * bar) if bars > 0 else roundi(MAX_SECONDS * float(_rec.rate))
+	# Zadana liczba taktów albo limit czasu / miejsca (zaokrąglony w dół do pełnych taktów): koniec
+	# dokładnie na granicy taktu, nagranie przycięte co do próbki.
+	var target := roundi(bars * bar) if bars > 0 else roundi(_limit_frames())
 	if buf.size() >= target:
 		buf.resize(target)
 		_rec.buf = buf
-		_finish_record(true)
+		_finish_record(true, "" if bars > 0 else tr("The maximum recording length was reached – the recording was saved."))
+		return
+	# Co 2 s: czy na dysku nadal jest miejsce na to, co już nagrane (inne programy też zapisują).
+	if now - int(_rec.checked) > 2000:
+		_rec.checked = now
+		if _space_seconds(float(_rec.rate)) < buf.size() / float(_rec.rate) + 2.0:
+			_finish_record(false, tr("The disk is almost full – recording stopped."))
 
 
-func _finish_record(complete := false) -> void:
+## Limit nagrania w próbkach: mniejszy z 10 minut i wolnego miejsca, w pełnych taktach.
+func _limit_frames() -> float:
+	var bar := _bar_frames(int(_rec.bpm), int(_rec.metre), float(_rec.rate))
+	var frames := minf(MAX_SECONDS, float(_rec.limit)) * float(_rec.rate)
+	return maxf(floorf(frames / bar), 1.0) * bar
+
+
+## Ile sekund nagrania (32-bit float, mono) zmieści się na dysku, z zapasem DISK_RESERVE.
+func _space_seconds(rate: float) -> float:
+	DirAccess.make_dir_recursive_absolute(DIR)
+	var d := DirAccess.open(DIR)
+	if d == null or rate <= 0.0:
+		return 0.0
+	var free := d.get_space_left() if _test_free < 0 else _test_free
+	if free <= 0:
+		return MAX_SECONDS   # system nie podaje wolnego miejsca – zapis i tak jest sprawdzany
+	return maxf(float(free - DISK_RESERVE), 0.0) / (rate * 4.0)
+
+
+static func _clock(sec: float) -> String:
+	var s := ceili(sec)
+	return "%d:%02d" % [s / 60, s % 60]
+
+
+func _finish_record(complete := false, reason := "") -> void:
 	if _rec.is_empty():
 		return
 	_toggle_at = Time.get_ticks_msec()
@@ -508,12 +577,23 @@ func _finish_record(complete := false) -> void:
 	stop_all()
 	var buf: PackedFloat32Array = rec.buf
 	if buf.size() < float(rec.rate) * 0.3:
-		_show_error(tr("The recording is too short – it was not saved."))
+		_show_error((reason + " " if not reason.is_empty() else "") + tr("The recording is too short – it was not saved."))
 		return
+	_show_error(reason)
+	_store(rec, buf)
+
+
+# Zapis nagrania: plik WAV (atomowo – najpierw plik tymczasowy) i opis ścieżki. Gdy się nie uda
+# (np. brak miejsca), nagranie zostaje w pamięci, a przycisk „Zapisz ponownie” ponawia zapis.
+func _store(rec: Dictionary, buf: PackedFloat32Array) -> void:
 	var t := _new_track(rec, buf.size())
-	if not _save_wav(DIR + t.id + ".wav", buf, int(rec.rate)):
-		_show_error(tr("Could not save the recording."))
+	if _test_fail or not _save_wav(DIR + t.id + ".wav", buf, int(rec.rate)):
+		_pending = {"rec": rec, "buf": buf}
+		_show_error(tr("Could not save the recording – the disk may be full. The recording is kept in memory: free up some space and press „Save again”."))
+		_retry.visible = true
 		return
+	_pending = {}
+	_retry.visible = false
 	_samples[t.id] = buf
 	_tracks.insert(0, t)
 	_save_index()
@@ -521,6 +601,14 @@ func _finish_record(complete := false) -> void:
 	_select(t.id)
 	_update_empty()
 	scr._update_texts()
+
+
+func _save_pending() -> void:
+	if _pending.is_empty():
+		_retry.visible = false
+		return
+	_show_error("")
+	_store(_pending.rec, _pending.buf)
 
 
 func _new_track(rec: Dictionary, frames: int) -> Dictionary:
@@ -577,6 +665,51 @@ func _selftest() -> void:
 	print("[looper-test] koniec ręczny przed czasem: ścieżek +%d, długość %d próbek" % [_tracks.size() - n0,
 			int(_tracks[0].frames) if _tracks.size() > n0 else -1])
 	print("[looper-test] zgranie: ", _core.timing_info() if _core else {})
+	# Zabezpieczenia: brak miejsca przed startem, limit miejsca w trakcie (dowolna długość), błąd zapisu.
+	App.set_settings({&"lp_rec_bars": 0, &"lp_countin": 0})
+	await tree.create_timer(1.0).timeout
+	_test_free = DISK_RESERVE + int(_core.sample_rate() * 4 * 3)
+	toggle_record()
+	print("[looper-test] 3 s miejsca: nagrywa = %s, komunikat: %s" % [not _rec.is_empty(), _error.text])
+	await tree.create_timer(1.0).timeout
+	_test_free = DISK_RESERVE + int(_core.sample_rate() * 4 * 7)
+	var n1 := _tracks.size()
+	toggle_record()
+	var t1 := Time.get_ticks_msec()
+	var shown := ""
+	while not _rec.is_empty() and Time.get_ticks_msec() - t1 < 15000:
+		await tree.create_timer(0.5).timeout
+		if _live and is_instance_valid(_live):
+			shown = _live.info.text
+	print("[looper-test] 7 s miejsca: koniec po %d ms, ścieżek +%d, długość %.2f s (%.2f taktu), status: %s, komunikat: %s" % [
+			Time.get_ticks_msec() - t1, _tracks.size() - n1, float(_tracks[0].frames) / _core.sample_rate(),
+			float(_tracks[0].frames) / _bar_frames(120, scr._metre(), _core.sample_rate()), shown, _error.text])
+	_test_free = -1
+	_test_fail = true
+	await tree.create_timer(1.0).timeout
+	toggle_record()
+	await tree.create_timer(2.0).timeout
+	toggle_record()
+	print("[looper-test] błąd zapisu: czeka w pamięci = %s, przycisk = %s, komunikat: %s" % [not _pending.is_empty(), _retry.visible, _error.text])
+	_test_fail = false
+	var n2 := _tracks.size()
+	_retry.pressed.emit()
+	print("[looper-test] zapisz ponownie: ścieżek +%d, czeka = %s, przycisk = %s" % [_tracks.size() - n2, not _pending.is_empty(), _retry.visible])
+	var part := 0
+	for f in DirAccess.get_files_at(DIR):
+		if f.ends_with(".part"):
+			part += 1
+	print("[looper-test] pliki tymczasowe .part: ", part)
+	if OS.has_environment("FBM_TEST_KILL_AUDIO"):
+		# Urządzenie znika w trakcie: test zewnętrzny zatrzymuje serwer dźwięku po ok. 2 s nagrywania.
+		await tree.create_timer(1.0).timeout
+		var n3 := _tracks.size()
+		toggle_record()
+		print("[looper-test] odłączenie: start")
+		var t3 := Time.get_ticks_msec()
+		while not _rec.is_empty() and Time.get_ticks_msec() - t3 < 12000:
+			await tree.process_frame
+		print("[looper-test] odłączenie: koniec po %d ms, ścieżek +%d, komunikat: %s" % [Time.get_ticks_msec() - t3, _tracks.size() - n3, _error.text])
 	tree.quit()
 
 
@@ -698,12 +831,37 @@ func _load_index() -> void:
 
 
 func _save_index() -> void:
-	var f := FileAccess.open(INDEX, FileAccess.WRITE)
-	if f:
-		f.store_string(JSON.stringify(_tracks, " "))
+	# Atomowo: plik tymczasowy, potem podmiana – przerwany zapis nie psuje listy ścieżek.
+	var tmp := INDEX + ".part"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
+	if f == null:
+		return
+	f.store_string(JSON.stringify(_tracks, " "))
+	var ok := f.get_error() == OK
+	f.close()
+	if ok:
+		DirAccess.remove_absolute(INDEX)
+		ok = DirAccess.rename_absolute(tmp, INDEX) == OK
+	if not ok:
+		DirAccess.remove_absolute(tmp)
+		_show_error(tr("Could not save the track list – the disk may be full."))
 
 
+## Zapis WAV (32-bit float, mono) atomowo: plik tymczasowy, sprawdzenie błędu i długości, dopiero
+## wtedy zmiana nazwy. Nieudany zapis (np. brak miejsca) nie zostawia uszkodzonego pliku.
 static func _save_wav(path: String, samples: PackedFloat32Array, rate: int) -> bool:
+	var tmp := path + ".part"
+	if not _write_wav(tmp, samples, rate):
+		DirAccess.remove_absolute(tmp)
+		return false
+	DirAccess.remove_absolute(path)
+	if DirAccess.rename_absolute(tmp, path) != OK:
+		DirAccess.remove_absolute(tmp)
+		return false
+	return true
+
+
+static func _write_wav(path: String, samples: PackedFloat32Array, rate: int) -> bool:
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	if f == null:
 		return false
@@ -721,7 +879,9 @@ static func _save_wav(path: String, samples: PackedFloat32Array, rate: int) -> b
 	f.store_buffer("data".to_ascii_buffer())
 	f.store_32(data.size())
 	f.store_buffer(data)
-	return true
+	var ok := f.get_error() == OK and f.get_position() == 44 + data.size()
+	f.close()
+	return ok and FileAccess.get_size(path) == 44 + data.size()
 
 
 ## WAV: 32-bit float albo 16-bit PCM; przy wielu kanałach – pierwszy kanał.

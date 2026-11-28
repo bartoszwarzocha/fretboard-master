@@ -587,6 +587,21 @@ T = {
   "Verschiebt Looper-Aufnahmen gegenüber der Begleitung: + früher, − später. Gespeichert für diesen Treiber und diese Geräte.",
   "Desplaza las grabaciones del looper respecto al acompañamiento: + antes, − después. Se guarda para este controlador y dispositivos.",
   "Сдвигает записи лупера относительно аккомпанемента: + раньше, − позже. Сохраняется для этого драйвера и устройств."),
+ "Save again": ("Zapisz ponownie", "Erneut speichern", "Guardar de nuevo", "Сохранить снова"),
+ "Not enough free disk space to record – free up some space and try again.": ("Za mało wolnego miejsca na dysku, by nagrywać – zwolnij trochę miejsca i spróbuj ponownie.", "Nicht genug freier Speicherplatz für eine Aufnahme – gib etwas Platz frei und versuche es erneut.", "No hay espacio libre suficiente para grabar: libera espacio e inténtalo de nuevo.", "Недостаточно места на диске для записи – освободите место и попробуйте снова."),
+ "The audio device stopped responding – recording stopped.": ("Urządzenie audio przestało odpowiadać – nagrywanie zatrzymane.", "Das Audiogerät reagiert nicht mehr – Aufnahme gestoppt.", "El dispositivo de audio dejó de responder: grabación detenida.", "Аудиоустройство перестало отвечать – запись остановлена."),
+ "The audio input stopped responding – recording stopped.": ("Wejście audio przestało odpowiadać – nagrywanie zatrzymane.", "Der Audioeingang reagiert nicht mehr – Aufnahme gestoppt.", "La entrada de audio dejó de responder: grabación detenida.", "Аудиовход перестал отвечать – запись остановлена."),
+ "%s left": ("zostało %s", "noch %s", "quedan %s", "осталось %s"),
+ "%s left – the recording will stop at the end of a bar": ("zostało %s – nagranie zatrzyma się na końcu taktu", "noch %s – die Aufnahme stoppt am Taktende", "quedan %s: la grabación se detendrá al final del compás", "осталось %s – запись остановится в конце такта"),
+ "The maximum recording length was reached – the recording was saved.": ("Osiągnięto największą długość nagrania – nagranie zapisane.", "Maximale Aufnahmelänge erreicht – die Aufnahme wurde gespeichert.", "Se alcanzó la duración máxima: la grabación se guardó.", "Достигнута максимальная длина записи – запись сохранена."),
+ "The disk is almost full – recording stopped.": ("Dysk jest prawie pełny – nagrywanie zatrzymane.", "Der Datenträger ist fast voll – Aufnahme gestoppt.", "El disco está casi lleno: grabación detenida.", "Диск почти заполнен – запись остановлена."),
+ "Could not save the recording – the disk may be full. The recording is kept in memory: free up some space and press „Save again”.": (
+  "Nie udało się zapisać nagrania – dysk może być pełny. Nagranie jest zachowane w pamięci: zwolnij trochę miejsca i naciśnij „Zapisz ponownie”.",
+  "Die Aufnahme konnte nicht gespeichert werden – der Datenträger ist evtl. voll. Sie bleibt im Speicher: gib Platz frei und drücke „Erneut speichern”.",
+  "No se pudo guardar la grabación: puede que el disco esté lleno. Se conserva en memoria: libera espacio y pulsa „Guardar de nuevo”.",
+  "Не удалось сохранить запись – возможно, диск заполнен. Запись сохранена в памяти: освободите место и нажмите «Сохранить снова»."),
+ "Could not save the track list – the disk may be full.": ("Nie udało się zapisać listy ścieżek – dysk może być pełny.", "Die Spurliste konnte nicht gespeichert werden – der Datenträger ist evtl. voll.", "No se pudo guardar la lista de pistas: puede que el disco esté lleno.", "Не удалось сохранить список дорожек – возможно, диск заполнен."),
+ "(uncertain – results differ by %d ms, measure again)": ("(wynik niepewny – pomiary różnią się o %d ms, zmierz ponownie)", "(unsicher – Messungen weichen um %d ms ab, erneut messen)", "(incierto: las mediciones difieren %d ms, mide de nuevo)", "(неточно – измерения расходятся на %d мс, повторите)"),
 }
 
 def esc(s): return s.replace("\\", "\\\\").replace('"', '\\"')

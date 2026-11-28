@@ -373,6 +373,8 @@ func _measure() -> void:
 	print("[opóźnienie] pomiar: razem %.1f ms, sterownik %.1f ms, dopełnienie %.1f ms, rozrzut %.1f ms, %s" % [
 			r.total_ms, float(r.info.get("roundtrip_ms", 0.0)), r.residual_ms, r.spread_ms, str(r.info)])
 	_update_latency()
+	if float(r.spread_ms) > 3.0:
+		_latency_hint.text += "  " + tr("(uncertain – results differ by %d ms, measure again)") % roundi(float(r.spread_ms))
 
 
 func _midi_card() -> Control:

@@ -51,6 +51,10 @@ var _big := false               # tryb „Duży gryf”: panel gryfu na całą w
 var _big_btn: Button
 var _bottom: Control
 var _morph: LayoutMorph
+var _detail_card: Control
+var _need := {false: 0.0, true: 0.0}
+var _fit_tween: Tween
+var _fitted := false   # wysokość rzędu potrzebna treści karty (zwykły / duży gryf)
 var _staff_holder: Control      # pięciolinia w obudowie z przycięciem – szerokość animowana do zera
 var _staff_box: Control
 var _range_box: Control
@@ -171,6 +175,8 @@ func _build_content() -> void:
 	var card := _card(22)
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.add_child(card)
+	_detail_card = card
+	card.resized.connect(func() -> void: _fit_bottom())
 	# Treść karty w obudowie z przycięciem: jej wysokość nie blokuje animacji rzędu.
 	var clip := Control.new()
 	clip.clip_contents = true
@@ -819,6 +825,7 @@ func _parse_note(t: String) -> int:
 
 func _build_detail() -> void:
 	_clear(_detail)
+	_fit_bottom.call_deferred()
 	# Tryb „Duży gryf”: karta w dwóch kolumnach (tonika, nazwa, przyciski | budowa, dźwięki, akordy),
 	# bez opisu rodziny i listy ćwiczeń – niska, na szerokość po pięciolinii.
 	var left: Control = _detail
@@ -1477,7 +1484,7 @@ func _apply_big(animate: bool) -> void:
 	_big_btn.tooltip_text = tr("Normal view") if _big else tr("Large neck")
 	if _morph:
 		_morph.kill()
-	var h := BOTTOM_H_BIG if _big else BOTTOM_H
+	var h := _target_h(_big)
 	var w := 0.0 if _big else STAFF_W + 18.0
 	if not animate:
 		_bottom.custom_minimum_size.y = h
@@ -1489,8 +1496,35 @@ func _apply_big(animate: bool) -> void:
 	# w jej miejsce, a treść karty zmienia układ, gdy jest wygaszona. Gryf zajmuje zwolnione miejsce.
 	_morph = LayoutMorph.new(self).hold(_fb, Vector2(0, _bottom.custom_minimum_size.y - h)) \
 			.height(_bottom, h).width(_staff_holder, w) \
-			.fade(_staff_box, 0.0 if _big else 1.0).swap(_detail, _build_detail)
+			.fade(_staff_box, 0.0 if _big else 1.0).swap(_detail, _build_detail).then(_fit_bottom)
 	_morph.play()
+
+
+# Wysokość rzędu z kartą: stała z makiety albo więcej, gdy treść karty jej potrzebuje (dłuższe napisy
+# w innym języku, większa czcionka, węższe okno – zawijane wiersze). Treść nigdy nie jest ucinana.
+func _target_h(big: bool) -> float:
+	return maxf(BOTTOM_H_BIG if big else BOTTOM_H, _need[big])
+
+
+func _fit_bottom() -> void:
+	if not is_inside_tree() or (_morph and _morph.running()):
+		return
+	await get_tree().process_frame   # minimalne rozmiary po przebudowie treści
+	if not is_inside_tree() or (_morph and _morph.running()):
+		return
+	var pad := _detail_card.get_theme_stylebox(&"panel").get_minimum_size().y if _detail_card else 44.0
+	_need[_big] = ceilf(_detail.get_combined_minimum_size().y + pad)
+	var h := _target_h(_big)
+	if absf(_bottom.custom_minimum_size.y - h) <= 0.5:
+		return
+	if _fit_tween:
+		_fit_tween.kill()
+	if not _fitted or App.animations() == "off":
+		_bottom.custom_minimum_size.y = h
+	else:
+		_fit_tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		_fit_tween.tween_property(_bottom, "custom_minimum_size:y", h, 0.2)
+	_fitted = true
 
 
 # Test płynności (argument „--morph-test --morph-log”): cztery przełączenia co sekundę, potem koniec.
