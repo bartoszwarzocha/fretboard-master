@@ -1581,3 +1581,33 @@ msgstr ""
 msgid "Normal view"
 msgstr ""
 
+msgid "Recording length"
+msgstr ""
+
+msgid "free"
+msgstr ""
+
+msgid "4 bars"
+msgstr ""
+
+msgid "8 bars"
+msgstr ""
+
+msgid "16 bars"
+msgstr ""
+
+msgid "recording · bar %d of %d"
+msgstr ""
+
+msgid "Recording alignment correction:"
+msgstr ""
+
+msgid "Recordings later"
+msgstr ""
+
+msgid "Recordings earlier"
+msgstr ""
+
+msgid "Shifts looper recordings against the backing: + earlier, − later. Saved for this driver and devices."
+msgstr ""
+

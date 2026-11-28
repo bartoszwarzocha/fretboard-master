@@ -67,6 +67,15 @@ public:
     // Opóźnienie wejście + wyjście w próbkach: dźwięk zagrany do próbki wyjścia f pojawia się na wejściu
     // jako próbka f + latency_frames().
     int64_t latency_frames() const;
+    // Numer próbki wejścia nagranej w chwili, gdy brzmi próbka wyjścia `out_frame` (gracz gra równo
+    // z tym, co słyszy): opóźnienia wyjścia i wejścia wg sterownika plus przesunięcie numeracji
+    // osobnych strumieni wejścia i wyjścia (śledzone na bieżąco). Resztę dopełnia pomiar impulsem.
+    int64_t input_frame_at(int64_t out_frame) const;
+    // Diagnostyka: częstotliwość, opóźnienia wg sterownika, czy duplex, przesunięcie numeracji strumieni,
+    // kompensowane opóźnienie i (dla porównania) opóźnienie z czasów przetworników (ms).
+    Dictionary timing_info() const;
+    // Pomiar opóźnienia: krótki impuls na wyjściu; zwraca numer próbki wyjścia, w której zabrzmi.
+    int64_t probe_click();
 
     // --- looper (zob. looper.h) ---
     void looper_clear();

@@ -91,6 +91,86 @@ static func _open() -> void:
 		_error = c.open(driver(), str(App.setting(&"audio_output")), "Default", channel, buffer)
 
 
+# --- Opóźnienie nagrania (looper) ----------------------------------------------------------
+# Rdzeń zgrywa wejście z wyjściem według czasów przetworników podawanych przez sterownik. Sterownik
+# nie zna jednak opóźnienia samych przetworników i kabli – to dopełnia pomiar (impuls na wyjściu
+# wraca na wejście) i ręczna korekta. Oba zapisane osobno dla sterownika, urządzeń i bufora.
+
+static func latency_key() -> String:
+	return "%s|%s|%s|%d" % [driver(), str(App.setting(&"audio_output")), str(App.setting(&"audio_input")),
+			int(App.setting(&"buffer_samples"))]
+
+
+## {"measured": ms (dopełnienie z pomiaru), "manual": ms (ręczna korekta)} dla bieżących urządzeń.
+static func latency_fix() -> Dictionary:
+	var all: Variant = App.setting(&"latency_fix")
+	return (all as Dictionary).get(latency_key(), {}) if all is Dictionary else {}
+
+
+static func set_latency_fix(field: String, ms: float) -> void:
+	var all: Dictionary = (App.setting(&"latency_fix") as Dictionary).duplicate(true) \
+			if App.setting(&"latency_fix") is Dictionary else {}
+	var e: Dictionary = (all.get(latency_key(), {}) as Dictionary).duplicate()
+	e[field] = snappedf(ms, 0.1)
+	all[latency_key()] = e
+	App.set_setting(&"latency_fix", all)
+
+
+## Numer próbki wejścia nagranej w chwili, gdy brzmi próbka wyjścia `out_frame` (z korektami).
+static func input_frame_for(c: Object, out_frame: int) -> int:
+	var f := latency_fix()
+	var fix := roundi((float(f.get("measured", 0.0)) + float(f.get("manual", 0.0))) * float(c.sample_rate()) / 1000.0)
+	if c.has_method(&"input_frame_at"):
+		return int(c.input_frame_at(out_frame)) + fix
+	return out_frame + int(c.latency_frames()) + fix
+
+
+## Opóźnienie wyjście → wejście w ms, które looper kompensuje (wg sterownika + korekty); −1 – brak wejścia.
+static func roundtrip_ms() -> float:
+	var c := core()
+	if c == null or not c.is_open() or not c.input_ok() or not c.has_method(&"timing_info"):
+		return -1.0
+	var f := latency_fix()
+	return float(c.timing_info().get("roundtrip_ms", 0.0)) + float(f.get("measured", 0.0)) + float(f.get("manual", 0.0))
+
+
+## Pomiar: pięć impulsów na wyjściu, każdy szukany na wejściu (kabel z wyjścia do wejścia albo mikrofon
+## przy głośniku). Wynik: {"ok", "total_ms", "residual_ms", "spread_ms", "info"} albo {"ok": false, "error"}.
+static func measure_latency() -> Dictionary:
+	var c := ensure_open()
+	if c == null or not c.input_ok() or not c.has_method(&"probe_click"):
+		return {"ok": false, "error": "input"}
+	var tree := Engine.get_main_loop() as SceneTree
+	var rate: float = c.sample_rate()
+	var res: Array[float] = []
+	for i in 5:
+		var at: int = c.probe_click()
+		var expected: int = c.input_frame_at(at)
+		await tree.create_timer(0.6).timeout
+		var from := expected - int(rate * 0.15)
+		var data: Variant = c.input_read(from, int(rate * 0.5))
+		if data == null:
+			continue
+		var buf := data as PackedFloat32Array
+		var peak := 0.0
+		for v in buf:
+			peak = maxf(peak, absf(v))
+		if peak < 0.03:
+			continue
+		var thr := peak * 0.3
+		for k in buf.size():
+			if absf(buf[k]) >= thr:
+				res.append((from + k - expected) * 1000.0 / rate)
+				break
+	if res.size() < 3:
+		return {"ok": false, "error": "signal"}
+	res.sort()
+	var med := res[res.size() / 2]
+	var info: Dictionary = c.timing_info()
+	return {"ok": true, "residual_ms": med, "spread_ms": res[-1] - res[0],
+			"total_ms": float(info.get("roundtrip_ms", 0.0)) + med, "info": info}
+
+
 static func _on_setting(key: StringName) -> void:
 	var c := core()
 	if c == null:

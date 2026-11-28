@@ -1582,3 +1582,33 @@ msgstr "Большой гриф"
 msgid "Normal view"
 msgstr "Обычный вид"
 
+msgid "Recording length"
+msgstr "Длина записи"
+
+msgid "free"
+msgstr "свободная"
+
+msgid "4 bars"
+msgstr "4 такта"
+
+msgid "8 bars"
+msgstr "8 тактов"
+
+msgid "16 bars"
+msgstr "16 тактов"
+
+msgid "recording · bar %d of %d"
+msgstr "запись · такт %d из %d"
+
+msgid "Recording alignment correction:"
+msgstr "Коррекция синхронизации записи:"
+
+msgid "Recordings later"
+msgstr "Записи позже"
+
+msgid "Recordings earlier"
+msgstr "Записи раньше"
+
+msgid "Shifts looper recordings against the backing: + earlier, − later. Saved for this driver and devices."
+msgstr "Сдвигает записи лупера относительно аккомпанемента: + раньше, − позже. Сохраняется для этого драйвера и устройств."
+

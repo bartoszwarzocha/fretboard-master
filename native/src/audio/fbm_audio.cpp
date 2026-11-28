@@ -2,6 +2,8 @@
 // Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
 #include "fbm_audio.h"
 
+#include <cstdint>
+
 #include <godot_cpp/core/class_db.hpp>
 
 #include <portaudio.h>
@@ -54,15 +56,34 @@ struct FbmAudio::Stream {
     int in_channel = 0;
     bool input = false;
     double in_latency = 0.0;    // s
+    // Osobne strumienie wejścia i wyjścia liczą próbki każdy od swojego startu: przesunięcie numeracji
+    // (zapisane wejście minus wyrenderowane wyjście) mierzone w każdym wywołaniu wyjścia i wygładzane
+    // (wahania o rozmiar bufora znikają, powolne rozjeżdżanie się zegarów urządzeń jest śledzone).
+    // Przy strumieniu dwukierunkowym numeracja jest wspólna – przesunięcie 0.
+    std::atomic<double> in_offset{0.0};
+    bool in_offset_set = false;
+    // Diagnostyka: czasy przetworników podawane przez sterownik (bywają niewiarygodne – nie do zgrania).
+    std::atomic<int64_t> in_base_frame{0};
+    std::atomic<double> in_base_adc{0.0};
 };
 
 static int pa_callback(const void *input, void *output, unsigned long frames, const PaStreamCallbackTimeInfo *time,
         PaStreamCallbackFlags, void *user) {
     auto *s = static_cast<FbmAudio::Stream *>(user);
     if (s->input && !s->in_pa) {
+        if (time && time->inputBufferAdcTime > 0.0) {
+            s->in_base_adc.store(time->inputBufferAdcTime, std::memory_order_relaxed);
+            s->in_base_frame.store(s->ring->written(), std::memory_order_relaxed);
+        }
         s->ring->write(static_cast<const float *>(input), static_cast<int>(frames), s->in_channels, s->in_channel);
     }
     const int64_t first = s->seq->frames_rendered();
+    if (s->in_pa) {
+        const double d = static_cast<double>(s->ring->written() - first);
+        const double o = s->in_offset.load(std::memory_order_relaxed);
+        s->in_offset.store(s->in_offset_set ? o + (d - o) * 0.02 : d, std::memory_order_relaxed);
+        s->in_offset_set = true;
+    }
     s->seq->render(static_cast<float *>(output), static_cast<int>(frames));
     if (time && time->outputBufferDacTime > 0.0) {
         s->base_dac.store(time->outputBufferDacTime, std::memory_order_relaxed);
@@ -71,9 +92,13 @@ static int pa_callback(const void *input, void *output, unsigned long frames, co
     return paContinue;
 }
 
-static int pa_input_callback(const void *input, void *, unsigned long frames, const PaStreamCallbackTimeInfo *,
+static int pa_input_callback(const void *input, void *, unsigned long frames, const PaStreamCallbackTimeInfo *time,
         PaStreamCallbackFlags, void *user) {
     auto *s = static_cast<FbmAudio::Stream *>(user);
+    if (time && time->inputBufferAdcTime > 0.0) {
+        s->in_base_adc.store(time->inputBufferAdcTime, std::memory_order_relaxed);
+        s->in_base_frame.store(s->ring->written(), std::memory_order_relaxed);
+    }
     s->ring->write(static_cast<const float *>(input), static_cast<int>(frames), s->in_channels, s->in_channel);
     return paContinue;
 }
@@ -119,6 +144,9 @@ void FbmAudio::_bind_methods() {
     ClassDB::bind_method(D_METHOD("render_offline", "frames"), &FbmAudio::render_offline);
     ClassDB::bind_method(D_METHOD("input_read", "from", "max_count"), &FbmAudio::input_read);
     ClassDB::bind_method(D_METHOD("latency_frames"), &FbmAudio::latency_frames);
+    ClassDB::bind_method(D_METHOD("input_frame_at", "out_frame"), &FbmAudio::input_frame_at);
+    ClassDB::bind_method(D_METHOD("timing_info"), &FbmAudio::timing_info);
+    ClassDB::bind_method(D_METHOD("probe_click"), &FbmAudio::probe_click);
     ClassDB::bind_method(D_METHOD("looper_clear"), &FbmAudio::looper_clear);
     ClassDB::bind_method(D_METHOD("looper_add", "samples", "from", "to", "gain"), &FbmAudio::looper_add);
     ClassDB::bind_method(D_METHOD("looper_play", "offset", "length", "delay"), &FbmAudio::looper_play);
@@ -417,6 +445,9 @@ void FbmAudio::configure(const Dictionary &d, const PackedByteArray &pattern) {
     c.ramp_step = d.get("ramp_step", 4.0);
     c.ramp_bars = std::max(static_cast<int>(d.get("ramp_bars", 8)), 1);
     c.silent = d.get("silent", false);
+    c.countin_bars = std::max(static_cast<int>(d.get("countin_bars", 0)), 0);
+    c.countin_sticks = d.get("countin_sticks", false);
+    c.play_bars = std::max(static_cast<int>(d.get("play_bars", 0)), 0);
     for (int r = 0; r < fbm::kDrumRows; ++r) {
         for (int s = 0; s < c.steps; ++s) {
             const int64_t i = static_cast<int64_t>(r) * c.steps + s;
@@ -501,6 +532,46 @@ Variant FbmAudio::input_read(int64_t from, int max_count) {
 
 int64_t FbmAudio::latency_frames() const {
     return stream_ ? static_cast<int64_t>(std::llround((stream_->latency + stream_->in_latency) * stream_->rate)) : 0;
+}
+
+int64_t FbmAudio::input_frame_at(int64_t out_frame) const {
+    if (!stream_) {
+        return out_frame;
+    }
+    // Próbka wyjścia brzmi po opóźnieniu wyjścia, a to, co wtedy zagrano, trafia do bufora wejścia po
+    // opóźnieniu wejścia; do tego przesunięcie numeracji osobnych strumieni.
+    const int64_t off = static_cast<int64_t>(std::llround(stream_->in_offset.load(std::memory_order_relaxed)));
+    return out_frame + off + latency_frames();
+}
+
+Dictionary FbmAudio::timing_info() const {
+    Dictionary d;
+    if (!stream_) {
+        return d;
+    }
+    const Stream &s = *stream_;
+    d["rate"] = s.rate;
+    d["out_latency_ms"] = s.latency * 1000.0;
+    d["in_latency_ms"] = s.in_latency * 1000.0;
+    d["duplex"] = s.input && !s.in_pa;
+    const double off = s.in_offset.load();
+    d["start_offset_ms"] = off * 1000.0 / s.rate;
+    // Opóźnienie wyjście → wejście, które looper kompensuje (wg sterownika, bez przesunięcia numeracji).
+    d["roundtrip_ms"] = latency_frames() * 1000.0 / s.rate;
+    // Dla porównania: to samo z czasów przetworników (0 – sterownik ich nie podaje).
+    const double dac0 = s.base_dac.load(), adc0 = s.in_base_adc.load();
+    if (dac0 > 0.0 && adc0 > 0.0) {
+        const int64_t f0 = s.base_frame.load(), i0 = s.in_base_frame.load();
+        // próbka wejścia z chwili, gdy brzmi próbka wyjścia f0, minus (f0 + przesunięcie)
+        d["timestamps_ms"] = ((i0 + (dac0 - adc0) * s.rate) - (f0 + off)) * 1000.0 / s.rate;
+    } else {
+        d["timestamps_ms"] = 0.0;
+    }
+    return d;
+}
+
+int64_t FbmAudio::probe_click() {
+    return sequencer_.probe_click();
 }
 
 void FbmAudio::looper_clear() {

@@ -16,6 +16,7 @@ constexpr double kPi = 3.14159265358979323846;
 constexpr int kDrumChannel = 9;
 constexpr int kNoteChannel = 0;
 constexpr float kDrumVelocity[3] = {0.0f, 0.62f, 1.0f};
+constexpr int kSticksKey = 31;     // General MIDI / GS: Sticks (pałeczki) – odliczanie perkusisty
 } // namespace
 
 Sequencer::Sequencer() {
@@ -161,7 +162,16 @@ void Sequencer::fire_tick() {
     if (tick_ >= per_bar) {
         tick_ = 0;
     }
-    if (config_.silent) {
+    const bool counting = bar_ < config_.countin_bars;
+    if (config_.play_bars > 0 && bar_ >= config_.play_bars) {
+        // koniec nagrania o zadanej długości – bez pierwszego uderzenia następnego taktu
+    } else if (counting && config_.countin_sticks && config_.mode == MetronomeMode::Drums) {
+        // Odliczanie perkusisty: pałeczki na każde uderzenie, pierwsze mocniej.
+        const int per_beat = std::max(config_.steps_per_beat, 1);
+        if (sf_ && tick_ % per_beat == 0) {
+            tsf_channel_note_on(sf_, kDrumChannel, kSticksKey, tick_ == 0 ? 1.0f : 0.8f);
+        }
+    } else if (config_.silent) {
         // zegar bez dźwięku
     } else if (config_.mode == MetronomeMode::Classic) {
         const int sub = std::max(config_.subdivision, 1);
@@ -197,6 +207,12 @@ void Sequencer::fire_tick() {
         }
     }
     current_bpm_.store(bpm_);
+}
+
+int64_t Sequencer::probe_click() {
+    const int64_t f = frame_.load() + static_cast<int64_t>(rate_ * 0.1);
+    probe_frame_.store(f);
+    return f;
 }
 
 void Sequencer::trigger_click(int sound_index, float gain) {
@@ -281,6 +297,19 @@ void Sequencer::render(float *stereo, int frames) {
         }
     }
     looper_.mix(stereo, frames, start, clock_start_.load(std::memory_order_relaxed));
+    // Impuls pomiaru opóźnienia (probe_click): 3 ms sinusa 1 kHz.
+    const int64_t probe = probe_frame_.load(std::memory_order_relaxed);
+    if (probe >= 0) {
+        const int len = static_cast<int>(rate_ * 0.003);
+        for (int64_t k = std::max(probe, start); k < std::min<int64_t>(probe + len, start + frames); ++k) {
+            const float v = 0.9f * static_cast<float>(std::sin(2.0 * kPi * 1000.0 * (k - probe) / rate_));
+            stereo[(k - start) * 2] += v;
+            stereo[(k - start) * 2 + 1] += v;
+        }
+        if (probe + len <= start + frames) {
+            probe_frame_.store(-1, std::memory_order_relaxed);
+        }
+    }
     // Kamerton: sinus z odrobiną 2. i 3. harmonicznej (słyszalny także w małych głośnikach),
     // głośność zmienia się płynnie (ok. 20 ms) – bez trzasków przy włączaniu i zmianie struny.
     const float target = tone_target_.load(std::memory_order_relaxed);

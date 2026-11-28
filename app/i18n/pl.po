@@ -1582,3 +1582,33 @@ msgstr "Duży gryf"
 msgid "Normal view"
 msgstr "Zwykły widok"
 
+msgid "Recording length"
+msgstr "Długość nagrania"
+
+msgid "free"
+msgstr "dowolna"
+
+msgid "4 bars"
+msgstr "4 takty"
+
+msgid "8 bars"
+msgstr "8 taktów"
+
+msgid "16 bars"
+msgstr "16 taktów"
+
+msgid "recording · bar %d of %d"
+msgstr "nagrywanie · takt %d z %d"
+
+msgid "Recording alignment correction:"
+msgstr "Korekta zgrania nagrań:"
+
+msgid "Recordings later"
+msgstr "Nagrania później"
+
+msgid "Recordings earlier"
+msgstr "Nagrania wcześniej"
+
+msgid "Shifts looper recordings against the backing: + earlier, − later. Saved for this driver and devices."
+msgstr "Przesuwa nagrania loopera względem podkładu: + wcześniej, − później. Zapamiętywane dla tego sterownika i urządzeń."
+

@@ -573,6 +573,20 @@ T = {
  "Outline colour": ("Kolor obwódki", "Randfarbe", "Color del contorno", "Цвет обводки"),
  "Large neck": ("Duży gryf", "Großes Griffbrett", "Mástil grande", "Большой гриф"),
  "Normal view": ("Zwykły widok", "Normale Ansicht", "Vista normal", "Обычный вид"),
+ "Recording length": ("Długość nagrania", "Aufnahmelänge", "Duración de la grabación", "Длина записи"),
+ "free": ("dowolna", "frei", "libre", "свободная"),
+ "4 bars": ("4 takty", "4 Takte", "4 compases", "4 такта"),
+ "8 bars": ("8 taktów", "8 Takte", "8 compases", "8 тактов"),
+ "16 bars": ("16 taktów", "16 Takte", "16 compases", "16 тактов"),
+ "recording · bar %d of %d": ("nagrywanie · takt %d z %d", "Aufnahme · Takt %d von %d", "grabando · compás %d de %d", "запись · такт %d из %d"),
+ "Recording alignment correction:": ("Korekta zgrania nagrań:", "Korrektur der Aufnahme-Synchronität:", "Corrección de sincronía de grabación:", "Коррекция синхронизации записи:"),
+ "Recordings later": ("Nagrania później", "Aufnahmen später", "Grabaciones más tarde", "Записи позже"),
+ "Recordings earlier": ("Nagrania wcześniej", "Aufnahmen früher", "Grabaciones antes", "Записи раньше"),
+ "Shifts looper recordings against the backing: + earlier, − later. Saved for this driver and devices.": (
+  "Przesuwa nagrania loopera względem podkładu: + wcześniej, − później. Zapamiętywane dla tego sterownika i urządzeń.",
+  "Verschiebt Looper-Aufnahmen gegenüber der Begleitung: + früher, − später. Gespeichert für diesen Treiber und diese Geräte.",
+  "Desplaza las grabaciones del looper respecto al acompañamiento: + antes, − después. Se guarda para este controlador y dispositivos.",
+  "Сдвигает записи лупера относительно аккомпанемента: + раньше, − позже. Сохраняется для этого драйвера и устройств."),
 }
 
 def esc(s): return s.replace("\\", "\\\\").replace('"', '\\"')

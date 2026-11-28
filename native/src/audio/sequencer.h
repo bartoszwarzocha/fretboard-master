@@ -40,6 +40,9 @@ struct MetronomeConfig {
     double ramp_step = 4.0;
     int ramp_bars = 8;
     bool silent = false;           // zegar bez dźwięku (looper bez podkładu)
+    int countin_bars = 0;          // odliczanie: pierwsze takty po starcie
+    bool countin_sticks = false;   // odliczanie samymi pałeczkami (GM 31) na każde uderzenie zamiast wzorca
+    int play_bars = 0;             // > 0: po tylu taktach (z odliczaniem) zegar biegnie dalej, ale cicho
 };
 
 // Ostatni krok widoczny w interfejsie (z numerem próbki, od której brzmi).
@@ -87,6 +90,8 @@ public:
     // --- wątek dźwięku ---
     void render(float *stereo, int frames);
     int64_t frames_rendered() const { return frame_.load(); }
+    // Pomiar opóźnienia: impuls (3 ms, 1 kHz) ok. 100 ms od teraz; zwraca numer jego pierwszej próbki.
+    int64_t probe_click();
 
 private:
     struct Voice {
@@ -134,6 +139,7 @@ private:
     std::atomic<int64_t> frame_{0};
     std::atomic<double> current_bpm_{96.0};
     std::atomic<int64_t> clock_start_{-1};
+    std::atomic<int64_t> probe_frame_{-1};
     std::atomic<double> bar_frames_{0.0};
     Looper looper_;
     std::atomic<float> volume_{0.7f};

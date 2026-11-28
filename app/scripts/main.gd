@@ -24,6 +24,11 @@ func _ready() -> void:
 		_measure_screens()
 	elif "--morph-test" in OS.get_cmdline_user_args():
 		_open_after_splash(&"encyclopedia")
+	elif "--audio-timing" in OS.get_cmdline_user_args():
+		_audio_timing()
+	elif "--looper-test" in OS.get_cmdline_user_args():
+		App.set_setting(&"met_mode", 2)
+		_open_after_splash(&"metronome")
 
 
 func _exit_tree() -> void:
@@ -86,6 +91,29 @@ func _open_after_splash(id: StringName) -> void:
 		await get_tree().create_timer(0.2).timeout
 	await get_tree().create_timer(1.0).timeout
 	App.go(id)
+
+
+# Diagnostyka zgrania nagrań: FretboardMaster.exe -- --audio-timing (bez zapisu ustawień). Wypisuje
+# opóźnienia wg sterownika, przesunięcie startu strumieni i to, co looper kompensował przed poprawką
+# (opóźnienia bez przesunięcia) i po niej. Z „--measure” także pięć impulsów pomiaru (słychać kliknięcia;
+# wynik tylko przy pętli zwrotnej – kabel albo mikrofon przy głośniku).
+func _audio_timing() -> void:
+	while App.current_screen == &"splash":
+		await get_tree().create_timer(0.2).timeout
+	var c := AudioEngine.ensure_open()
+	if c == null:
+		print("[opóźnienie] brak wyjścia: ", AudioEngine.last_error())
+		get_tree().quit()
+		return
+	await get_tree().create_timer(1.5).timeout
+	var info: Dictionary = c.timing_info()
+	print("[opóźnienie] sterownik %s, wejście %s: %s" % [AudioEngine.driver(), str(c.input_ok()), str(info)])
+	print("[opóźnienie] looper teraz: %.1f ms + przesunięcie numeracji %.1f ms; poprawka: %s" % [
+			float(info.get("roundtrip_ms", 0.0)), float(info.get("start_offset_ms", 0.0)), str(AudioEngine.latency_fix())])
+	if "--measure" in OS.get_cmdline_user_args():
+		var r: Dictionary = await AudioEngine.measure_latency()
+		print("[opóźnienie] pomiar impulsami: ", r)
+	get_tree().quit()
 
 
 # Pomiar czasów otwarcia ekranów: FretboardMaster.exe -- --measure-screens

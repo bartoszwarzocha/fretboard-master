@@ -18,6 +18,8 @@ const PRESETS := ["Rock", "Pop", "Shuffle", "Waltz", "Ballad 6/8"]
 const RED := Color("FF5A5F")
 const STOP := Color("FF7A59")
 const MAX_SECONDS := 600.0
+const REC_BARS := [0, 1, 2, 4, 8, 16]   # długość nagrania w taktach (0 – dowolna, do zatrzymania)
+const TOGGLE_GUARD_MS := 600            # po starcie albo końcu nagrania przycisk/R chwilę nie działa
 const PEAKS := 1024
 
 var scr: Node                      # ekran Metronomu (pomocnicze elementy i ustawienia rytmu)
@@ -41,6 +43,7 @@ var _playing := false
 var _selected := ""
 var _rec := {}                     # stan nagrywania (pusty – nie nagrywa)
 var _live_tick := 0
+var _toggle_at := -100000             # chwila ostatniego startu albo końca nagrania (ms)
 
 
 func _init(screen: Node) -> void:
@@ -52,6 +55,8 @@ func _init(screen: Node) -> void:
 func build(main: VBoxContainer, aside: VBoxContainer) -> void:
 	_core = AudioEngine.ensure_open()
 	_load_index()
+	if "--looper-test" in OS.get_cmdline_user_args():
+		_selftest.call_deferred()
 
 	main.add_child(scr._gap(31))
 	var row := HBoxContainer.new()
@@ -186,6 +191,9 @@ func _build_aside(aside: VBoxContainer) -> void:
 	with_f.add_child(note)
 	set_note.call()
 	rc.add_child(with_f)
+	rc.add_child(scr._field("Recording length", scr._chips_row(["free", "1 bar", "2 bars", "4 bars", "8 bars", "16 bars"],
+			int(App.setting(&"lp_rec_bars")), true, func(i: int) -> void:
+				App.set_setting(&"lp_rec_bars", i), true)))
 	rc.add_child(scr._field("Count-in before recording", scr._chips_row(["none", "1 bar", "2 bars"],
 			int(App.setting(&"lp_countin")), true, func(i: int) -> void:
 				App.set_setting(&"lp_countin", i), true)))
@@ -360,7 +368,7 @@ func _stop_core() -> void:
 
 
 ## Podkład do rdzenia: bed 0 – zegar bez dźwięku, 1 – automat perkusyjny, 2 – metronom klasyczny.
-func _configure(bpm: int, metre: int, bed: int) -> void:
+func _configure(bpm: int, metre: int, bed: int, countin := 0, bars := 0) -> void:
 	var same: bool = metre == scr._metre()
 	var g: int = scr._grid_kind() if same else 0
 	var pattern: Array = scr._pattern if same else scr._basic(metre, 0)
@@ -378,12 +386,20 @@ func _configure(bpm: int, metre: int, bed: int) -> void:
 		"subdivision": SUBS[clampi(int(App.setting(&"met_sub")), 0, 3)], "sound": int(App.setting(&"met_sound")),
 		"steps": steps, "steps_per_beat": scr._spq(metre, g), "kit": KITS[int(App.setting(&"met_kit"))][1],
 		"ramp": false, "silent": bed == 0,
+		# Odliczanie przed nagraniem: przy automacie same pałeczki na każde uderzenie (jak perkusista),
+		# przy metronomie – jego kliknięcia.
+		"countin_bars": countin, "countin_sticks": bed == 1,
+		"play_bars": countin + bars if bars > 0 else 0,
 	}, flat)
 
 
 # --- Nagrywanie ----------------------------------------------------------------------------
 
 func toggle_record() -> void:
+	# Ochrona przed podwójnym kliknięciem i kliknięciem „Zakończ” w chwili, gdy nagranie właśnie samo się
+	# skończyło: bez niej drugie naciśnięcie zaczynałoby od razu nowe nagranie.
+	if Time.get_ticks_msec() - _toggle_at < TOGGLE_GUARD_MS:
+		return
 	if _rec.is_empty():
 		_start_record()
 	else:
@@ -405,7 +421,8 @@ func _start_record() -> void:
 	var bed := 1 if int(App.setting(&"lp_rec_with")) == 0 else 2
 	var rate: float = _core.sample_rate()
 	var countin := int(App.setting(&"lp_countin"))
-	_configure(bpm, metre, bed)
+	var rec_bars := int(REC_BARS[clampi(int(App.setting(&"lp_rec_bars")), 0, REC_BARS.size() - 1)])
+	_configure(bpm, metre, bed, countin, rec_bars)
 	# Odsłuch zaznaczonych ścieżek w tym samym tempie i metrum – po odliczaniu, od pierwszego taktu.
 	var along: Array = _ticked().filter(func(t: Dictionary) -> bool: return int(t.bpm) == bpm and int(t.metre) == metre)
 	_core.looper_clear()
@@ -417,7 +434,9 @@ func _start_record() -> void:
 		_core.looper_play(loop.x, loop.y, roundi(countin * _bar_frames(bpm, metre, rate)))
 	_core.start()
 	_rec = {"bpm": bpm, "metre": metre, "bed": bed, "rate": rate, "countin": countin,
+			"bars": rec_bars,
 			"out": -1, "next": -1, "buf": PackedFloat32Array()}
+	_toggle_at = Time.get_ticks_msec()
 	_live = _add_row({}, true)
 	_live.set_live(tr("New recording"), _meta_text(bpm, metre, bed, _bed_name(bed)))
 	_update_empty()
@@ -431,7 +450,9 @@ func _poll_record(v: Dictionary) -> void:
 			return
 		var out := cs + roundi(int(_rec.countin) * _bar_frames(int(_rec.bpm), int(_rec.metre), float(_rec.rate)))
 		_rec.out = out
-		_rec.next = out + int(_core.latency_frames())
+		# Próbka wejścia z chwili, w której zabrzmi „raz” pierwszego taktu (opóźnienie wejścia i wyjścia,
+		# osobne zegary urządzeń, pomiar i ręczna korekta z ustawień dźwięku).
+		_rec.next = AudioEngine.input_frame_for(_core, out)
 	var chunk: Variant = _core.input_read(int(_rec.next), 1 << 17)
 	if chunk == null:
 		_show_error(tr("Recording interrupted – the input was not read in time."))
@@ -443,12 +464,15 @@ func _poll_record(v: Dictionary) -> void:
 	_rec.next = int(_rec.next) + (chunk as PackedFloat32Array).size()
 	var bar := _bar_frames(int(_rec.bpm), int(_rec.metre), float(_rec.rate))
 	var heard := int(v.frame)
+	var bars := int(_rec.bars)
 	var status: String
 	if heard < int(_rec.out):
-		var left := ceili((int(_rec.out) - heard) / bar)
-		status = tr("count-in: %d") % maxi(left, 1)
+		# Odliczanie uderzeniami: 4, 3, 2, 1 (w 2 taktach – od 8).
+		var beat := bar / float(BEATS[int(_rec.metre)])
+		status = tr("count-in: %d") % maxi(ceili((int(_rec.out) - heard) / beat), 1)
 	else:
-		status = tr("recording · bar %d") % (floori((heard - int(_rec.out)) / bar) + 1)
+		var n := floori((heard - int(_rec.out)) / bar) + 1
+		status = tr("recording · bar %d of %d") % [mini(n, bars), bars] if bars > 0 else tr("recording · bar %d") % n
 	_live.set_status(status)
 	_live_tick += 1
 	if _live_tick % 6 == 0 and buf.size() > 0:
@@ -458,18 +482,26 @@ func _poll_record(v: Dictionary) -> void:
 		_live.wave.peak_frames = buf.size()
 		_live.wave.trim = Vector2i(0, buf.size())
 		_live.wave.queue_redraw()
-	if buf.size() > MAX_SECONDS * float(_rec.rate):
-		_finish_record()
+	# Zadana liczba taktów: koniec dokładnie na granicy taktu, nagranie przycięte co do próbki.
+	var target := roundi(bars * bar) if bars > 0 else roundi(MAX_SECONDS * float(_rec.rate))
+	if buf.size() >= target:
+		buf.resize(target)
+		_rec.buf = buf
+		_finish_record(true)
 
 
-func _finish_record() -> void:
+func _finish_record(complete := false) -> void:
 	if _rec.is_empty():
 		return
-	if int(_rec.next) >= 0:
+	_toggle_at = Time.get_ticks_msec()
+	if int(_rec.next) >= 0 and not complete:
 		var chunk: Variant = _core.input_read(int(_rec.next), 1 << 17)
 		if chunk != null:
 			var b: PackedFloat32Array = _rec.buf
 			b.append_array(chunk)
+			var most := roundi(int(_rec.bars) * _bar_frames(int(_rec.bpm), int(_rec.metre), float(_rec.rate)))
+			if most > 0 and b.size() > most:
+				b.resize(most)
 			_rec.buf = b
 	var rec := _rec
 	_rec = {}
@@ -500,6 +532,52 @@ func _new_track(rec: Dictionary, frames: int) -> Dictionary:
 		"name": tr("Recording %d") % n, "bpm": int(rec.bpm), "metre": int(rec.metre), "bed": bed,
 		"bed_name": _bed_name(bed), "rate": float(rec.rate), "frames": frames,
 		"trim": [0, frames], "range": [], "on": true}
+
+
+# Test nagrywania (-- --looper-test, bez zapisu ustawień): 1 takt odliczania i 1 takt nagrania przy
+# 120 BPM, podwójne naciśnięcie, naciśnięcie tuż po samoczynnym końcu, zatrzymanie ręczne przed końcem.
+func _selftest() -> void:
+	var tree := scr.get_tree()
+	App.set_settings({&"lp_rec_bars": 1, &"lp_countin": 1, &"lp_rec_with": 0, &"met_bpm": 120})
+	await tree.create_timer(1.0).timeout
+	var m: Dictionary = await AudioEngine.measure_latency()
+	print("[looper-test] pomiar: ", m)
+	if m.ok:
+		AudioEngine.set_latency_fix("measured", float(m.residual_ms))
+	var n0 := _tracks.size()
+	toggle_record()
+	toggle_record()
+	print("[looper-test] podwójne naciśnięcie: nagrywa nadal = ", not _rec.is_empty())
+	var t0 := Time.get_ticks_msec()
+	while not _rec.is_empty() and Time.get_ticks_msec() - t0 < 10000:
+		await tree.create_timer(0.5).timeout
+		if not _rec.is_empty():
+			print("[looper-test] stan: next %d, próbek %d, zegar %s, wejście %d" % [int(_rec.next),
+					(_rec.buf as PackedFloat32Array).size(), str(_core.visual_state()), _core.input_frames()])
+	var bar := _bar_frames(120, scr._metre(), _core.sample_rate()) if _core else 0.0
+	print("[looper-test] komunikat: '%s', zgranie: %s" % [_error.text if _error else "", _core.timing_info() if _core else {}])
+	print("[looper-test] samoczynny koniec po %d ms, ścieżek +%d, długość %d próbek (takt %d)" % [
+			Time.get_ticks_msec() - t0, _tracks.size() - n0, int(_tracks[0].frames) if _tracks.size() > n0 else -1, roundi(bar)])
+	if _tracks.size() > n0:
+		# Przy pętli zwrotnej nagranie zawiera sam podkład: pierwsze uderzenie ma wypaść w próbce 0.
+		var smp := _track_samples(_tracks[0])
+		var pk := 0.0
+		for v in smp:
+			pk = maxf(pk, absf(v))
+		for k in smp.size():
+			if pk > 0.01 and absf(smp[k]) >= pk * 0.3:
+				print("[looper-test] pierwsze uderzenie w nagraniu: %.2f ms od początku" % (k * 1000.0 / _core.sample_rate()))
+				break
+	toggle_record()
+	print("[looper-test] naciśnięcie tuż po końcu: nowe nagranie = ", not _rec.is_empty())
+	await tree.create_timer(1.0).timeout
+	toggle_record()
+	await tree.create_timer(3.0).timeout
+	toggle_record()
+	print("[looper-test] koniec ręczny przed czasem: ścieżek +%d, długość %d próbek" % [_tracks.size() - n0,
+			int(_tracks[0].frames) if _tracks.size() > n0 else -1])
+	print("[looper-test] zgranie: ", _core.timing_info() if _core else {})
+	tree.quit()
 
 
 # --- Ścieżki: zmiany z wierszy -----------------------------------------------------------

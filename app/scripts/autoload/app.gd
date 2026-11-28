@@ -6,8 +6,9 @@ signal screen_requested(screen_id: StringName)
 signal settings_changed(key: StringName)
 
 const SETTINGS_PATH := "user://settings.cfg"
-# Test płynności (--morph-test) nie zapisuje ustawień – plik użytkownika zostaje nietknięty.
-var _readonly := "--morph-test" in OS.get_cmdline_user_args()
+# Testy (--morph-test, --audio-timing) nie zapisują ustawień – plik użytkownika zostaje nietknięty.
+var _readonly := "--morph-test" in OS.get_cmdline_user_args() or "--audio-timing" in OS.get_cmdline_user_args() \
+		or "--looper-test" in OS.get_cmdline_user_args()
 const LANGUAGES: Array[String] = ["", "en", "pl", "de", "es", "ru"]  # "" = język systemu
 
 # Wszystkie ustawienia z wartościami domyślnymi, pogrupowane jak zakładki okna konfiguracji
@@ -15,7 +16,7 @@ const LANGUAGES: Array[String] = ["", "en", "pl", "de", "es", "ru"]  # "" = jęz
 const DEFAULTS := {
 	&"audio": {
 		&"audio_driver": "wasapi", &"audio_input": "Default", &"input_channel": 0,
-		&"audio_output": "Default", &"output_volume": 70, &"input_monitor": false, &"buffer_samples": 128,
+		&"audio_output": "Default", &"output_volume": 70, &"input_monitor": false, &"buffer_samples": 128, &"latency_fix": {},
 		&"midi_output": "internal", &"midi_instrument": 24, &"bass_midi_instrument": 33,
 	},
 	&"guitar": {
@@ -53,7 +54,7 @@ const DEFAULTS := {
 	&"metronome": {
 		&"met_mode": 0, &"met_bpm": 96, &"met_metre": 2, &"met_sub": 0, &"met_sound": 0, &"met_grid": 0,
 		&"met_kit": 0, &"met_pattern": "", &"met_preset": 0, &"met_ramp": true, &"met_ramp_to": 120,
-		&"met_ramp_step": 4, &"met_ramp_bars": 8, &"lp_bed": 1, &"lp_rec_with": 0, &"lp_countin": 1,
+		&"met_ramp_step": 4, &"met_ramp_bars": 8, &"lp_bed": 1, &"lp_rec_with": 0, &"lp_countin": 1, &"lp_rec_bars": 3,
 	},
 	# Tuner – widok, tryb i wybrana struna (0 = 6. struna).
 	&"tuner": {

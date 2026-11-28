@@ -1582,3 +1582,33 @@ msgstr "Großes Griffbrett"
 msgid "Normal view"
 msgstr "Normale Ansicht"
 
+msgid "Recording length"
+msgstr "Aufnahmelänge"
+
+msgid "free"
+msgstr "frei"
+
+msgid "4 bars"
+msgstr "4 Takte"
+
+msgid "8 bars"
+msgstr "8 Takte"
+
+msgid "16 bars"
+msgstr "16 Takte"
+
+msgid "recording · bar %d of %d"
+msgstr "Aufnahme · Takt %d von %d"
+
+msgid "Recording alignment correction:"
+msgstr "Korrektur der Aufnahme-Synchronität:"
+
+msgid "Recordings later"
+msgstr "Aufnahmen später"
+
+msgid "Recordings earlier"
+msgstr "Aufnahmen früher"
+
+msgid "Shifts looper recordings against the backing: + earlier, − later. Saved for this driver and devices."
+msgstr "Verschiebt Looper-Aufnahmen gegenüber der Begleitung: + früher, − später. Gespeichert für diesen Treiber und diese Geräte."
+

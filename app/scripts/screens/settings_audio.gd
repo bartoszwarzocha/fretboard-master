@@ -39,6 +39,7 @@ var _monitor_button: Button
 var _latency_value: Label
 var _latency_hint: Label
 var _measured := 0.0          # zmierzone opóźnienie (ms); 0 – brak pomiaru
+var _fix_value: Label         # ręczna korekta zgrania nagrań loopera (ms)
 
 
 func _ready() -> void:
@@ -320,12 +321,58 @@ func _output_card() -> Control:
 	var measure := Button.new()
 	measure.text = "Measure latency"
 	_style_teal(measure)
-	measure.pressed.connect(func() -> void:
-		_latency_hint.text = "· " + tr("measuring…")
-		_check.measure_latency())
+	measure.pressed.connect(_measure)
 	lat.add_child(measure)
+
+	# Ręczna korekta zgrania nagrań loopera z podkładem – zapisywana dla bieżącego sterownika i urządzeń.
+	var fx := HBoxContainer.new()
+	fx.add_theme_constant_override("separation", 8)
+	col.add_child(fx)
+	var fl := _label("Recording alignment correction:", 15, ThemeManager.color("muted"))
+	fl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	fl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	fx.add_child(fl)
+	for d in [-1, 1]:
+		var b := _round_button("−" if d < 0 else "+", 0, func() -> void:
+			var m := float(AudioEngine.latency_fix().get("manual", 0.0))
+			AudioEngine.set_latency_fix("manual", clampf(m + d, -200.0, 200.0))
+			_update_latency())
+		b.tooltip_text = tr("Recordings later") if d < 0 else tr("Recordings earlier")
+		fx.add_child(b)
+		if d < 0:
+			_fix_value = _label("", 15, ThemeManager.color("text"), true)
+			_fix_value.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+			_fix_value.custom_minimum_size.x = 64
+			_fix_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			_fix_value.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			fx.add_child(_fix_value)
+	var hint := _label("Shifts looper recordings against the backing: + earlier, − later. Saved for this driver and devices.",
+			13, ThemeManager.color("faint"))
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	col.add_child(hint)
 	_update_latency()
 	return card
+
+
+# Pomiar opóźnienia w rdzeniu audio (ta sama droga co looper): impulsy na wyjściu szukane na wejściu.
+# Wynik dopełnia opóźnienie podawane przez sterownik i jest zapamiętany dla bieżących urządzeń.
+func _measure() -> void:
+	_latency_hint.text = "· " + tr("measuring…")
+	if not AudioEngine.available():
+		_check.measure_latency()
+		return
+	var r: Dictionary = await AudioEngine.measure_latency()
+	if not is_inside_tree():
+		return
+	if not r.ok:
+		_latency_hint.text = "· " + tr("no signal – connect the output to the input")
+		return
+	AudioEngine.set_latency_fix("measured", float(r.residual_ms))
+	_measured = float(r.total_ms)
+	print("[opóźnienie] pomiar: razem %.1f ms, sterownik %.1f ms, dopełnienie %.1f ms, rozrzut %.1f ms, %s" % [
+			r.total_ms, float(r.info.get("roundtrip_ms", 0.0)), r.residual_ms, r.spread_ms, str(r.info)])
+	_update_latency()
 
 
 func _midi_card() -> Control:
@@ -427,7 +474,15 @@ func _on_latency(ms: float) -> void:
 
 # Opóźnienie: zmierzone (po pomiarze) albo wyliczone z bufora – wejście i wyjście plus przetwornik.
 func _update_latency() -> void:
+	var fix := AudioEngine.latency_fix() if AudioEngine.available() else {}
+	if _fix_value:
+		var m := float(fix.get("manual", 0.0))
+		_fix_value.text = ("+%d ms" if m > 0 else "%d ms") % roundi(m)
 	var ms := _measured
+	if ms <= 0.0 and fix.has("measured"):
+		ms = AudioEngine.roundtrip_ms() - float(fix.get("manual", 0.0))
+		if ms > 0.0:
+			_measured = ms
 	if ms <= 0.0:
 		ms = int(App.setting(&"buffer_samples")) * 2.0 / AudioServer.get_mix_rate() * 1000.0 + 2.5
 	var lat := roundi(ms)
@@ -605,7 +660,7 @@ func _device_select(key: StringName, devices: PackedStringArray) -> OptionButton
 	return opt
 
 
-func _round_button(text: String, step: int) -> Button:
+func _round_button(text: String, step: int, on_press := Callable()) -> Button:
 	var b := Button.new()
 	b.text = text
 	b.custom_minimum_size = Vector2(40, 40)
@@ -615,6 +670,9 @@ func _round_button(text: String, step: int) -> Button:
 	for state in ["normal", "hover", "pressed"]:
 		var bg: Color = ThemeManager.color("surface_2") if state == "normal" else ThemeManager.color("border")
 		b.add_theme_stylebox_override(state, ThemeManager.box(bg, ThemeManager.color("border_strong"), 20, 1, 0, 0))
+	if on_press.is_valid():
+		b.pressed.connect(on_press)
+		return b
 	b.pressed.connect(func() -> void:
 		App.set_setting(&"output_volume", clampi(int(App.setting(&"output_volume")) + step, 0, 100))
 		_update_volume())

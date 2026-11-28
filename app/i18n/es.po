@@ -1582,3 +1582,33 @@ msgstr "Mástil grande"
 msgid "Normal view"
 msgstr "Vista normal"
 
+msgid "Recording length"
+msgstr "Duración de la grabación"
+
+msgid "free"
+msgstr "libre"
+
+msgid "4 bars"
+msgstr "4 compases"
+
+msgid "8 bars"
+msgstr "8 compases"
+
+msgid "16 bars"
+msgstr "16 compases"
+
+msgid "recording · bar %d of %d"
+msgstr "grabando · compás %d de %d"
+
+msgid "Recording alignment correction:"
+msgstr "Corrección de sincronía de grabación:"
+
+msgid "Recordings later"
+msgstr "Grabaciones más tarde"
+
+msgid "Recordings earlier"
+msgstr "Grabaciones antes"
+
+msgid "Shifts looper recordings against the backing: + earlier, − later. Saved for this driver and devices."
+msgstr "Desplaza las grabaciones del looper respecto al acompañamiento: + antes, − después. Se guarda para este controlador y dispositivos."
+
