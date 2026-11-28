@@ -92,9 +92,8 @@ func _build_content() -> void:
 	_hear_timer.wait_time = HEAR_POLL
 	_hear_timer.timeout.connect(_hear)
 	add_child(_hear_timer)
-	var core := AudioEngine.ensure_open()
-	if core and core.input_ok():
-		_hear_timer.start()
+	# Otwarcie urządzenia audio po pokazaniu ekranu – bez przestoju przy wejściu do Encyklopedii.
+	get_tree().create_timer(0.25).timeout.connect(_open_input)
 
 	# --- Gryf ---
 	var neck_card := PanelContainer.new()
@@ -1191,6 +1190,14 @@ func _tutorial_mode(m: String) -> void:
 const HEAR_POLL := 0.04
 const HEAR_HOLD := 0.3        # podświetlenie trwa jeszcze chwilę po wybrzmieniu
 const HEAR_CLARITY := 0.85    # tylko wyraźne pojedyncze dźwięki
+
+
+func _open_input() -> void:
+	if not is_inside_tree():
+		return
+	var core := AudioEngine.ensure_open()
+	if core and core.input_ok():
+		_hear_timer.start()
 
 
 func _hear() -> void:

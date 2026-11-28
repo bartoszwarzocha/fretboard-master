@@ -73,8 +73,20 @@ func count_processing_nodes(root: Node) -> int:
 func _viewports() -> Array[RID]:
 	var out: Array[RID] = [get_viewport().get_viewport_rid()]
 	for v in get_tree().root.find_children("*", "SubViewport", true, false):
-		out.append((v as SubViewport).get_viewport_rid())
+		if is_instance_valid(v) and not v.is_queued_for_deletion():
+			out.append((v as SubViewport).get_viewport_rid())
 	return out
+
+
+# Czy w drzewie zostały ekrany czekające na usunięcie (poprzedni ekran audytu).
+func _stale_screens() -> bool:
+	for n in get_tree().root.get_children():
+		if n.is_queued_for_deletion():
+			return true
+		for c in n.get_children():
+			if c.is_queued_for_deletion():
+				return true
+	return false
 
 
 # --- Audyt wszystkich ekranów ------------------------------------------------------
@@ -112,6 +124,10 @@ func _run_audit() -> void:
 		# Odczekanie, aż poprzedni ekran zniknie z drzewa, a nowy się narysuje (także przy wolnym
 		# pierwszym uruchomieniu, gdy kompilują się shadery).
 		await get_tree().create_timer(0.3).timeout
+		# Ekran mierzony dopiero, gdy jest bieżący, a poprzedni zniknął z drzewa (najwyżej 3 s).
+		var t_wait := Time.get_ticks_msec()
+		while (App.current_screen != StringName(screen) or _stale_screens()) and Time.get_ticks_msec() - t_wait < 3000:
+			await RenderingServer.frame_post_draw
 		for i in SETTLE_FRAMES:
 			await RenderingServer.frame_post_draw
 		var vps := _viewports()
@@ -133,7 +149,9 @@ func _run_audit() -> void:
 			# i od fokusu okna; najgorsza klatka z próbki.
 			var g := 0.0
 			var c := 0.0
-			for rid in vps:
+			# Lista viewportów na nowo w każdej klatce – zwolniony viewport nie jest odczytywany.
+			for rid in _viewports():
+				RenderingServer.viewport_set_measure_render_time(rid, true)
 				g += RenderingServer.viewport_get_measured_render_time_gpu(rid)
 				c += RenderingServer.viewport_get_measured_render_time_cpu(rid)
 			if i >= 3:
