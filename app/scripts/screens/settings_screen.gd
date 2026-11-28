@@ -331,6 +331,8 @@ func _build_guitar() -> void:
 	_colors(&"marker_color", "Note markers", "Default colour", ["5AA9FF", "7BD88F", "B98CFF", "E8ECF6"])
 	_colors(&"marker_root_color", "Root markers", "Default colour", ["FF7A59", "FF5A6E", "F2D15C", "E8ECF6"])
 	_colors(&"marker_text_color", "Text on markers", "Default colour", ["0B0F1E", "FFFFFF"])
+	_toggle(&"marker_rim", "Marker outline")
+	_colors(&"marker_rim_color", "Outline colour", "Default colour", ["0B0F1E", "F2D15C", "3FD0C9", "FF7A59"])
 
 
 func _build_graphics() -> void:

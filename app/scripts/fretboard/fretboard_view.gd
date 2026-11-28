@@ -21,7 +21,7 @@ signal fret_clicked(fret: int)
 # Ustawienia, których zmiana przebudowuje gryf.
 const KEYS := [&"neck_view", &"fretboard_wood", &"fret_metal", &"string_color", &"inlays", &"strings",
 		&"frets", &"tuning", &"instrument", &"bass_strings", &"bass_tuning", &"left_handed", &"neck_tilt_range", &"neck_zoom_max", &"neck_fov", &"shadows", &"msaa", &"notation",
-		&"marker_color", &"marker_root_color", &"marker_text_color"]
+		&"marker_color", &"marker_root_color", &"marker_text_color", &"marker_rim", &"marker_rim_color"]
 const GUTTER := 56.0        # kolumna nazw strun
 const TOP := 30.0           # wiersz numerów progów
 const PAD := 10.0
@@ -638,9 +638,10 @@ func _schema_notes(pos_fn: Callable, r_fn: Callable) -> void:
 	var pts := PackedVector2Array()
 	var cols := PackedColorArray()
 	# Aktywne: jasna obwódka i pełny krążek; nieaktywne: mniejsze, ciemne, bez obwódki.
-	for m in shown:
+	var rim := NeckSpec.rim_color()
+	for m in (shown if NeckSpec.rim_visible() else []):
 		var dim: bool = m[0].get("dim", false)
-		_disc(pts, cols, m[1], m[2] * (0.8 if dim else 1.12) + 2.0, NeckSpec.RIM_DIM if dim else NeckSpec.RIM)
+		_disc(pts, cols, m[1], m[2] * (0.8 if dim else 1.12) + 2.0, NeckSpec.RIM_DIM if dim else rim)
 	for m in shown:
 		var dim: bool = m[0].get("dim", false)
 		var base := NeckSpec.note_color(m[0].get("root", false))

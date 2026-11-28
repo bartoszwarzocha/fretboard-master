@@ -1570,3 +1570,9 @@ msgstr "Synth-Bass"
 msgid "electronic tone"
 msgstr "elektronischer Klang"
 
+msgid "Marker outline"
+msgstr "Rand der Markierungen"
+
+msgid "Outline colour"
+msgstr "Randfarbe"
+

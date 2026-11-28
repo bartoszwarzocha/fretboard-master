@@ -213,6 +213,16 @@ static func dim_color(col: Color) -> Color:
 	return col.lerp(Color("#1A1F2E"), 0.8)
 
 
+# Obwódka znacznika aktywnego: widoczna lub nie (Gitara i strój → Wygląd gryfu), kolor; "" = domyślny.
+static func rim_visible() -> bool:
+	return bool(App.setting(&"marker_rim"))
+
+
+static func rim_color() -> Color:
+	var hex := str(App.setting(&"marker_rim_color"))
+	return Color(hex) if not hex.is_empty() else RIM
+
+
 static func text_color(root: bool) -> Color:
 	var hex := str(App.setting(&"marker_text_color"))
 	if not hex.is_empty():

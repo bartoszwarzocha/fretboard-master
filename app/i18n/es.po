@@ -1570,3 +1570,9 @@ msgstr "Bajo sintetizado"
 msgid "electronic tone"
 msgstr "sonido electrónico"
 
+msgid "Marker outline"
+msgstr "Contorno de los marcadores"
+
+msgid "Outline colour"
+msgstr "Color del contorno"
+

@@ -22,6 +22,7 @@ const DEFAULTS := {
 		&"neck_view": "electric_3d", &"fretboard_wood": "auto", &"fret_metal": "auto",
 		&"inlays": "auto", &"string_color": "auto",
 		&"marker_color": "", &"marker_root_color": "", &"marker_text_color": "",
+		&"marker_rim": true, &"marker_rim_color": "",
 	},
 	&"look": {
 		&"theme": "graphite", &"accent": "", &"bg_mode": "pattern", &"bg_color": "", &"bg_color2": "",

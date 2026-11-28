@@ -1570,3 +1570,9 @@ msgstr "Bas syntezatorowy"
 msgid "electronic tone"
 msgstr "brzmienie elektroniczne"
 
+msgid "Marker outline"
+msgstr "Obwódka znaczników"
+
+msgid "Outline colour"
+msgstr "Kolor obwódki"
+

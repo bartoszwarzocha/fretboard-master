@@ -190,7 +190,10 @@ func set_notes(notes: Array) -> void:
 		_markers.append({"pos": Vector3(x, y, spec.string_z(s, xs)), "r": r, "note": n})
 	var mm_r := _rims.multimesh
 	var mm_d := _discs.multimesh
-	mm_r.instance_count = _markers.size()
+	# Obwódki wyłączone w ustawieniach – bez instancji (zero kosztu rysowania).
+	var rim_on := NeckSpec.rim_visible()
+	var rim := NeckSpec.rim_color()
+	mm_r.instance_count = _markers.size() if rim_on else 0
 	mm_d.instance_count = _markers.size()
 	for i in _markers.size():
 		var m: Dictionary = _markers[i]
@@ -200,8 +203,9 @@ func set_notes(notes: Array) -> void:
 		# Aktywny: krążek ×1,12 z jasną obwódką; nieaktywny: mniejszy, ciemny, z ciemną obwódką.
 		var dim: bool = m.note.get("dim", false)
 		var k := 0.8 if dim else 1.12
-		mm_r.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * (k + 0.1), r * 0.9, r * (k + 0.1))), p - Vector3(0, 0.05, 0)))
-		mm_r.set_instance_color(i, NeckSpec.RIM_DIM if dim else NeckSpec.RIM)
+		if rim_on:
+			mm_r.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * (k + 0.1), r * 0.9, r * (k + 0.1))), p - Vector3(0, 0.05, 0)))
+			mm_r.set_instance_color(i, NeckSpec.RIM_DIM if dim else rim)
 		mm_d.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(r * k, r, r * k)), p))
 		var col: Color = NeckSpec.note_color(m.note.get("root", false))
 		if dim:

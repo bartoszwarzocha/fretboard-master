@@ -1569,3 +1569,9 @@ msgstr ""
 msgid "electronic tone"
 msgstr ""
 
+msgid "Marker outline"
+msgstr ""
+
+msgid "Outline colour"
+msgstr ""
+

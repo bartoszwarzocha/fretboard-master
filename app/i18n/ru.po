@@ -1570,3 +1570,9 @@ msgstr "Синтезаторный бас"
 msgid "electronic tone"
 msgstr "электронный звук"
 
+msgid "Marker outline"
+msgstr "Обводка маркеров"
+
+msgid "Outline colour"
+msgstr "Цвет обводки"
+

@@ -569,6 +569,8 @@ T = {
  "warm, woody tone": ("ciepłe, drewniane brzmienie", "warmer, holziger Klang", "sonido cálido y amaderado", "тёплый, деревянный звук"),
  "Synth bass": ("Bas syntezatorowy", "Synth-Bass", "Bajo sintetizado", "Синтезаторный бас"),
  "electronic tone": ("brzmienie elektroniczne", "elektronischer Klang", "sonido electrónico", "электронный звук"),
+ "Marker outline": ("Obwódka znaczników", "Rand der Markierungen", "Contorno de los marcadores", "Обводка маркеров"),
+ "Outline colour": ("Kolor obwódki", "Randfarbe", "Color del contorno", "Цвет обводки"),
 }
 
 def esc(s): return s.replace("\\", "\\\\").replace('"', '\\"')
