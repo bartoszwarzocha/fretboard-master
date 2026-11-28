@@ -136,7 +136,9 @@ func _build_content() -> void:
 	_big_btn = _chip_button("", false)
 	_big_btn.custom_minimum_size = Vector2(42, 38)
 	_big_btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_big_btn.add_theme_constant_override("icon_max_width", 20)
+	_big_btn.add_theme_constant_override("icon_max_width", int(ICON))
+	_big_btn.expand_icon = false
+	_big_btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_big_btn.pressed.connect(func(): _set_big(not _big))
 	head.add_child(_big_btn)
 
@@ -1443,6 +1445,7 @@ func _set_big(on: bool) -> void:
 
 # Duży gryf: pięciolinia znika, dolny rząd (lista i karta) płynnie obniża się do zwartego układu,
 # a gryf zajmuje zwolnione miejsce; powrót – odwrotnie.
+const ICON := 18.0             # ikona przełącznika „Duży gryf” (px przy skali 1)
 const BOTTOM_H := 430.0
 const BOTTOM_H_BIG := 262.0
 const ANIM := 0.28
@@ -1482,18 +1485,21 @@ var _icons := {}
 
 
 func _frame_icon(collapse: bool) -> Texture2D:
-	var px := roundi(20.0 * get_viewport().get_final_transform().get_scale().y)
+	# Siatka 18 × 18, linie grubości 2 na całych pikselach, narożniki prostokątne (miter) – cztery
+	# jednakowe narożniki o ramionach 4 px; tekstura dokładnie w rozmiarze ekranowym.
+	var k := get_viewport().get_final_transform().get_scale().y if is_inside_tree() else 1.0
+	var px := maxi(roundi(ICON * k), 8)
 	var ink := ThemeManager.color("text")
 	var key := "%s|%d|%s" % [collapse, px, ink.to_html()]
 	if _icons.has(key):
 		return _icons[key]
-	var d := "M9 3.5V9H3.5M14.5 3.5V9H20M9 20.5V15H3.5M14.5 20.5V15H20" if collapse \
-			else "M3.5 9V3.5H9M15 3.5H20.5V9M3.5 15V20.5H9M15 20.5H20.5V15"
-	var svg := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">' \
-			+ '<path d="%s" fill="none" stroke="#%s" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' \
+	var d := "M6 2V6H2M12 2V6H16M6 16V12H2M12 16V12H16" if collapse \
+			else "M2 6V2H6M12 2H16V6M2 12V16H6M16 12V16H12"
+	var svg := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18">' \
+			+ '<path d="%s" fill="none" stroke="#%s" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/></svg>' \
 			% [d, ink.to_html(false)]
 	var img := Image.new()
-	img.load_svg_from_string(svg, float(px) / 24.0)
+	img.load_svg_from_string(svg, float(px) / 18.0)
 	var tex := ImageTexture.create_from_image(img)
 	_icons[key] = tex
 	return tex
