@@ -40,7 +40,8 @@ var playing := Vector2i(-1, -1)    # dźwięk odtwarzany (Encyklopedia – odsł
 var demo := false           # przykładowa skala (podgląd w ustawieniach) – odtwarzana po każdej zmianie
 var ruler := false          # linijka progów z zakresem pod gryfem (zamiast numerów progów nad nim)
 var fret_range := Vector2i(-1, -1)   # zakres progów (od, do); (-1, -1) – cały gryf bez przyciemnienia
-var heard := Vector2i(-1, -1)      # dźwięk zagrany na gitarze (Encyklopedia) – podświetlenie z poświatą
+var heard := Vector2i(-1, -1)      # dźwięk zagrany na gitarze (Encyklopedia) – główne miejsce, z poświatą
+var heard_more: Array = []         # pozostałe miejsca tej samej wysokości – słabsze podświetlenie
 var heard_ok := true               # w skali (zielony) albo poza nią (pomarańczowy)
 var heard_text := ""
 var _heard_r := 10.0
@@ -436,9 +437,12 @@ func _store_cells(pos_fn: Callable, r: float) -> void:
 		draw_arc(c, r + 5.0, 0, TAU, 40, ThemeManager.color("focus"), 3.5, true)
 
 
-func set_heard(p: Vector2i, ok: bool, text := "") -> void:
-	if heard != p or (p.x >= 0 and (heard_ok != ok or heard_text != text)):
-		heard = p
+# Mikrofon nie wie, na której strunie zagrano – podświetlane są wszystkie miejsca tej samej wysokości:
+# main – pełne (np. miejsce z wariantu superpozycji), more – słabsze.
+func set_heard(main: Vector2i, more: Array, ok: bool, text := "") -> void:
+	if heard != main or heard_more != more or (main.x >= 0 and (heard_ok != ok or heard_text != text)):
+		heard = main
+		heard_more = more
 		heard_ok = ok
 		heard_text = text
 		queue_redraw()
@@ -523,20 +527,29 @@ func _draw_shifts(r: float) -> void:
 
 # Dźwięk zagrany na gitarze – na wierzchu, po przyciemnieniu zakresu.
 func _draw_heard(r: float) -> void:
-	if heard.x < 0 or not _cells.has(heard):
+	for c in heard_more:
+		_heard_disc(c, r, 0.45)
+	_heard_disc(heard, r, 1.0)
+
+
+# Pełne koło z poświatą w miejscu dźwięku (promień z odstępu strun w tym miejscu – działa też
+# w perspektywie 3D) i nazwa dźwięku na wierzchu; a – krycie (miejsca dodatkowe słabsze).
+func _heard_disc(cell: Vector2i, r: float, a: float) -> void:
+	if cell.x < 0 or not _cells.has(cell):
 		return
-	# Pełne koło z poświatą w miejscu dźwięku (promień z odstępu strun w tym miejscu – działa też
-	# w perspektywie 3D) i nazwa dźwięku na wierzchu.
-	var hc: Vector2 = _cells[heard]
+	var hc: Vector2 = _cells[cell]
 	var g := Color("#4CD964") if heard_ok else Color("#FF9A3C")
 	var rr := r * 1.12
-	var nb := Vector2i(heard.x + (1 if heard.x == 0 else -1), heard.y)
+	var nb := Vector2i(cell.x + (1 if cell.x == 0 else -1), cell.y)
 	if _cells.has(nb):
 		rr = maxf(rr, (_cells[nb] - hc).length() * 0.46)
 	for k in 4:
-		draw_circle(hc, rr + 4.0 + k * 4.0, Color(g, 0.18 - k * 0.04))
-	draw_circle(hc, rr + 1.0, g)
-	_text_c(hc, heard_text, maxi(int(rr * 1.05), 8), Color("#08130B") if heard_ok else Color("#1E0F02"))
+		draw_circle(hc, rr + 4.0 + k * 4.0, Color(g, (0.18 - k * 0.04) * a))
+	draw_circle(hc, rr + 1.0, Color(g, a) if a >= 1.0 else g.lerp(Color("#1A1F2E"), 1.0 - a))
+	var ink := Color("#08130B") if heard_ok else Color("#1E0F02")
+	if a < 1.0:
+		ink = Color.WHITE
+	_text_c(hc, heard_text, maxi(int(rr * 1.05), 8), ink)
 
 
 # Podświetlenie odtwarzanego dźwięku – tylko nakładka 2D, bez ponownego rysowania sceny 3D.

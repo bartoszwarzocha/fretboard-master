@@ -25,6 +25,7 @@ const GREEN := Color("7BD88F")
 const YELLOW := Color("F2D15C")
 const ORANGE := Color("FF7A59")
 const IN_TUNE := 5.0          # ± centów uznawane za nastrojenie
+const IN_TUNE_HYST := 1.5     # histereza: „nastrojona” od ±3,5 ct, przestaje być powyżej ±6,5 ct
 const POLL := 1.0 / 30.0
 const HOLD := 1.5             # s – jak długo pokazywać ostatni odczyt po wybrzmieniu
 const A4_MIN := 415
@@ -49,7 +50,6 @@ var _tone_button: Button
 var _tone_on := false
 
 var _poll_t := 0.0
-var _hz_history: Array[float] = []
 var _last_seen := -100.0
 var _has_reading := false
 var _target := 0              # MIDI dźwięku odniesienia bieżącego odczytu
@@ -57,6 +57,9 @@ var _target_string := -1      # struna (0 = 6. struna) albo -1 przy dźwięku sp
 var _hz := 0.0
 var _cents := 0.0
 var _shown_cents := 0.0       # wskazówka – płynnie dochodzi do _cents
+var _tracker := PitchTracker.new()   # bramka, pominięcie ataku, histereza dźwięku, wygładzanie
+var _tuned := false           # stan „nastrojona” z histerezą
+var _shown_int := 0           # liczba centów na wyświetlaczu (zmiana dopiero o pełny cent)
 var _string_cents: Array = []
 
 
@@ -305,50 +308,47 @@ func _process(delta: float) -> void:
 	if _poll_t >= POLL:
 		_poll_t = 0.0
 		if _core and _core.input_ok():
-			var p: Dictionary = _core.pitch()
-			if float(p.hz) > 0.0 and float(p.clarity) >= 0.8:
-				_feed(float(p.hz))
-		if _has_reading and _now() - _last_seen > HOLD:
+			_tracker.set_a4(_a4())
+			if _tracker.feed(_core.pitch(), _now()):
+				_feed()
+		if _has_reading and _now() - _tracker.last_time() > HOLD:
 			_reset_reading()
 			_refresh()
-	# Wskazówka dochodzi płynnie do odczytu.
+	# Wskazówka dochodzi płynnie do odczytu (tłumienie ok. 0,15 s – bez drgań).
 	if absf(_shown_cents - _cents) > 0.05:
-		_shown_cents = lerpf(_shown_cents, _cents, clampf(delta * 14.0, 0.0, 1.0))
+		_shown_cents = lerpf(_shown_cents, _cents, clampf(delta * 7.0, 0.0, 1.0))
 		_update_meter()
 
 
-## Nowy odczyt częstotliwości (mediana z kilku ostatnich – bez skoków przy wybrzmiewaniu).
-func _feed(hz: float) -> void:
-	_hz_history.append(hz)
-	if _hz_history.size() > 5:
-		_hz_history.remove_at(0)
-	var sorted := _hz_history.duplicate()
-	sorted.sort()
-	_hz = sorted[sorted.size() / 2]
+## Nowy odczyt z PitchTracker: struna docelowa (z histerezą) i odchyłka w centach.
+func _feed() -> void:
+	_hz = _tracker.hz()
+	var v := _tracker.value
 	_last_seen = _now()
 	_has_reading = true
 	var notes: Array = _tuning()[2]
-	var a4 := _a4()
 	if _chromatic():
 		_target_string = -1
 	elif _mode() == 1:
 		_target_string = clampi(int(App.setting(&"tun_string")), 0, notes.size() - 1)
 	else:
-		# Najbliższa struna stroju; dźwięk dalej niż 2,5 półtonu od każdej – zwykły stroik chromatyczny.
-		_target_string = -1
-		var best := 1e9
+		# Najbliższa struna stroju; bieżąca zostaje, dopóki inna nie jest wyraźnie (o pół tonu) bliżej.
+		# Dźwięk dalej niż 2,5 półtonu od każdej struny – zwykły stroik chromatyczny.
+		var best := -1
 		for i in notes.size():
-			var c := _cents_from(_hz, float(notes[i]), a4)
-			if absf(c) < absf(best):
-				best = c
-				_target_string = i
-		if absf(best) > 250.0:
-			_target_string = -1
-	if _target_string >= 0:
-		_target = int(notes[_target_string])
-	else:
-		_target = roundi(69.0 + 12.0 * log(_hz / a4) / log(2.0))
-	_cents = _cents_from(_hz, float(_target), a4)
+			if best < 0 or absf(v - notes[i]) < absf(v - notes[best]):
+				best = i
+		var cur := _target_string
+		if cur >= 0 and cur < notes.size() and absf(v - notes[cur]) <= absf(v - notes[best]) + 0.5 \
+				and absf(v - notes[cur]) <= 2.5:
+			best = cur
+		_target_string = best if absf(v - notes[best]) <= 2.5 else -1
+	_target = int(notes[_target_string]) if _target_string >= 0 else _tracker.note
+	_cents = (v - _target) * 100.0
+	var lim := IN_TUNE + (IN_TUNE_HYST if _tuned else -IN_TUNE_HYST)
+	_tuned = absf(_cents) <= lim
+	if absf(_cents - _shown_int) >= 1.0:
+		_shown_int = roundi(_cents)
 	if _target_string >= 0:
 		if _string_cents.size() != notes.size():
 			_string_cents.resize(notes.size())
@@ -361,8 +361,10 @@ func _feed(hz: float) -> void:
 
 func _reset_reading() -> void:
 	_has_reading = false
-	_hz_history.clear()
+	_tracker.reset()
+	_tuned = false
 	_cents = 0.0
+	_shown_int = 0
 
 
 static func _cents_from(hz: float, midi: float, a4: float) -> float:
@@ -378,10 +380,10 @@ func _now() -> float:
 func _refresh() -> void:
 	if _note == null:
 		return
-	var ok := _has_reading and absf(_cents) <= IN_TUNE
+	var ok := _has_reading and _tuned
 	var accent: Color = ThemeManager.color("accent")
 	var col: Color = GREEN if ok else accent
-	var c := roundi(_cents)
+	var c := _shown_int
 	if _has_reading:
 		_note.text = _note_name(_target, _target_string)
 	else:
@@ -426,7 +428,7 @@ func _update_meter() -> void:
 		return
 	_meter.set("cents", clampf(_shown_cents, -50.0, 50.0))
 	_meter.set("active", _has_reading)
-	_meter.set("ok", _has_reading and absf(_cents) <= IN_TUNE)
+	_meter.set("ok", _has_reading and _tuned)
 	_meter.set("raw_cents", _cents)
 	_meter.set("accent", ThemeManager.color("accent"))
 	_meter.queue_redraw()
@@ -471,7 +473,7 @@ func _build_strings() -> void:
 	for v in _string_cents:
 		states.append(-9 if v == null else 0 if absf(v) <= IN_TUNE else signi(roundi(v)))
 	var sig := str([_chromatic(), _has_reading, _target_string, posmod(_target, 12) if _chromatic() else 0,
-			absf(_cents) <= IN_TUNE, states, App.setting(&"tun_string"), App.setting(&"tun_note"), Instrument.tuning_id(), Instrument.string_count(),
+			_tuned, states, App.setting(&"tun_string"), App.setting(&"tun_note"), Instrument.tuning_id(), Instrument.string_count(),
 			_strings_row.get_child_count()])
 	if sig == _strings_sig:
 		return
@@ -546,7 +548,7 @@ func _build_notes() -> void:
 		var border: Color = ThemeManager.color("accent") if on else ThemeManager.color("border_strong")
 		for st in ["normal", "hover", "pressed"]:
 			b.add_theme_stylebox_override(st, ThemeManager.box(bg if st == "normal" else bg.lightened(0.05), border, 14, 1, 0, 0))
-		var tc: Color = (GREEN if absf(_cents) <= IN_TUNE else ThemeManager.color("accent")) if on and _has_reading else ThemeManager.color("text")
+		var tc: Color = (GREEN if _tuned else ThemeManager.color("accent")) if on and _has_reading else ThemeManager.color("text")
 		for c in ["font_color", "font_hover_color", "font_pressed_color"]:
 			b.add_theme_color_override(c, tc)
 		b.pressed.connect(func() -> void:
@@ -812,7 +814,8 @@ func _round_button(text: String, step: int) -> Button:
 		_update_texts()
 		_update_tone()
 		if _has_reading:
-			_feed(_hz)
+			_tracker.set_a4(_a4())
+			_feed()
 		else:
 			_refresh())
 	return b

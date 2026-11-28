@@ -54,8 +54,7 @@ var _anim: Tween
 var _staff_box: Control
 var _range_box: Control
 var _tutorial: TutorialOverlay
-var _heard_hist: Array = []   # ostatnie odczyty (MIDI) – mediana bez skoków
-var _heard_t := 0.0           # czas ostatniego pewnego odczytu (s)
+var _tracker := PitchTracker.new()   # bramka, pominięcie ataku, histereza, wygładzanie odczytu
 
 var _fb: FretboardView
 var _title: Label
@@ -1241,7 +1240,6 @@ func _tutorial_mode(m: String) -> void:
 
 const HEAR_POLL := 0.04
 const HEAR_HOLD := 0.3        # podświetlenie trwa jeszcze chwilę po wybrzmieniu
-const HEAR_CLARITY := 0.85    # tylko wyraźne pojedyncze dźwięki
 
 
 func _open_input() -> void:
@@ -1256,44 +1254,56 @@ func _hear() -> void:
 	var core := AudioEngine.ensure_open()
 	var now := Time.get_ticks_msec() / 1000.0
 	if core == null or not core.input_ok() or _play_timer.time_left > 0.0:
-		_fb.set_heard(Vector2i(-1, -1), false, "")
+		_tracker.reset()
+		_fb.set_heard(Vector2i(-1, -1), [], false, "")
 		return
-	var p: Dictionary = core.pitch()
-	if float(p.hz) > 0.0 and float(p.clarity) >= HEAR_CLARITY:
-		var a4 := clampf(float(App.setting(&"a4")), 400.0, 480.0)
-		_heard_hist.append(roundi(69.0 + 12.0 * log(float(p.hz) / a4) / log(2.0)))
-		if _heard_hist.size() > 3:
-			_heard_hist.remove_at(0)
-		_heard_t = now
-		var sorted := _heard_hist.duplicate()
-		sorted.sort()
-		var midi: int = sorted[sorted.size() / 2]
+	_tracker.set_a4(clampf(float(App.setting(&"a4")), 400.0, 480.0))
+	if _tracker.feed(core.pitch(), now):
+		var midi := _tracker.note
 		var in_scale := false
 		for n in _notes:
 			if Theory.pc(n) == posmod(midi, 12):
 				in_scale = true
-		_fb.set_heard(_heard_cell(midi), in_scale, NoteNames.note_name(midi, App.notation()))
-	elif now - _heard_t > HEAR_HOLD:
-		_heard_hist.clear()
-		_fb.set_heard(Vector2i(-1, -1), false, "")
+		var cells := _heard_cells(midi)
+		_fb.set_heard(cells[0], cells[1], in_scale, NoteNames.note_name(midi, App.notation()))
+	elif _tracker.note >= 0 and now - _tracker.last_time() > HEAR_HOLD:
+		_tracker.reset()
+		_fb.set_heard(Vector2i(-1, -1), [], false, "")
 
 
-# Miejsce zagranego dźwięku: z bieżącego wariantu superpozycji, inaczej najbliżej środka zakresu.
-func _heard_cell(midi: int) -> Vector2i:
+# Miejsca zagranego dźwięku (ta sama wysokość, nie tylko nazwa): wszystkie w zakresie progów i puste
+# struny. Główne: z bieżącego wariantu superpozycji, inaczej najbliżej środka zakresu (pusta struna,
+# gdy dźwięk nie mieści się w zakresie). Wynik: [główne, [pozostałe]].
+func _heard_cells(midi: int) -> Array:
+	var spec := _fb.spec
+	var all: Array = []
+	for s in spec.strings:
+		var f: int = midi - spec.open_midi[s]
+		if f >= 0 and f <= spec.frets and (f == 0 or (f >= _from and f <= _to)):
+			all.append(Vector2i(s, f))
+	var main := Vector2i(-1, -1)
 	if not _variants.is_empty():
 		for n in _variants[_variant]:
 			if n.midi == midi:
-				return Vector2i(n.s, n.f)
-	var spec := _fb.spec
-	var best := Vector2i(-1, -1)
-	var dist := 1e9
-	var mid := (_from + _to) * 0.5
-	for s in spec.strings:
-		var f: int = midi - spec.open_midi[s]
-		if f >= 0 and f <= spec.frets and absf(f - mid) < dist:
-			dist = absf(f - mid)
-			best = Vector2i(s, f)
-	return best
+				main = Vector2i(n.s, n.f)
+	if main.x < 0:
+		var dist := 1e9
+		var mid := (_from + _to) * 0.5
+		for c in all:
+			var d := absf(c.y - mid) + (0.0 if c.y >= _from and c.y <= _to else 100.0)
+			if d < dist:
+				dist = d
+				main = c
+	if main.x < 0:
+		# Poza zakresem i nie na pustej strunie – najbliższe miejsce na całym gryfie.
+		var dist := 1e9
+		for s in spec.strings:
+			var f: int = midi - spec.open_midi[s]
+			if f >= 0 and f <= spec.frets and absf(f - (_from + _to) * 0.5) < dist:
+				dist = absf(f - (_from + _to) * 0.5)
+				main = Vector2i(s, f)
+	all.erase(main)
+	return [main, all]
 
 
 # --- Odsłuch -------------------------------------------------------------------------

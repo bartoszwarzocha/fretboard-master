@@ -7,6 +7,14 @@
 
 namespace fbm {
 
+// Wysokość szczytu NSDF po interpolacji parabolicznej (krótkie okresy – szczyt między próbkami).
+double PitchDetector::peak_value(int tau) const {
+    const double y0 = nsdf_[tau - 1], y1 = nsdf_[tau], y2 = nsdf_[tau + 1];
+    const double den = y0 - 2.0 * y1 + y2;
+    const double shift = std::fabs(den) > 1e-12 ? std::clamp(0.5 * (y0 - y2) / den, -0.5, 0.5) : 0.0;
+    return y1 - 0.25 * (y0 - y2) * shift;
+}
+
 PitchResult PitchDetector::detect(const float *x, int n, double rate, double min_hz, double max_hz) {
     PitchResult r;
     if (n < 64 || rate <= 0.0) {
@@ -92,6 +100,23 @@ PitchResult PitchDetector::detect(const float *x, int n, double rate, double min
             chosen = p;
             break;
         }
+    }
+    // Korekta oktawy: przy słabym dźwięku podstawowym (silna 2. harmoniczna – częste na gitarze przy
+    // kostce i na basie) szczyt NSDF przy połowie okresu bywa ponad progiem i wygrywa. Gdy szczyt przy
+    // podwójnym okresie jest wyraźnie wyższy, prawdziwy okres jest dwa razy dłuższy (oktawa niżej).
+    // Przy dźwięku naprawdę o tym okresie szczyt przy 2P jest niższy (wybrzmiewanie, okno) – bez zmiany.
+    for (int round = 0; round < 2; ++round) {
+        int better = -1;
+        for (int p : peaks) {
+            if (p > chosen * 19 / 10 && p < chosen * 21 / 10 && p < max_lag - 1
+                    && peak_value(p) > peak_value(chosen) + OCTAVE_MARGIN && (better < 0 || nsdf_[p] > nsdf_[better])) {
+                better = p;
+            }
+        }
+        if (better < 0) {
+            break;
+        }
+        chosen = better;
     }
     // Interpolacja paraboliczna wokół szczytu.
     const double y0 = nsdf_[chosen - 1], y1 = nsdf_[chosen], y2 = nsdf_[chosen + 1];

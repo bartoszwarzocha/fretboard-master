@@ -16,10 +16,14 @@ struct PitchResult {
 
 class PitchDetector {
 public:
-    // Zakres: od niskiego H w stroju obniżonym (ok. 55 Hz) do 1500 Hz.
+    // Zakres: domyślnie od ok. 55 Hz (gitara; bas – od 27 Hz, zob. FbmAudio::set_pitch_min) do 1500 Hz.
     PitchResult detect(const float *x, int n, double rate, double min_hz = 55.0, double max_hz = 1500.0);
 
+    // O ile szczyt NSDF przy podwójnym okresie musi być wyższy, by uznać dźwięk za oktawę niżej.
+    static constexpr double OCTAVE_MARGIN = 0.01;
+
 private:
+    double peak_value(int tau) const;
     std::vector<double> nsdf_;
 };
 
