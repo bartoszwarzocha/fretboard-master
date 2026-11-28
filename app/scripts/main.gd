@@ -22,6 +22,8 @@ func _ready() -> void:
 	_show(&"splash")   # ekran startowy (reklama firmy) zawsze – bez wyłączania i pomijania
 	if "--measure-screens" in OS.get_cmdline_user_args():
 		_measure_screens()
+	elif "--morph-test" in OS.get_cmdline_user_args():
+		_open_after_splash(&"encyclopedia")
 
 
 func _exit_tree() -> void:
@@ -76,6 +78,14 @@ func _report_time(what: String, t0: int) -> void:
 	var build_ms := (Time.get_ticks_usec() - t0) / 1000.0
 	await RenderingServer.frame_post_draw
 	print("[ekran] %s: budowa %.0f ms, pierwsza klatka %.0f ms" % [what, build_ms, (Time.get_ticks_usec() - t0) / 1000.0])
+
+
+# Test płynności „Dużego gryfu”: FretboardMaster.exe -- --morph-test --morph-log (Encyklopedia po starcie).
+func _open_after_splash(id: StringName) -> void:
+	while App.current_screen == &"splash":
+		await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(1.0).timeout
+	App.go(id)
 
 
 # Pomiar czasów otwarcia ekranów: FretboardMaster.exe -- --measure-screens

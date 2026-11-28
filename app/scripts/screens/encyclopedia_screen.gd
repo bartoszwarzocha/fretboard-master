@@ -50,7 +50,8 @@ var _listen_btn: Control
 var _big := false               # tryb „Duży gryf”: panel gryfu na całą wysokość, dół zwinięty do paska
 var _big_btn: Button
 var _bottom: Control
-var _anim: Tween
+var _morph: LayoutMorph
+var _staff_holder: Control      # pięciolinia w obudowie z przycięciem – szerokość animowana do zera
 var _staff_box: Control
 var _range_box: Control
 var _tutorial: TutorialOverlay
@@ -161,18 +162,38 @@ func _build_content() -> void:
 	_bottom = bottom
 	_catalog_card = _catalog()
 	bottom.add_child(_catalog_card)
+	# Karta i pięciolinia w jednym rzędzie bez odstępu – odstęp jest w obudowie pięciolinii, więc przy
+	# jej zwijaniu karta rośnie płynnie aż do krawędzi.
+	var right := HBoxContainer.new()
+	right.add_theme_constant_override("separation", 0)
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bottom.add_child(right)
 	var card := _card(22)
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bottom.add_child(card)
+	right.add_child(card)
+	# Treść karty w obudowie z przycięciem: jej wysokość nie blokuje animacji rzędu.
+	var clip := Control.new()
+	clip.clip_contents = true
+	card.add_child(clip)
 	_detail = VBoxContainer.new()
 	_detail.add_theme_constant_override("separation", 12)
-	card.add_child(_detail)
+	_detail.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	clip.add_child(_detail)
+	_staff_holder = Control.new()
+	_staff_holder.clip_contents = true
+	_staff_holder.custom_minimum_size.x = STAFF_W + 18.0
+	right.add_child(_staff_holder)
 	_staff_box = _staff_card()
-	bottom.add_child(_staff_box)
+	_staff_holder.add_child(_staff_box)
+	_staff_box.anchor_bottom = 1.0
+	_staff_box.offset_left = 18.0
+	_staff_box.offset_right = 18.0 + STAFF_W
 
 	_big = bool(App.setting(&"enc_big_neck"))
 	_refresh_all()
 	_apply_big(false)
+	if "--morph-test" in OS.get_cmdline_user_args():
+		_morph_test()
 
 
 func _exit_tree() -> void:
@@ -1025,7 +1046,7 @@ func _chord_chip(c: Dictionary) -> Button:
 
 func _staff_card() -> Control:
 	var card := PanelContainer.new()
-	card.custom_minimum_size.x = 680
+	card.custom_minimum_size.x = STAFF_W
 	card.add_theme_stylebox_override("panel", ThemeManager.box(Color("F4F1EA"), Color.TRANSPARENT, ThemeManager.radius_card(), 0, 18, 14))
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 4)
@@ -1273,15 +1294,15 @@ func _hear() -> void:
 		_fb.set_heard(Vector2i(-1, -1), [], false, "")
 
 
-# Miejsca zagranego dźwięku (ta sama wysokość, nie tylko nazwa): wszystkie w zakresie progów i puste
-# struny. Główne: z bieżącego wariantu superpozycji, inaczej najbliżej środka zakresu (pusta struna,
-# gdy dźwięk nie mieści się w zakresie). Wynik: [główne, [pozostałe]].
+# Miejsca zagranego dźwięku (ta sama wysokość, nie tylko nazwa): wszystkie w zakresie progów (pusta
+# struna tylko wtedy, gdy zakres zaczyna się od progu 0). Główne: z bieżącego wariantu superpozycji,
+# inaczej najbliżej środka zakresu. Wynik: [główne, [pozostałe]].
 func _heard_cells(midi: int) -> Array:
 	var spec := _fb.spec
 	var all: Array = []
 	for s in spec.strings:
 		var f: int = midi - spec.open_midi[s]
-		if f >= 0 and f <= spec.frets and (f == 0 or (f >= _from and f <= _to)):
+		if f >= 0 and f <= spec.frets and f >= _from and f <= _to:
 			all.append(Vector2i(s, f))
 	var main := Vector2i(-1, -1)
 	if not _variants.is_empty():
@@ -1292,12 +1313,12 @@ func _heard_cells(midi: int) -> Array:
 		var dist := 1e9
 		var mid := (_from + _to) * 0.5
 		for c in all:
-			var d := absf(c.y - mid) + (0.0 if c.y >= _from and c.y <= _to else 100.0)
+			var d := absf(c.y - mid)
 			if d < dist:
 				dist = d
 				main = c
 	if main.x < 0:
-		# Poza zakresem i nie na pustej strunie – najbliższe miejsce na całym gryfie.
+		# Poza zakresem – najbliższe miejsce na całym gryfie.
 		var dist := 1e9
 		for s in spec.strings:
 			var f: int = midi - spec.open_midi[s]
@@ -1446,37 +1467,40 @@ func _set_big(on: bool) -> void:
 # Duży gryf: pięciolinia znika, dolny rząd (lista i karta) płynnie obniża się do zwartego układu,
 # a gryf zajmuje zwolnione miejsce; powrót – odwrotnie.
 const ICON := 18.0             # ikona przełącznika „Duży gryf” (px przy skali 1)
+const STAFF_W := 680.0
 const BOTTOM_H := 430.0
 const BOTTOM_H_BIG := 262.0
-const ANIM := 0.28
 
 
 func _apply_big(animate: bool) -> void:
 	_big_btn.icon = _frame_icon(_big)
 	_big_btn.tooltip_text = tr("Normal view") if _big else tr("Large neck")
-	if _anim and _anim.is_valid():
-		_anim.kill()
+	if _morph:
+		_morph.kill()
 	var h := BOTTOM_H_BIG if _big else BOTTOM_H
+	var w := 0.0 if _big else STAFF_W + 18.0
 	if not animate:
-		_staff_box.visible = not _big
-		_staff_box.modulate.a = 1.0
 		_bottom.custom_minimum_size.y = h
+		_staff_holder.custom_minimum_size.x = w
+		_staff_box.modulate.a = 0.0 if _big else 1.0
 		_build_detail()
 		return
-	_anim = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	if _big:
-		_anim.tween_property(_staff_box, "modulate:a", 0.0, ANIM * 0.45)
-		_anim.tween_callback(func():
-			_staff_box.visible = false
-			_build_detail())
-		_anim.tween_property(_bottom, "custom_minimum_size:y", h, ANIM)
-	else:
-		_anim.tween_property(_bottom, "custom_minimum_size:y", h, ANIM)
-		_anim.tween_callback(func():
-			_build_detail()
-			_staff_box.modulate.a = 0.0
-			_staff_box.visible = true)
-		_anim.tween_property(_staff_box, "modulate:a", 1.0, ANIM * 0.45)
+	# Jedna animacja: rząd paneli niżej/wyżej, pięciolinia zwija się w prawo i gaśnie, karta rośnie
+	# w jej miejsce, a treść karty zmienia układ, gdy jest wygaszona. Gryf zajmuje zwolnione miejsce.
+	_morph = LayoutMorph.new(self).hold(_fb, Vector2(0, _bottom.custom_minimum_size.y - h)) \
+			.height(_bottom, h).width(_staff_holder, w) \
+			.fade(_staff_box, 0.0 if _big else 1.0).swap(_detail, _build_detail)
+	_morph.play()
+
+
+# Test płynności (argument „--morph-test --morph-log”): cztery przełączenia co sekundę, potem koniec.
+func _morph_test() -> void:
+	for i in 4:
+		await get_tree().create_timer(1.0).timeout
+		_set_big(not _big)
+	await get_tree().create_timer(1.0).timeout
+	_set_big(false)
+	get_tree().quit()
 
 
 # Ikona przełącznika (SVG, ostra przy każdej skali): cztery narożniki na zewnątrz – „pełny ekran”,

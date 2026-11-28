@@ -6,6 +6,8 @@ signal screen_requested(screen_id: StringName)
 signal settings_changed(key: StringName)
 
 const SETTINGS_PATH := "user://settings.cfg"
+# Test płynności (--morph-test) nie zapisuje ustawień – plik użytkownika zostaje nietknięty.
+var _readonly := "--morph-test" in OS.get_cmdline_user_args()
 const LANGUAGES: Array[String] = ["", "en", "pl", "de", "es", "ru"]  # "" = język systemu
 
 # Wszystkie ustawienia z wartościami domyślnymi, pogrupowane jak zakładki okna konfiguracji
@@ -174,7 +176,7 @@ func reset_group(group: StringName) -> void:
 	for key in DEFAULTS[group]:
 		if _config.has_section_key("settings", key):
 			_config.erase_section_key("settings", key)
-	_config.save(SETTINGS_PATH)
+	_save()
 	if group == &"language":
 		_apply_language()
 	for key in DEFAULTS[group]:
@@ -190,7 +192,7 @@ func set_settings(values: Dictionary) -> void:
 			changed.append(key)
 	if changed.is_empty():
 		return
-	_config.save(SETTINGS_PATH)
+	_save()
 	if &"language" in changed:
 		_apply_language()
 	for key in changed:
@@ -201,10 +203,15 @@ func set_setting(key: StringName, value: Variant) -> void:
 	if setting(key) == value and typeof(setting(key)) == typeof(value):
 		return
 	_config.set_value("settings", key, value)
-	_config.save(SETTINGS_PATH)
+	_save()
 	if key == &"language":
 		_apply_language()
 	settings_changed.emit(key)
+
+
+func _save() -> void:
+	if not _readonly:
+		_config.save(SETTINGS_PATH)
 
 
 func language() -> String:

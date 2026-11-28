@@ -82,6 +82,8 @@ func _ready() -> void:
 var _hint: Control
 var _ss := SS
 var _hint_tween: Tween
+var _reserve := Vector2.ZERO       # rozmiar zarezerwowany na czas płynnej zmiany układu (reserve)
+var _atlas: AtlasTexture           # widoczna część obrazu 3D (lewy górny róg bufora)
 
 
 func _fade_hint(a: float) -> void:
@@ -217,7 +219,9 @@ func _rebuild() -> void:
 		_vp.add_child(_neck)
 		_neck.set_notes(_notes)
 		_tex = TextureRect.new()
-		_tex.texture = _vp.get_texture()
+		_atlas = AtlasTexture.new()
+		_atlas.atlas = _vp.get_texture()
+		_tex.texture = _atlas
 		_tex.flip_h = _lefty
 		_tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		_tex.stretch_mode = TextureRect.STRETCH_SCALE
@@ -310,15 +314,32 @@ static func warm_up(host: Node) -> void:
 	vp.queue_free()
 
 
+# Płynna zmiana układu (LayoutMorph): na czas animacji bufor obrazu 3D ma stały rozmiar – największy
+# z obu stanów – a widok pokazuje tylko jego lewy górny fragment. Bez tego bufor (z MSAA) byłby
+# tworzony od nowa w każdej klatce animacji, co kosztuje kilkakrotność zwykłej klatki.
+func reserve(px: Vector2) -> void:
+	_reserve = px
+	_on_resized()
+
+
+func release() -> void:
+	_reserve = Vector2.ZERO
+	_on_resized()
+
+
 func _on_resized() -> void:
 	_place_hint()
 	if _vp and size.x > 1 and size.y > 1:
-		_ss = clampf(sqrt(SS_PIXELS / maxf(size.x * size.y, 1.0)), 1.4, SS)
-		_vp.size = Vector2i(size * _ss)
-		# Duży obraz (Encyklopedia – gryf na całą szerokość): nadpróbkowanie 2× już wygładza krawędzie,
-		# więc MSAA najwyżej 2× – bufor wielopróbkowy 4× zająłby kilkadziesiąt MB pamięci karty.
-		var cap := Viewport.MSAA_2X if _vp.size.x * _vp.size.y > 1500000 else Viewport.MSAA_4X
-		_vp.msaa_3d = mini(Graphics.msaa_mode(), cap) as Viewport.MSAA
+		var full := size.max(_reserve) if _reserve != Vector2.ZERO else size
+		var want := Vector2i(full * clampf(sqrt(SS_PIXELS / maxf(full.x * full.y, 1.0)), 1.4, SS))
+		if _vp.size != want:
+			_ss = float(want.x) / full.x
+			_vp.size = want
+			# Duży obraz (Encyklopedia – gryf na całą szerokość): nadpróbkowanie 2× już wygładza krawędzie,
+			# więc MSAA najwyżej 2× – bufor wielopróbkowy 4× zająłby kilkadziesiąt MB pamięci karty.
+			var cap := Viewport.MSAA_2X if _vp.size.x * _vp.size.y > 1500000 else Viewport.MSAA_4X
+			_vp.msaa_3d = mini(Graphics.msaa_mode(), cap) as Viewport.MSAA
+		_atlas.region = Rect2(Vector2.ZERO, (size * _ss).min(Vector2(_vp.size)))
 		_apply_camera()
 	queue_redraw()
 
@@ -327,7 +348,7 @@ func _apply_camera() -> void:
 	var r := _region_3d()
 	var lim := _neck.pan_limit(_zoom)
 	_pan = _pan.clamp(-lim, lim)
-	_neck.fit_camera(size * _ss, Rect2(r.position * _ss, r.size * _ss), float(App.setting(&"neck_fov")),
+	_neck.fit_camera(Vector2(_vp.size), Rect2(r.position * _ss, r.size * _ss), float(App.setting(&"neck_fov")),
 			_zoom, _pitch, _yaw, _pan)
 	_render()
 	queue_redraw()
