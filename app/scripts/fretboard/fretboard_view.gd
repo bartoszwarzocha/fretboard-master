@@ -97,8 +97,21 @@ func _place_hint() -> void:
 
 class _MouseHint extends Control:
 	const ITEMS := [["wheel", "zoom"], ["left", "move"], ["right", "rotate"]]
-	const W := 16.0
+	const W := 17.0               # ikona myszy (logicznie), proporcje rysunku SVG 24 × 34
 	const H := 24.0
+	const FONT := 13
+	const INK := Color("#E8ECF6")
+	# Mysz wektorowo (SVG): zaokrąglony korpus, dwa przyciski z linią podziału, kółko pośrodku;
+	# wyróżniony element – kolorem akcentu. Rysunek renderowany do tekstury w rozmiarze ekranowym
+	# (ostry przy każdej skali), raz na kolor i rozmiar.
+	const SVG := """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 34" width="{w}" height="{h}">
+<defs><clipPath id="b"><rect x="2" y="2" width="20" height="30" rx="10" ry="10"/></clipPath></defs>
+<g clip-path="url(#b)">{fill}</g>
+<rect x="2" y="2" width="20" height="30" rx="10" ry="10" fill="none" stroke="{ink}" stroke-width="1.8"/>
+<path d="M2 13.5H22M12 2V13.5" fill="none" stroke="{ink}" stroke-width="1.6"/>
+<rect x="9.75" y="5" width="4.5" height="7.5" rx="2.25" ry="2.25" fill="{wheel}" stroke="{ink}" stroke-width="1.3"/>
+</svg>"""
+	static var _cache := {}
 
 	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -107,35 +120,43 @@ class _MouseHint extends Control:
 		var f := ThemeManager.font_body
 		var w := 0.0
 		for it in ITEMS:
-			w += W + 6.0 + f.get_string_size(tr(it[1]), HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x + 16.0
-		return Vector2(w + 12.0, H + 12.0)
+			w += W + 7.0 + f.get_string_size(tr(it[1]), HORIZONTAL_ALIGNMENT_LEFT, -1, FONT).x + 18.0
+		return Vector2(w + 14.0, H + 14.0)
+
+	static func _icon(kind: String, acc: Color, px: Vector2i) -> Texture2D:
+		var key := "%s|%s|%s" % [kind, acc.to_html(), px]
+		if _cache.has(key):
+			return _cache[key]
+		var a := "#" + acc.to_html(false)
+		var fill := ""
+		match kind:
+			"left": fill = '<rect x="0" y="0" width="12" height="13.5" fill="%s"/>' % a
+			"right": fill = '<rect x="12" y="0" width="12" height="13.5" fill="%s"/>' % a
+		var svg := SVG.format({"w": 24, "h": 34, "ink": "#" + INK.to_html(false), "fill": fill,
+				"wheel": a if kind == "wheel" else "none"})
+		var img := Image.new()
+		img.load_svg_from_string(svg, float(px.y) / 34.0)
+		var tex := ImageTexture.create_from_image(img)
+		_cache[key] = tex
+		return tex
 
 	func _draw() -> void:
 		var f := ThemeManager.font_body
-		var bg := Color("#070A14", 0.72)
-		draw_rect(Rect2(Vector2.ZERO, size), bg)
-		var ink := Color("#E8ECF6", 0.9)
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color("#070A14", 0.86)
+		sb.set_corner_radius_all(9)
+		draw_style_box(sb, Rect2(Vector2.ZERO, size))
 		var acc := ThemeManager.color("accent")
-		var x := 8.0
-		var y := 6.0
+		# Rozmiar ikony w pikselach ekranu – tekstura 1:1, bez rozmywania.
+		var k := get_global_transform_with_canvas().get_scale().y
+		var px := Vector2i(roundi(W * k), roundi(H * k))
+		var x := 9.0
+		var y := 7.0
 		for it in ITEMS:
-			var r := Rect2(x, y, W, H)
-			# Korpus myszy: obrys, podział przycisków, zaznaczony przycisk lub kółko.
-			var top := r.position.y + H * 0.42
-			var cx := r.position.x + W * 0.5
-			match it[0]:
-				"left":
-					draw_rect(Rect2(r.position, Vector2(W * 0.5, H * 0.42)), acc)
-				"right":
-					draw_rect(Rect2(Vector2(cx, r.position.y), Vector2(W * 0.5, H * 0.42)), acc)
-			draw_rect(r, ink, false, 1.5)
-			draw_line(Vector2(r.position.x, top), Vector2(r.end.x, top), ink, 1.5)
-			draw_line(Vector2(cx, r.position.y), Vector2(cx, top), ink, 1.5)
-			if it[0] == "wheel":
-				draw_rect(Rect2(cx - 2.0, r.position.y + 3.0, 4.0, 7.0), acc)
+			draw_texture_rect(_icon(it[0], acc, px), Rect2(x, y, W, H), false)
 			var t: String = tr(it[1])
-			draw_string(f, Vector2(r.end.x + 6.0, y + H * 0.5 + 5.0), t, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, ink)
-			x = r.end.x + 6.0 + f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x + 16.0
+			draw_string(f, Vector2(x + W + 7.0, y + H * 0.5 + FONT * 0.36), t, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT, Color(INK, 0.92))
+			x += W + 7.0 + f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT).x + 18.0
 
 
 func set_notes(notes: Array) -> void:
