@@ -1533,3 +1533,39 @@ msgstr ""
 msgid "treble clef, octave lower (guitar)"
 msgstr ""
 
+msgid "Bass tuning:"
+msgstr ""
+
+msgid "Bass guitar (3D)"
+msgstr ""
+
+msgid "Whole step down"
+msgstr ""
+
+msgid "bass clef"
+msgstr ""
+
+msgid "bass clef, octave lower (bass guitar)"
+msgstr ""
+
+msgid "picked"
+msgstr ""
+
+msgid "Fretless bass"
+msgstr ""
+
+msgid "smooth, singing tone"
+msgstr ""
+
+msgid "Acoustic bass"
+msgstr ""
+
+msgid "warm, woody tone"
+msgstr ""
+
+msgid "Synth bass"
+msgstr ""
+
+msgid "electronic tone"
+msgstr ""
+

@@ -30,6 +30,11 @@ const GUITARS := {
 		"bind": 1.6, "fret_r": 1.15, "fret_h": 1.2, "h_nut": 1.8, "h_end": 3.0,
 		"wood": "electric", "metal": "nickel", "strings": "nickel", "inlays": "trapezoids",
 		"neck": Color("#6A2E1C"), "nut_col": Color("#EDE6D3")},
+	# Gitara basowa 4-strunowa: menzura 34", szersze progi, grubsze struny (wymiary dla 4 strun).
+	"bass": {"L": 864.0, "nut": 38.0, "w12": 53.0, "span_nut": 30.0, "span_br": 57.0, "R": 305.0,
+		"bind": 0.0, "fret_r": 1.35, "fret_h": 1.25, "h_nut": 2.2, "h_end": 4.6, "base": 4,
+		"wood": "rosewood", "metal": "nickel", "strings": "nickel", "inlays": "dots",
+		"neck": Color("#6A3A20"), "nut_col": Color("#EDE6D3")},
 }
 
 const WOODS := {
@@ -45,10 +50,8 @@ const METALS := {
 }
 const BINDING := Color("#E8DDC0")
 
-# Struny dodatkowe (7. i 8.) poniżej najniższej struny stroju.
-const EXTRA_LOW := [35, 30]
-
 var kind := "electric"
+var bass := false
 var g: Dictionary
 var strings := 6
 var frets := 22
@@ -76,16 +79,16 @@ static func is_3d(view: String) -> bool:
 static func from_settings() -> NeckSpec:
 	var s := NeckSpec.new()
 	var view := str(App.setting(&"neck_view"))
+	s.bass = Instrument.is_bass()
 	s.kind = view.trim_suffix("_3d") if is_3d(view) else "electric"
+	if s.bass:
+		s.kind = "bass"
 	if not GUITARS.has(s.kind):
 		s.kind = "electric"
 	s.g = GUITARS[s.kind]
-	s.strings = clampi(int(App.setting(&"strings")), 6, 8)
+	s.strings = Instrument.string_count()
 	s.frets = clampi(int(App.setting(&"frets")), 12, 24)
-	var tuning: Array = ModuleHeader.TUNING_MIDI.get(str(App.setting(&"tuning")), ModuleHeader.TUNING_MIDI["standard"])
-	var low_to_high: Array = tuning.duplicate()
-	for i in s.strings - 6:
-		low_to_high.push_front(EXTRA_LOW[i])
+	var low_to_high: Array = Instrument.open_low_to_high().duplicate()
 	low_to_high.reverse()
 	s.open_midi = low_to_high
 	var w := str(App.setting(&"fretboard_wood"))
@@ -100,9 +103,10 @@ static func from_settings() -> NeckSpec:
 	s.bind = s.g.bind
 	s.L = s.g.L
 	# Dodatkowe struny poszerzają gryf o kolejne odstępy.
-	var extra := s.strings - 6
-	var sp_nut: float = s.g.span_nut / 5.0
-	var sp_br: float = s.g.span_br / 5.0
+	var base: int = s.g.get("base", 6)
+	var extra := s.strings - base
+	var sp_nut: float = s.g.span_nut / float(base - 1)
+	var sp_br: float = s.g.span_br / float(base - 1)
 	s.span_nut = s.g.span_nut + sp_nut * extra
 	s.span_br = s.g.span_br + sp_br * extra
 	s.nut_w = s.g.nut + sp_nut * extra
@@ -142,7 +146,10 @@ func string_y(s: int, x: float) -> float:
 
 
 # Grubość struny w mm (indeks 0 = najwyższa); 7. i 8. struna – grubsze od 6.
+# Bas: wg wysokości pustej struny (E1 ok. 2,67 mm = .105", G2 ok. 1,25 mm, H0 ok. 3,4 mm).
 func gauge(s: int) -> float:
+	if bass:
+		return 2.67 * pow(0.78, (float(open_midi[s]) - 28.0) / 5.0)
 	var table: Array
 	match string_kind:
 		"nylon": table = [0.72, 0.84, 1.04, 0.76, 0.92, 1.12]
@@ -155,6 +162,11 @@ func gauge(s: int) -> float:
 
 # Rodzaj materiału struny: plain/wound dla danego kompletu.
 func string_material(s: int) -> String:
+	if bass:
+		match string_kind:
+			"bronze": return "bronze"
+			"black": return "black"
+			_: return "nickelw"     # struny basowe – wszystkie nawijane
 	match string_kind:
 		"nylon": return "nylon" if s < 3 else "silver"
 		"bronze": return "steel" if s < 2 else "bronze"
@@ -210,7 +222,7 @@ static func text_color(root: bool) -> Color:
 
 # Nazwa pustej struny do opisu (najwyższa struna małą literą, gdy powtarza nazwę najniższej).
 func string_label(s: int) -> String:
-	var t := NoteNames.note_name(open_midi[s], App.notation())
-	if s == 0 and t == NoteNames.note_name(open_midi[strings - 1], App.notation()):
+	var t := Instrument.string_name(open_midi[s])
+	if s == 0 and t == Instrument.string_name(open_midi[strings - 1]):
 		t = t.to_lower()
 	return t

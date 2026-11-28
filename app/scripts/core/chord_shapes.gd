@@ -152,7 +152,7 @@ func _check(choice: Array) -> void:
 	if fingers > 4:
 		return
 	# Koszt: mniej strun, rozciągnięcie, więcej palców, barré – drożej.
-	var cost := (6 - count) * 3.0 + (hi - lo) * 1.5 + fingers * 1.0 + (2.0 if not barre.is_empty() else 0.0)
+	var cost := (_n - count) * 3.0 + (hi - lo) * 1.5 + fingers * 1.0 + (2.0 if not barre.is_empty() else 0.0)
 	var cells := []
 	var muted := []
 	for s in range(_n - 1, -1, -1):

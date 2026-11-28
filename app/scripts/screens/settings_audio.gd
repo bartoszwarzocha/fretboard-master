@@ -16,6 +16,11 @@ const INSTRUMENTS := [
 	[29, "Overdriven guitar", "overdriven tone"], [0, "Piano", "for ear training"],
 	[33, "Bass guitar", "fingerstyle"],
 ]
+# Brzmienia basu (ustawienie bass_midi_instrument – gdy instrumentem jest gitara basowa).
+const BASS_INSTRUMENTS := [
+	[33, "Bass guitar", "fingerstyle"], [34, "Bass guitar", "picked"], [35, "Fretless bass", "smooth, singing tone"],
+	[32, "Acoustic bass", "warm, woody tone"], [38, "Synth bass", "electronic tone"],
+]
 const SEGMENTS := 32
 const BLUE := Color("5AA9FF")
 const GREEN := Color("7BD88F")
@@ -345,9 +350,10 @@ func _midi_card() -> Control:
 	tiles.add_theme_constant_override("separation", 12)
 	col.add_child(tiles)
 	var group := ButtonGroup.new()
-	var current := int(App.setting(&"midi_instrument"))
+	var key := &"bass_midi_instrument" if Instrument.is_bass() else &"midi_instrument"
+	var current := int(App.setting(key))
 	var accent := ThemeManager.color("accent")
-	for inst in INSTRUMENTS:
+	for inst in (BASS_INSTRUMENTS if Instrument.is_bass() else INSTRUMENTS):
 		var b := Button.new()
 		b.toggle_mode = true
 		b.button_group = group
@@ -362,7 +368,7 @@ func _midi_card() -> Control:
 		b.add_theme_stylebox_override("pressed", on)
 		b.add_theme_stylebox_override("hover_pressed", on)
 		b.button_pressed = inst[0] == current
-		b.pressed.connect(App.set_setting.bind(&"midi_instrument", inst[0]))
+		b.pressed.connect(App.set_setting.bind(key, inst[0]))
 		tiles.add_child(b)
 		var box := VBoxContainer.new()
 		box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

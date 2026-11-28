@@ -1534,3 +1534,39 @@ msgstr "Violinschlüssel"
 msgid "treble clef, octave lower (guitar)"
 msgstr "Violinschlüssel, oktaviert (Gitarre)"
 
+msgid "Bass tuning:"
+msgstr "Bass-Stimmung:"
+
+msgid "Bass guitar (3D)"
+msgstr "E-Bass (3D)"
+
+msgid "Whole step down"
+msgstr "Ganzton tiefer"
+
+msgid "bass clef"
+msgstr "Bassschlüssel"
+
+msgid "bass clef, octave lower (bass guitar)"
+msgstr "Bassschlüssel, oktaviert (E-Bass)"
+
+msgid "picked"
+msgstr "mit Plektrum"
+
+msgid "Fretless bass"
+msgstr "Bundloser Bass"
+
+msgid "smooth, singing tone"
+msgstr "weicher, singender Klang"
+
+msgid "Acoustic bass"
+msgstr "Akustikbass"
+
+msgid "warm, woody tone"
+msgstr "warmer, holziger Klang"
+
+msgid "Synth bass"
+msgstr "Synth-Bass"
+
+msgid "electronic tone"
+msgstr "elektronischer Klang"
+

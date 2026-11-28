@@ -557,6 +557,18 @@ T = {
  "You can bring this guide back at any time with the „?” button at the top of the window.": ("Ten przewodnik przywołasz w każdej chwili przyciskiem „?” u góry okna.", "Diese Anleitung rufst du jederzeit mit der Schaltfläche „?” oben im Fenster wieder auf.", "Puedes volver a abrir esta guía en cualquier momento con el botón «?» en la parte superior de la ventana.", "Это руководство можно открыть в любой момент кнопкой «?» вверху окна."),
  "treble clef": ("klucz wiolinowy", "Violinschlüssel", "clave de sol", "скрипичный ключ"),
  "treble clef, octave lower (guitar)": ("klucz wiolinowy oktawowy (gitarowy)", "Violinschlüssel, oktaviert (Gitarre)", "clave de sol octava baja (guitarra)", "скрипичный ключ с октавой ниже (гитарный)"),
+ "Bass tuning:": ("Strój basu:", "Bass-Stimmung:", "Afinación del bajo:", "Строй баса:"),
+ "Bass guitar (3D)": ("Gitara basowa (3D)", "E-Bass (3D)", "Bajo eléctrico (3D)", "Бас-гитара (3D)"),
+ "Whole step down": ("Cały ton niżej", "Ganzton tiefer", "Un tono abajo", "На тон ниже"),
+ "bass clef": ("klucz basowy", "Bassschlüssel", "clave de fa", "басовый ключ"),
+ "bass clef, octave lower (bass guitar)": ("klucz basowy oktawowy (basowy)", "Bassschlüssel, oktaviert (E-Bass)", "clave de fa octava baja (bajo)", "басовый ключ с октавой ниже (бас-гитара)"),
+ "picked": ("gra kostką", "mit Plektrum", "con púa", "медиатором"),
+ "Fretless bass": ("Bas bezprogowy", "Bundloser Bass", "Bajo sin trastes", "Безладовый бас"),
+ "smooth, singing tone": ("gładkie, śpiewne brzmienie", "weicher, singender Klang", "sonido suave y cantarín", "мягкий, певучий звук"),
+ "Acoustic bass": ("Bas akustyczny", "Akustikbass", "Bajo acústico", "Акустический бас"),
+ "warm, woody tone": ("ciepłe, drewniane brzmienie", "warmer, holziger Klang", "sonido cálido y amaderado", "тёплый, деревянный звук"),
+ "Synth bass": ("Bas syntezatorowy", "Synth-Bass", "Bajo sintetizado", "Синтезаторный бас"),
+ "electronic tone": ("brzmienie elektroniczne", "elektronischer Klang", "sonido electrónico", "электронный звук"),
 }
 
 def esc(s): return s.replace("\\", "\\\\").replace('"', '\\"')

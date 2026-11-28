@@ -57,6 +57,8 @@ public:
     double input_peak_db();
     // Rozpoznany dźwięk z ostatnich ok. 85 ms wejścia: {"hz" (0 – brak), "clarity", "level_db"}.
     Dictionary pitch();
+    // Najniższa rozpoznawana częstotliwość (Hz): gitara ok. 55, gitara basowa ok. 28 (H0 = 30,9 Hz).
+    void set_pitch_min(double hz);
     // Liczba próbek wejścia od otwarcia (numeracja wspólna z wyjściem przy strumieniu dwukierunkowym).
     int64_t input_frames() const;
     // Próbki wejścia od numeru `from` (do `max_count`, tyle, ile już jest); pusta tablica, gdy nie ma
@@ -106,6 +108,7 @@ private:
     fbm::Sequencer sequencer_;
     fbm::InputRing ring_;
     fbm::PitchDetector detector_;
+    double pitch_min_ = 55.0;
     std::vector<float> window_;
     String input_error_;
     std::unique_ptr<Stream> stream_;

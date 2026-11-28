@@ -428,7 +428,7 @@ func _on_fret_clicked(f: int) -> void:
 func _on_note_picked(s: int, f: int) -> void:
 	var c := AudioEngine.ensure_open()
 	if c:
-		c.play_note(int(App.setting(&"midi_instrument")), _fb.spec.open_midi[s] + f, 0.85, 1.4)
+		c.play_note(Instrument.midi_program(), _fb.spec.open_midi[s] + f, 0.85, 1.4)
 
 
 func _range_row() -> Control:
@@ -1002,21 +1002,33 @@ func _staff_card() -> Control:
 	_clef = OptionButton.new()
 	_clef.focus_mode = Control.FOCUS_NONE
 	_clef.flat = true
-	_clef.add_item(tr("treble clef"))
-	_clef.add_item(tr("treble clef, octave lower (guitar)"))
-	_clef.select(1 if str(App.setting(&"enc_clef")) == "treble_8vb" else 0)
+	# Klucze: gitara – wiolinowy (także z ósemką), bas – basowy (także z ósemką); każdy instrument
+	# pamięta swój wybór.
+	var bass := Instrument.is_bass()
+	var clef_key := &"enc_clef_bass" if bass else &"enc_clef"
+	var clefs := ["bass", "bass_8vb"] if bass else ["treble", "treble_8vb"]
+	if bass:
+		_clef.add_item(tr("bass clef"))
+		_clef.add_item(tr("bass clef, octave lower (bass guitar)"))
+	else:
+		_clef.add_item(tr("treble clef"))
+		_clef.add_item(tr("treble clef, octave lower (guitar)"))
+	var clef := str(App.setting(clef_key))
+	if not clef in clefs:
+		clef = clefs[0]
+	_clef.select(clefs.find(clef))
 	_clef.add_theme_color_override("font_color", Color("4A4A58"))
 	_clef.add_theme_color_override("font_hover_color", Color("1A1A22"))
 	_clef.add_theme_font_size_override("font_size", ThemeManager.fs(14))
 	for st in ["normal", "hover", "pressed", "focus"]:
 		_clef.add_theme_stylebox_override(st, StyleBoxEmpty.new())
 	_clef.item_selected.connect(func(i: int):
-		App.set_setting(&"enc_clef", "treble_8vb" if i == 1 else "treble")
-		_staff.clef_8vb = i == 1)
+		App.set_setting(clef_key, clefs[i])
+		_staff.clef = clefs[i])
 	head.add_child(_clef)
 	_staff = StaffView.new()
 	_staff.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_staff.clef_8vb = str(App.setting(&"enc_clef")) == "treble_8vb"
+	_staff.clef = clef
 	col.add_child(_staff)
 	return card
 
@@ -1043,9 +1055,9 @@ func _update_staff() -> void:
 	else:
 		for i in _notes.size():
 			var num: int = Theory.parse_degree(str(_degrees[i]))[0]
-			notes.append(_written(_notes[i], 4 * 7 + tl + num - 1, i == 0))
+			notes.append(_written(_notes[i], _octave_base() * 7 + tl + num - 1, i == 0))
 		if _kind != "chord" and _kind != "interval":
-			notes.append(_written(_tonic, 4 * 7 + tl + 7, true))
+			notes.append(_written(_tonic, _octave_base() * 7 + tl + 7, true))
 	var items := []
 	var seq := []
 	var accs := _measure_accidentals(notes, fifths)
@@ -1063,7 +1075,7 @@ func _update_staff() -> void:
 		else:
 			for i in _notes.size():
 				var num: int = Theory.parse_degree(str(_degrees[i]))[0]
-				written.append(_written(_notes[i], 4 * 7 + tl + num - 1, i == 0))
+				written.append(_written(_notes[i], _octave_base() * 7 + tl + num - 1, i == 0))
 		items.append({"bar": true})
 		var stack_acc := _measure_accidentals(written, 0)
 		var heads := []
@@ -1086,6 +1098,11 @@ func _written_midi(note: Dictionary, midi: int, root: bool) -> Dictionary:
 	var w := midi + 12
 	var octave: int = (w - Theory.LETTER_PC[note.l] - int(note.a)) / 12 - 1
 	return {"step": octave * 7 + int(note.l) - STEP_BASE, "note": note, "root": root, "midi": midi}
+
+
+# Oktawa zapisu przykładu bez superpozycji: gitara – razkreślna, bas – mała (zapis basowy).
+func _octave_base() -> int:
+	return 3 if Instrument.is_bass() else 4
 
 
 func _written(note: Dictionary, diatonic: int, root: bool) -> Dictionary:
@@ -1264,7 +1281,7 @@ func _play_step() -> void:
 	var last := _play_i == _play_seq.size() - 1
 	if c:
 		for m in step[0]:
-			c.play_note(int(App.setting(&"midi_instrument")), int(m), 0.8, 2.0 if last or step[0].size() > 1 else 0.9)
+			c.play_note(Instrument.midi_program(), int(m), 0.8, 2.0 if last or step[0].size() > 1 else 0.9)
 	_staff.set_playing(step[1])
 	_fb.set_playing(step[2])
 	_play_i += 1

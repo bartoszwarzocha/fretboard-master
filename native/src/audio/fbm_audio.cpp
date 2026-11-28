@@ -101,6 +101,7 @@ void FbmAudio::_bind_methods() {
     ClassDB::bind_method(D_METHOD("pitch"), &FbmAudio::pitch);
     ClassDB::bind_method(D_METHOD("input_frames"), &FbmAudio::input_frames);
     ClassDB::bind_method(D_METHOD("detect_pitch", "samples", "rate"), &FbmAudio::detect_pitch);
+    ClassDB::bind_method(D_METHOD("set_pitch_min", "hz"), &FbmAudio::set_pitch_min);
     ClassDB::bind_method(D_METHOD("set_tone", "hz", "gain"), &FbmAudio::set_tone);
     ClassDB::bind_method(D_METHOD("close"), &FbmAudio::close);
     ClassDB::bind_method(D_METHOD("is_open"), &FbmAudio::is_open);
@@ -348,15 +349,19 @@ Dictionary FbmAudio::pitch() {
         d["level_db"] = -120.0;
         return d;
     }
-    // Okno ok. 85 ms – dwa okresy nawet dla niskiego H (ok. 62 Hz) w stroju obniżonym.
+    // Okno ok. 85 ms – ponad dwa i pół okresu nawet dla niskiego H basu (30,9 Hz).
     const int n = stream_->rate > 60000.0 ? 8192 : 4096;
     window_.resize(static_cast<size_t>(n));
     ring_.latest(window_.data(), n);
-    const fbm::PitchResult r = detector_.detect(window_.data(), n, stream_->rate);
+    const fbm::PitchResult r = detector_.detect(window_.data(), n, stream_->rate, pitch_min_);
     d["hz"] = r.hz;
     d["clarity"] = r.clarity;
     d["level_db"] = r.level_db;
     return d;
+}
+
+void FbmAudio::set_pitch_min(double hz) {
+    pitch_min_ = std::clamp(hz, 20.0, 200.0);
 }
 
 int64_t FbmAudio::input_frames() const {

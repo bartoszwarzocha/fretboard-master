@@ -1534,3 +1534,39 @@ msgstr "klucz wiolinowy"
 msgid "treble clef, octave lower (guitar)"
 msgstr "klucz wiolinowy oktawowy (gitarowy)"
 
+msgid "Bass tuning:"
+msgstr "Strój basu:"
+
+msgid "Bass guitar (3D)"
+msgstr "Gitara basowa (3D)"
+
+msgid "Whole step down"
+msgstr "Cały ton niżej"
+
+msgid "bass clef"
+msgstr "klucz basowy"
+
+msgid "bass clef, octave lower (bass guitar)"
+msgstr "klucz basowy oktawowy (basowy)"
+
+msgid "picked"
+msgstr "gra kostką"
+
+msgid "Fretless bass"
+msgstr "Bas bezprogowy"
+
+msgid "smooth, singing tone"
+msgstr "gładkie, śpiewne brzmienie"
+
+msgid "Acoustic bass"
+msgstr "Bas akustyczny"
+
+msgid "warm, woody tone"
+msgstr "ciepłe, drewniane brzmienie"
+
+msgid "Synth bass"
+msgstr "Bas syntezatorowy"
+
+msgid "electronic tone"
+msgstr "brzmienie elektroniczne"
+

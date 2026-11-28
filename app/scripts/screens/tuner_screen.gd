@@ -19,6 +19,8 @@ const FLATS := [
 	["C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B", "H"],
 	["Do", "Re♭", "Re", "Mi♭", "Mi", "Fa", "Sol♭", "Sol", "La♭", "La", "Si♭", "Si"],
 ]
+# Stroje obniżone – nazwy dźwięków z bemolami.
+const FLAT_TUNINGS := ["half_down", "full_down", "drop_c"]
 const GREEN := Color("7BD88F")
 const YELLOW := Color("F2D15C")
 const ORANGE := Color("FF7A59")
@@ -55,7 +57,7 @@ var _target_string := -1      # struna (0 = 6. struna) albo -1 przy dźwięku sp
 var _hz := 0.0
 var _cents := 0.0
 var _shown_cents := 0.0       # wskazówka – płynnie dochodzi do _cents
-var _string_cents: Array = [null, null, null, null, null, null]
+var _string_cents: Array = []
 
 
 func _init() -> void:
@@ -263,7 +265,7 @@ func _build_aside() -> void:
 	var list := VBoxContainer.new()
 	list.add_theme_constant_override("separation", 7)
 	tc.add_child(list)
-	for i in TUNINGS.size():
+	for i in _tunings().size():
 		list.add_child(_tuning_row(i))
 	list.add_child(_tuning_row(-1))
 
@@ -330,7 +332,7 @@ func _feed(hz: float) -> void:
 	if _chromatic():
 		_target_string = -1
 	elif _mode() == 1:
-		_target_string = clampi(int(App.setting(&"tun_string")), 0, 5)
+		_target_string = clampi(int(App.setting(&"tun_string")), 0, notes.size() - 1)
 	else:
 		# Najbliższa struna stroju; dźwięk dalej niż 2,5 półtonu od każdej – zwykły stroik chromatyczny.
 		_target_string = -1
@@ -348,6 +350,9 @@ func _feed(hz: float) -> void:
 		_target = roundi(69.0 + 12.0 * log(_hz / a4) / log(2.0))
 	_cents = _cents_from(_hz, float(_target), a4)
 	if _target_string >= 0:
+		if _string_cents.size() != notes.size():
+			_string_cents.resize(notes.size())
+			_string_cents.fill(null)
 		_string_cents[_target_string] = _cents
 		if _mode() == 0 and int(App.setting(&"tun_string")) != _target_string:
 			App.set_setting(&"tun_string", _target_string)
@@ -466,7 +471,7 @@ func _build_strings() -> void:
 	for v in _string_cents:
 		states.append(-9 if v == null else 0 if absf(v) <= IN_TUNE else signi(roundi(v)))
 	var sig := str([_chromatic(), _has_reading, _target_string, posmod(_target, 12) if _chromatic() else 0,
-			absf(_cents) <= IN_TUNE, states, App.setting(&"tun_string"), App.setting(&"tun_note"), App.setting(&"tuning"),
+			absf(_cents) <= IN_TUNE, states, App.setting(&"tun_string"), App.setting(&"tun_note"), Instrument.tuning_id(), Instrument.string_count(),
 			_strings_row.get_child_count()])
 	if sig == _strings_sig:
 		return
@@ -501,12 +506,12 @@ func _build_strings() -> void:
 		name.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		col.add_child(name)
-		var num := _label(tr("string %d") % (6 - i), 14, ThemeManager.color("hint"))
+		var num := _label(tr("string %d") % (notes.size() - i), 14, ThemeManager.color("hint"))
 		num.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		col.add_child(num)
 		col.add_child(_gap(7))
-		var sc: Variant = _string_cents[i]
+		var sc: Variant = _string_cents[i] if i < _string_cents.size() else null
 		var state := _label("–" if sc == null else tr("in tune") if absf(sc) <= IN_TUNE else tr("too low") if sc < 0 else tr("too high"),
 				14, ThemeManager.color("hint") if sc == null else GREEN if absf(sc) <= IN_TUNE else ThemeManager.color("warn"), ThemeManager.font_body_bold)
 		state.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -567,7 +572,8 @@ func _update_tone() -> void:
 	if _chromatic():
 		midi = 60 + clampi(int(App.setting(&"tun_note")), 0, 11)   # oktawa razkreślna, A = A4
 	elif _mode() == 1:
-		midi = int(_tuning()[2][clampi(int(App.setting(&"tun_string")), 0, 5)])
+		var notes: Array = _tuning()[2]
+		midi = int(notes[clampi(int(App.setting(&"tun_string")), 0, notes.size() - 1)])
 	_core.set_tone(_a4() * pow(2.0, (midi - 69) / 12.0), 0.5)
 
 
@@ -603,25 +609,30 @@ func _chromatic() -> bool:
 func _tuning_index() -> int:
 	if _chromatic():
 		return -1
-	var id := str(App.setting(&"tuning"))
-	for i in TUNINGS.size():
-		if TUNINGS[i][0] == id:
+	var id := Instrument.tuning_id()
+	var list := _tunings()
+	for i in list.size():
+		if list[i][0] == id:
 			return i
 	return -1
 
 
+# Stroje na liście: gitarowe z makiety albo basowe.
+func _tunings() -> Array:
+	return Instrument.BASS_TUNINGS if Instrument.is_bass() else TUNINGS
+
+
 func _tuning() -> Array:
+	# Wszystkie struny instrumentu (także 7. i 8. gitary, H i C basu); strój spoza listy (np. z ustawień:
+	# Drop C) – dźwięki z ustawień.
+	var id := Instrument.tuning_id()
 	var i := _tuning_index()
-	if i >= 0:
-		return TUNINGS[i]
-	# Strój spoza listy (np. z ustawień: Drop C) – dźwięki z nagłówka.
-	var id := str(App.setting(&"tuning"))
-	return [id, id, ModuleHeader.TUNING_MIDI.get(id, TUNINGS[0][2])]
+	return [id, _tunings()[i][1] if i >= 0 else id, Instrument.open_low_to_high(id)]
 
 
 ## Nazwa dźwięku w wybranym zapisie; w stroju „pół tonu niżej” – z bemolami (jak w makiecie).
 func _note_name(midi: int, string_index: int) -> String:
-	if string_index >= 0 and str(App.setting(&"tuning")) == "half_down":
+	if string_index >= 0 and Instrument.tuning_id() in FLAT_TUNINGS:
 		return FLATS[clampi(App.notation(), 0, 2)][posmod(midi, 12)]
 	return NoteNames.note_name(midi, App.notation())
 
@@ -646,14 +657,15 @@ func _tuning_row(i: int) -> Button:
 	row.offset_right = -17
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_child(row)
-	var name := _label("Any" if i < 0 else TUNINGS[i][1], 17, ThemeManager.color("text"), ThemeManager.font_body_bold)
+	var list := _tunings()
+	var name := _label("Any" if i < 0 else list[i][1], 17, ThemeManager.color("text"), ThemeManager.font_body_bold)
 	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	name.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(name)
 	var parts := PackedStringArray()
-	for m in ([] if i < 0 else TUNINGS[i][2]):
-		parts.append(FLATS[clampi(App.notation(), 0, 2)][posmod(m, 12)] if TUNINGS[i][0] == "half_down" else NoteNames.note_name(m, App.notation()))
+	for m in ([] if i < 0 else Instrument.open_low_to_high(list[i][0])):
+		parts.append(FLATS[clampi(App.notation(), 0, 2)][posmod(m, 12)] if list[i][0] in FLAT_TUNINGS else NoteNames.note_name(m, App.notation()))
 	var notes := _label(tr("chromatic") if i < 0 else " ".join(parts), 14, ThemeManager.color("hint"))
 	notes.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	notes.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -664,8 +676,8 @@ func _tuning_row(i: int) -> Button:
 		if i < 0:
 			App.set_setting(&"tun_chromatic", true)
 		else:
-			App.set_settings({&"tun_chromatic": false, &"tuning": TUNINGS[i][0]})
-		_string_cents = [null, null, null, null, null, null]
+			App.set_settings({&"tun_chromatic": false, Instrument.tuning_key(): list[i][0]})
+		_string_cents.clear()
 		_reset_reading()
 		_update_tone()
 		_rebuild())

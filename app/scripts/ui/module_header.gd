@@ -62,7 +62,7 @@ func _ready() -> void:
 	status.add_theme_constant_override("separation", 10)
 	status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(status)
-	status.add_child(_status_label(tr("Tuning:"), ThemeManager.color("muted"), false))
+	status.add_child(_status_label(tr("Bass tuning:") if Instrument.is_bass() else tr("Tuning:"), ThemeManager.color("muted"), false))
 	status.add_child(_status_label(tuning_text(), ThemeManager.color("text"), true))
 	status.add_child(_status_label("|", ThemeManager.color("placeholder"), false))
 	status.add_child(_status_label(tr("Audio input:"), ThemeManager.color("muted"), false))
@@ -121,8 +121,4 @@ const TUNING_MIDI := {
 
 
 static func tuning_text() -> String:
-	var notes: Array = TUNING_MIDI.get(str(App.setting(&"tuning")), TUNING_MIDI["standard"])
-	var parts := PackedStringArray()
-	for m in notes:
-		parts.append(NoteNames.note_name(m, App.notation()))
-	return " ".join(parts)
+	return Instrument.tuning_names(Instrument.tuning_id())

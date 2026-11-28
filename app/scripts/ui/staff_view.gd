@@ -1,6 +1,8 @@
 # Fretboard Master – pięciolinia (Encyklopedia): klucz, znaki przykluczowe i nuty rysowane krojem
-# Bravura (SMuFL) w jednym _draw. Nuty w zapisie gitarowym (klucz wiolinowy, dźwięk o oktawę niżej).
-# Pozycja nuty: step – stopień diatoniczny względem E4 (dolna linia = 0, każda linia/pole = 1).
+# Bravura (SMuFL) w jednym _draw. Nuty w zapisie gitarowym (klucz wiolinowy, dźwięk o oktawę niżej)
+# albo basowym (klucz basowy, dźwięk o oktawę niżej).
+# Pozycja nuty: step – stopień diatoniczny względem E4 (dolna linia klucza wiolinowego = 0, każda
+# linia/pole = 1); w kluczu basowym dolna linia to G2 (step −12) – przesunięcie liczy rysunek.
 # items: [{heads: [{step, acc (null = bez znaku, 0 = kasownik, ±1, ±2), root}], label, bar}] –
 # jedna główka = nuta pojedyncza, kilka – akord; bar = true – kreska taktowa.
 # Copyright © 2026 BW Digital Systems and Publishing – Bartosz Warzocha. Wszelkie prawa zastrzeżone.
@@ -9,6 +11,9 @@ extends Control
 
 const G_CLEF := 0xE050
 const G_CLEF_8VB := 0xE052
+const F_CLEF := 0xE062
+const F_CLEF_8VB := 0xE064
+const BASS_SHIFT := 12        # G2 (dolna linia klucza basowego) leży 12 stopni pod E4
 const HEAD_WHOLE := 0xE0A2
 const HEAD_BLACK := 0xE0A4    # przy wielu nutach (superpozycja na dwie oktawy i więcej) – węższe główki
 const ACC_GLYPH := {-2: 0xE264, -1: 0xE260, 0: 0xE261, 1: 0xE262, 2: 0xE263}
@@ -24,9 +29,9 @@ const PAPER := Color("F4F1EA")    # tło karty pięciolinii (rysunek nieprzezroc
 
 var items: Array = []
 var fifths := 0
-var clef_8vb := false:
+var clef := "treble":       # treble, treble_8vb, bass, bass_8vb
 	set(v):
-		clef_8vb = v
+		clef = v
 		_refresh()
 var playing := -1           # indeks odtwarzanej nuty (podświetlenie)
 var _vp: SubViewport
@@ -100,17 +105,32 @@ func _paint(ci: CanvasItem, sz: Vector2) -> void:
 	ci.draw_rect(Rect2(Vector2.ZERO, sz), PAPER)
 	# Odstęp linii dobrany do wysokości (nuty z liniami dodanymi i podpisy) i szerokości (klucz, znaki
 	# przykluczowe i miejsce na każdą nutę ze znakiem przygodnym).
+	var bass := clef.begins_with("bass")
+	var shift := BASS_SHIFT if bass else 0
+	var its: Array = items
+	if shift != 0:
+		its = []
+		for it in items:
+			var c: Dictionary = it.duplicate()
+			if c.has("heads"):
+				var hs := []
+				for h in c.heads:
+					var hh: Dictionary = h.duplicate()
+					hh.step += shift
+					hs.append(hh)
+				c.heads = hs
+			its.append(c)
 	var min_step := 0
 	var max_step := 8
-	for it in items:
+	for it in its:
 		for h in it.get("heads", []):
 			min_step = mini(min_step, h.step)
 			max_step = maxi(max_step, h.step)
-	var black := items.size() > 10
+	var black := its.size() > 10
 	var above := maxf(0.0, (max_step - 8) * 0.5) + 1.4
 	var label_off := maxf(3.6, -min_step * 0.5 + 2.4)
 	var units_h := above + 4.0 + label_off + 1.0
-	var units := 5.5 + mini(absi(fifths), 7) * 1.1 + maxi(items.size(), 8) * (2.5 if black else 3.7)
+	var units := 5.5 + mini(absi(fifths), 7) * 1.1 + maxi(its.size(), 8) * (2.5 if black else 3.7)
 	var sp := clampf(minf(sz.y / units_h, sz.x / units), 5.0, 17.0)
 	var top_y := (sz.y - units_h * sp) * 0.5
 	var bottom := top_y + (above + 4.0) * sp     # dolna linia (E4)
@@ -121,28 +141,29 @@ func _paint(ci: CanvasItem, sz: Vector2) -> void:
 	for i in 5:
 		var y := bottom - i * sp
 		ci.draw_line(Vector2(x0, y), Vector2(x1, y), INK, line_w, true)
-	# Klucz (linia G4 = step 2).
+	# Klucz: wiolinowy na linii G4 (step 2), basowy na linii F3 (step 6).
 	var x := x0 + sp * 0.4
-	_glyph(ci, G_CLEF_8VB if clef_8vb else G_CLEF, Vector2(x, y_of.call(2)), sp, INK)
+	var clef_cp := (F_CLEF_8VB if clef == "bass_8vb" else F_CLEF) if bass else (G_CLEF_8VB if clef == "treble_8vb" else G_CLEF)
+	_glyph(ci, clef_cp, Vector2(x, y_of.call(6 if bass else 2)), sp, INK)
 	x += _glyph_w(G_CLEF, sp) + sp * 0.8
 	# Znaki przykluczowe.
 	var n := absi(fifths)
 	for i in mini(n, 7):
-		var step: int = SHARP_STEPS[i] if fifths > 0 else FLAT_STEPS[i]
+		var step: int = (SHARP_STEPS[i] if fifths > 0 else FLAT_STEPS[i]) - (2 if bass else 0)
 		var cp: int = ACC_GLYPH[1] if fifths > 0 else ACC_GLYPH[-1]
 		_glyph(ci, cp, Vector2(x, y_of.call(step)), sp, INK)
 		x += _glyph_w(cp, sp) + sp * 0.15
 	x += sp * 1.2
-	if items.is_empty():
+	if its.is_empty():
 		return
 	# Nuty – równe odstępy na pozostałej szerokości (z miejscem na znaki przygodne).
 	var head_cp := HEAD_BLACK if black else HEAD_WHOLE
 	var head_w := _glyph_w(head_cp, sp)
-	var slot := minf((x1 - x - sp) / items.size(), sp * 5.0)
+	var slot := minf((x1 - x - sp) / its.size(), sp * 5.0)
 	var font := ThemeManager.font_body_bold
 	var fsz := maxi(int(sp * 1.05), 10)
-	for i in items.size():
-		var it: Dictionary = items[i]
+	for i in its.size():
+		var it: Dictionary = its[i]
 		var cx := x + slot * (i + 0.62)
 		if it.get("bar", false):
 			ci.draw_line(Vector2(cx, bottom), Vector2(cx, bottom - 4 * sp), INK, line_w * 1.2, true)

@@ -37,9 +37,16 @@ static func ensure_open() -> Object:
 		if data.is_empty() or not c.load_soundfont(data):
 			push_warning("FbmAudio: SoundFont not loaded")
 		c.set_volume(int(App.setting(&"output_volume")) / 100.0)
+		_apply_pitch_min(c)
 	if not c.is_open():
 		_open()
 	return c if c.is_open() else null
+
+
+# Najniższy rozpoznawany dźwięk: bas schodzi do H0 (30,9 Hz), gitara – do ok. 55 Hz.
+static func _apply_pitch_min(c: Object) -> void:
+	if c.has_method(&"set_pitch_min"):
+		c.set_pitch_min(27.0 if Instrument.is_bass() else 55.0)
 
 
 static func last_error() -> String:
@@ -90,6 +97,8 @@ static func _on_setting(key: StringName) -> void:
 		return
 	if key == &"output_volume":
 		c.set_volume(int(App.setting(key)) / 100.0)
+	elif key == &"instrument":
+		_apply_pitch_min(c)
 	elif key in REOPEN_KEYS and c.is_open():
 		var was_playing: bool = c.is_playing()
 		c.close()
@@ -98,10 +107,10 @@ static func _on_setting(key: StringName) -> void:
 			c.start()
 
 
-## Dźwięk próbny: struna A (A2) wybranym instrumentem MIDI.
+## Dźwięk próbny: struna A (A2, na basie A1) wybranym instrumentem MIDI.
 static func play_test_note() -> bool:
 	var c := ensure_open()
 	if c == null:
 		return false
-	c.play_note(int(App.setting(&"midi_instrument")), 45, 0.8, 1.6)
+	c.play_note(Instrument.midi_program(), 33 if Instrument.is_bass() else 45, 0.8, 1.6)
 	return true

@@ -1534,3 +1534,39 @@ msgstr "скрипичный ключ"
 msgid "treble clef, octave lower (guitar)"
 msgstr "скрипичный ключ с октавой ниже (гитарный)"
 
+msgid "Bass tuning:"
+msgstr "Строй баса:"
+
+msgid "Bass guitar (3D)"
+msgstr "Бас-гитара (3D)"
+
+msgid "Whole step down"
+msgstr "На тон ниже"
+
+msgid "bass clef"
+msgstr "басовый ключ"
+
+msgid "bass clef, octave lower (bass guitar)"
+msgstr "басовый ключ с октавой ниже (бас-гитара)"
+
+msgid "picked"
+msgstr "медиатором"
+
+msgid "Fretless bass"
+msgstr "Безладовый бас"
+
+msgid "smooth, singing tone"
+msgstr "мягкий, певучий звук"
+
+msgid "Acoustic bass"
+msgstr "Акустический бас"
+
+msgid "warm, woody tone"
+msgstr "тёплый, деревянный звук"
+
+msgid "Synth bass"
+msgstr "Синтезаторный бас"
+
+msgid "electronic tone"
+msgstr "электронный звук"
+

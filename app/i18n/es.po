@@ -1534,3 +1534,39 @@ msgstr "clave de sol"
 msgid "treble clef, octave lower (guitar)"
 msgstr "clave de sol octava baja (guitarra)"
 
+msgid "Bass tuning:"
+msgstr "Afinación del bajo:"
+
+msgid "Bass guitar (3D)"
+msgstr "Bajo eléctrico (3D)"
+
+msgid "Whole step down"
+msgstr "Un tono abajo"
+
+msgid "bass clef"
+msgstr "clave de fa"
+
+msgid "bass clef, octave lower (bass guitar)"
+msgstr "clave de fa octava baja (bajo)"
+
+msgid "picked"
+msgstr "con púa"
+
+msgid "Fretless bass"
+msgstr "Bajo sin trastes"
+
+msgid "smooth, singing tone"
+msgstr "sonido suave y cantarín"
+
+msgid "Acoustic bass"
+msgstr "Bajo acústico"
+
+msgid "warm, woody tone"
+msgstr "sonido cálido y amaderado"
+
+msgid "Synth bass"
+msgstr "Bajo sintetizado"
+
+msgid "electronic tone"
+msgstr "sonido electrónico"
+

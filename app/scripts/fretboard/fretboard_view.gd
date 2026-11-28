@@ -20,7 +20,7 @@ signal fret_clicked(fret: int)
 
 # Ustawienia, których zmiana przebudowuje gryf.
 const KEYS := [&"neck_view", &"fretboard_wood", &"fret_metal", &"string_color", &"inlays", &"strings",
-		&"frets", &"tuning", &"left_handed", &"neck_tilt_range", &"neck_zoom_max", &"neck_fov", &"shadows", &"msaa", &"notation",
+		&"frets", &"tuning", &"instrument", &"bass_strings", &"bass_tuning", &"left_handed", &"neck_tilt_range", &"neck_zoom_max", &"neck_fov", &"shadows", &"msaa", &"notation",
 		&"marker_color", &"marker_root_color", &"marker_text_color"]
 const GUTTER := 56.0        # kolumna nazw strun
 const TOP := 30.0           # wiersz numerów progów
@@ -163,6 +163,11 @@ static func demo_notes(neck: NeckSpec) -> Array:
 				out.append({"s": s, "f": f, "text": NoteNames.note_name(midi, App.notation()),
 					"root": posmod(midi, 12) == root})
 	return out
+
+
+# Grubość linii struny na schematach; struny basu – grubsze, wg średnicy.
+func _thick(s: int) -> float:
+	return 1.4 + spec.gauge(s) * 1.1 if spec.bass else THICK[mini(s, THICK.size() - 1)]
 
 
 func _rebuild() -> void:
@@ -739,7 +744,7 @@ func _draw_grid() -> void:
 	draw_rect(Rect2(_lx(x0 - 6, 6), top - 12, 6, h + 24), SCH_NUT)
 	for s in spec.strings:
 		var y := top + sp * s
-		draw_line(Vector2(_mx(x0 - 40), y), Vector2(_mx(x0 + cw * spec.frets), y), SCH_STRING, THICK[s])
+		draw_line(Vector2(_mx(x0 - 40), y), Vector2(_mx(x0 + cw * spec.frets), y), SCH_STRING, _thick(s))
 	# Napisy po liniach – w jednej partii.
 	for n in range(1, spec.frets + 1):
 		_fret_label(Vector2(_mx(x0 + cw * (n - 0.5)), top - 24), n)
@@ -775,7 +780,7 @@ func _draw_shape() -> void:
 	draw_rect(Rect2(nx - 7 if not _lefty else nx, Z.call(-spec.half_w(0.0)), 7, spec.half_w(0.0) * 2.0 * k), SCH_NUT)
 	for s in spec.strings:
 		draw_line(Vector2(X.call(0.0), Z.call(spec.string_z(s, 0.0))), Vector2(X.call(xend), Z.call(spec.string_z(s, xend))),
-			SCH_STRING, THICK[s], true)
+			SCH_STRING, _thick(s), true)
 	# Napisy po liniach – w jednej partii.
 	for n in range(1, spec.frets + 1):
 		var x := spec.xf(n)

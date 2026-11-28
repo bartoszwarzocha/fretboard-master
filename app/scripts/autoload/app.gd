@@ -14,10 +14,11 @@ const DEFAULTS := {
 	&"audio": {
 		&"audio_driver": "wasapi", &"audio_input": "Default", &"input_channel": 0,
 		&"audio_output": "Default", &"output_volume": 70, &"input_monitor": false, &"buffer_samples": 128,
-		&"midi_output": "internal", &"midi_instrument": 24,
+		&"midi_output": "internal", &"midi_instrument": 24, &"bass_midi_instrument": 33,
 	},
 	&"guitar": {
-		&"tuning": "standard", &"strings": 6, &"frets": 22, &"left_handed": false, &"a4": 440.0,
+		&"instrument": "guitar", &"tuning": "standard", &"strings": 6,
+		&"bass_tuning": "standard", &"bass_strings": 4, &"frets": 22, &"left_handed": false, &"a4": 440.0,
 		&"neck_view": "electric_3d", &"fretboard_wood": "auto", &"fret_metal": "auto",
 		&"inlays": "auto", &"string_color": "auto",
 		&"marker_color": "", &"marker_root_color": "", &"marker_text_color": "",
@@ -58,7 +59,7 @@ const DEFAULTS := {
 	# Encyklopedia – ostatnio wybrana pozycja, tonika, opis dźwięków, zakres progów i klucz.
 	&"encyclopedia": {
 		&"enc_kind": "scale", &"enc_scale": "dorian", &"enc_chord": "maj7", &"enc_interval": "M3", &"enc_tonic": 2,
-		&"enc_mode": "names", &"enc_from": 5, &"enc_to": 9, &"enc_clef": "treble", &"enc_shapes": false, &"enc_octaves": true, &"enc_barre": true,
+		&"enc_mode": "names", &"enc_from": 5, &"enc_to": 9, &"enc_clef": "treble", &"enc_clef_bass": "bass", &"enc_shapes": false, &"enc_octaves": true, &"enc_barre": true,
 	},
 	# Stan programu zapamiętywany między uruchomieniami – bez zakładki, nie jest przywracany.
 	&"state": {

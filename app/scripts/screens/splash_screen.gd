@@ -59,7 +59,7 @@ func _warm_up() -> void:
 	await (Engine.get_main_loop() as SceneTree).process_frame
 	# 1) Modele 3D – wczytywanie w tle; zostają w pamięci (CACHE) do końca działania programu.
 	var paths: Array = [ModuleIcon3D.MODEL_PATH]   # logo wczytuje się samo (jest już na ekranie)
-	for k in GuitarModel3D.KINDS:
+	for k in GuitarModel3D.ALL_KINDS:
 		if ResourceLoader.exists(GuitarModel3D.MODEL_DIR % k):
 			paths.append(GuitarModel3D.MODEL_DIR % k)
 	for p in paths:

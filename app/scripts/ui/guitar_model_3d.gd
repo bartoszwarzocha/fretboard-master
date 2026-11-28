@@ -9,6 +9,8 @@ extends RefCounted
 # Modele gitar: res://assets/models/guitar-<rodzaj>.glb. Kolejny model wystarczy dodać jako plik.
 const MODEL_DIR := "res://assets/models/guitar-%s.glb"
 const KINDS := ["classical", "acoustic", "electric"]
+const BASS := "bass"                          # gitara basowa – gdy instrumentem jest bas
+const ALL_KINDS := ["classical", "acoustic", "electric", "bass"]
 const TILT_DEG := -37.0       # pochylenie osi gitary względem pionu (główka w prawo u góry)
 const LEAN_DEG := 12.0        # lekkie odchylenie w stronę widza
 const TURN_TIME := 10.0       # s na pełny obrót
@@ -27,7 +29,10 @@ static func _existing() -> Array:
 
 # Gitara zgodna z widokiem gryfu (classical_3d / acoustic_3d / electric_3d); przy widoku
 # schematycznym albo braku pliku danego rodzaju – losowa z dostępnych (losowana przy wejściu do menu).
+# Instrumentem jest bas – zawsze model basu (przy każdym widoku gryfu).
 static func model_path() -> String:
+	if Instrument.is_bass() and ResourceLoader.exists(MODEL_DIR % BASS):
+		return MODEL_DIR % BASS
 	var kind := str(App.setting(&"neck_view")).trim_suffix("_3d")
 	if kind in KINDS and ResourceLoader.exists(MODEL_DIR % kind):
 		return MODEL_DIR % kind

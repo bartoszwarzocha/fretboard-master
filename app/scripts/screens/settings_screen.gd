@@ -13,7 +13,7 @@ const TABS := [
 	[&"language", "Language and notation"], [&"profile", "Profile and progress"],
 ]
 # Zmiana tych ustawień pokazuje lub ukrywa inne pola – zakładka jest wtedy budowana od nowa.
-const REBUILD_KEYS := [&"theme", &"accent", &"bg_mode", &"bg_gradient_type", &"bg_animated", &"particles", &"hit_particles", &"window_mode", &"neck_view",
+const REBUILD_KEYS := [&"instrument", &"bass_strings", &"theme", &"accent", &"bg_mode", &"bg_gradient_type", &"bg_animated", &"particles", &"hit_particles", &"window_mode", &"neck_view",
 		&"quality", &"power_saving", &"logo_spin", &"animations", &"ui_font", &"panel_radius", &"panel_opacity", &"panel_shadow", &"font_scale"]
 # Widoki gryfu: realistyczne 3D (trzy rodzaje gitar) i schematyczne (wg makiety gryfu z 27.11.2026).
 # Rysuje je FretboardView (scripts/fretboard). Kolejne widoki – nowa pozycja listy.
@@ -286,8 +286,17 @@ func _build_look() -> void:
 
 func _build_guitar() -> void:
 	_section("Instrument")
-	_select(&"tuning", "Tuning", TUNINGS)
-	_select(&"strings", "Strings", [[6, "6"], [7, "7"], [8, "8"]], false)
+	_select(&"instrument", "Instrument", [["guitar", "Guitar"], ["bass", "Bass guitar"]])
+	var bass := Instrument.is_bass()
+	if bass:
+		var tunings := []
+		for t in Instrument.BASS_TUNINGS:
+			tunings.append([t[0], "%s (%s)" % [tr(t[1]), Instrument.tuning_names(t[0])]])
+		_select(&"bass_tuning", "Tuning", tunings, false)
+		_select(&"bass_strings", "Strings", [[4, "4"], [5, "5"], [6, "6"]], false)
+	else:
+		_select(&"tuning", "Tuning", TUNINGS)
+		_select(&"strings", "Strings", [[6, "6"], [7, "7"], [8, "8"]], false)
 	_select(&"frets", "Frets", [[19, "19"], [20, "20"], [21, "21"], [22, "22"], [24, "24"]], false)
 	_toggle(&"left_handed", "Left-handed")
 	_slider(&"a4", "Concert pitch (A4)", 415, 466, 1, "%d Hz")
@@ -299,7 +308,14 @@ func _build_guitar() -> void:
 	preview.custom_minimum_size.y = 240
 	preview.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_rows.add_child(preview)
-	_select(&"neck_view", "Fretboard view", NECK_VIEWS)
+	# Bas ma jeden widok realistyczny – wartość ustawienia widoku 3D gitary zostaje (powrót do gitary
+	# przywraca jej rodzaj).
+	var views := NECK_VIEWS
+	if bass:
+		var v := str(App.setting(&"neck_view"))
+		views = [[v if v.ends_with("_3d") else "electric_3d", "Bass guitar (3D)"]]
+		views.append_array(NECK_VIEWS.slice(3))
+	_select(&"neck_view", "Fretboard view", views)
 	# Drewno, progi i struny dotyczą tylko realistycznych widoków 3D; wkładki – wszystkich widoków.
 	# „Jak w wybranej gitarze” = wygląd z zaakceptowanej makiety dla danego rodzaju gitary.
 	if str(App.setting(&"neck_view")).ends_with("_3d"):
