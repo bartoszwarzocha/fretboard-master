@@ -1416,6 +1416,24 @@ msgstr ""
 msgid "Positions:"
 msgstr ""
 
+msgid "Positions"
+msgstr ""
+
+msgid "Practise this interval"
+msgstr ""
+
+msgid "Exercises for this interval:"
+msgstr ""
+
+msgid "1 semitone"
+msgstr ""
+
+msgid "%d semitones"
+msgstr ""
+
+msgid "%d semitones (2–4)"
+msgstr ""
+
 msgid "Back"
 msgstr ""
 

@@ -6,7 +6,22 @@
 extends ModuleScreen
 
 const MODES := [["names", "Pitches"], ["intervals", "Intervals"], ["degrees", "Degrees"], ["fingers", "Fingering"]]
-const KINDS := [["scale", "Scales"], ["arpeggio", "Arpeggios"], ["chord", "Chords"]]
+const KINDS := [["scale", "Scales"], ["arpeggio", "Arpeggios"], ["chord", "Chords"], ["interval", "Intervals"]]
+# Interwały (w obrębie oktawy) – wpisy jak akordy: dwa stopnie, nazwy w językach programu.
+const INTERVALS := [
+	{"id": "m2", "degrees": ["1", "b2"], "name": {"en": "minor second", "pl": "sekunda mała", "de": "kleine Sekunde", "es": "segunda menor", "ru": "малая секунда"}},
+	{"id": "M2", "degrees": ["1", "2"], "name": {"en": "major second", "pl": "sekunda wielka", "de": "große Sekunde", "es": "segunda mayor", "ru": "большая секунда"}},
+	{"id": "m3", "degrees": ["1", "b3"], "name": {"en": "minor third", "pl": "tercja mała", "de": "kleine Terz", "es": "tercera menor", "ru": "малая терция"}},
+	{"id": "M3", "degrees": ["1", "3"], "name": {"en": "major third", "pl": "tercja wielka", "de": "große Terz", "es": "tercera mayor", "ru": "большая терция"}},
+	{"id": "P4", "degrees": ["1", "4"], "name": {"en": "perfect fourth", "pl": "kwarta czysta", "de": "reine Quarte", "es": "cuarta justa", "ru": "чистая кварта"}},
+	{"id": "A4", "degrees": ["1", "#4"], "name": {"en": "augmented fourth (tritone)", "pl": "kwarta zwiększona (tryton)", "de": "übermäßige Quarte (Tritonus)", "es": "cuarta aumentada (tritono)", "ru": "увеличенная кварта (тритон)"}},
+	{"id": "P5", "degrees": ["1", "5"], "name": {"en": "perfect fifth", "pl": "kwinta czysta", "de": "reine Quinte", "es": "quinta justa", "ru": "чистая квинта"}},
+	{"id": "m6", "degrees": ["1", "b6"], "name": {"en": "minor sixth", "pl": "seksta mała", "de": "kleine Sexte", "es": "sexta menor", "ru": "малая секста"}},
+	{"id": "M6", "degrees": ["1", "6"], "name": {"en": "major sixth", "pl": "seksta wielka", "de": "große Sexte", "es": "sexta mayor", "ru": "большая секста"}},
+	{"id": "m7", "degrees": ["1", "b7"], "name": {"en": "minor seventh", "pl": "septyma mała", "de": "kleine Septime", "es": "séptima menor", "ru": "малая септима"}},
+	{"id": "M7", "degrees": ["1", "7"], "name": {"en": "major seventh", "pl": "septyma wielka", "de": "große Septime", "es": "séptima mayor", "ru": "большая септима"}},
+	{"id": "P8", "degrees": ["1", "8"], "name": {"en": "octave", "pl": "oktawa czysta", "de": "Oktave", "es": "octava justa", "ru": "чистая октава"}},
+]
 const ROMAN := ["I", "II", "III", "IV", "V", "VI", "VII"]
 const STEP_BASE := 30          # E4 = 4·7 + 2 – dolna linia pięciolinii
 const NOTE_GAP := 0.42         # s – odstęp dźwięków przy odsłuchu
@@ -168,6 +183,8 @@ func _load_state() -> void:
 
 
 func _entry_for_kind(kind: String) -> Dictionary:
+	if kind == "interval":
+		return _interval(str(App.setting(&"enc_interval")))
 	if kind == "scale":
 		var e := Theory.scale(str(App.setting(&"enc_scale")))
 		return e if not e.is_empty() else Theory.scales()[0]
@@ -181,7 +198,7 @@ func _entry_for_kind(kind: String) -> Dictionary:
 
 func _save_state() -> void:
 	var v := {&"enc_kind": _kind, &"enc_tonic": _pc, &"enc_mode": _mode, &"enc_from": _from, &"enc_to": _to}
-	v[&"enc_scale" if _kind == "scale" else &"enc_chord"] = str(_entry.id)
+	v[{"scale": &"enc_scale", "interval": &"enc_interval"}.get(_kind, &"enc_chord")] = str(_entry.id)
 	App.set_settings(v)
 
 
@@ -197,6 +214,37 @@ func _select(kind: String, entry: Dictionary, pc := -1) -> void:
 
 
 # Pisownia toniki i dźwięków bieżącej pozycji.
+func _interval(id: String) -> Dictionary:
+	for e in INTERVALS:
+		if e.id == id:
+			return e
+	return INTERVALS[2]
+
+
+# Interwał: miejsca na gryfie w zakresie – pryma i drugi dźwięk na tej samej albo wyższej strunie,
+# w zasięgu ręki (≤ 4 progi); od najniższej prymy, najwyżej 8.
+func _interval_pairs(spec: NeckSpec) -> Array:
+	var semis: int = Theory.parse_degree(str(_degrees[1]))[2]
+	var out := []
+	for s1 in range(spec.strings - 1, -1, -1):
+		for f1 in range(_from, _to + 1):
+			var m1: int = spec.open_midi[s1] + f1
+			if posmod(m1, 12) != _pc:
+				continue
+			for s2 in range(s1, -1, -1):
+				var f2: int = m1 + semis - spec.open_midi[s2]
+				if f2 < _from or f2 > _to or (s2 == s1 and semis == 0):
+					continue
+				if f1 > 0 and f2 > 0 and absi(f2 - f1) > 4:
+					continue
+				out.append([m1, s1, [{"s": s1, "f": f1, "midi": m1, "pos": 0}, {"s": s2, "f": f2, "midi": m1 + semis, "pos": 0}]])
+	out.sort_custom(func(a, b): return a[0] < b[0] or (a[0] == b[0] and a[1] > b[1]))
+	var v := []
+	for x in out.slice(0, 8):
+		v.append(x[2])
+	return v
+
+
 func _compute() -> void:
 	_degrees = _entry.get("degrees", [])
 	_tonic = Theory.best_tonic(_pc, _entry) if _kind == "scale" else Theory.best_root(_pc, _entry)
@@ -249,6 +297,8 @@ func _update_neck() -> void:
 			_from = lo
 			_to = mini(lo + 4 if lo == 0 else lo + ChordShapes.SPAN, spec.frets)
 			_fb.set_range(_from, _to)
+	elif _kind == "interval":
+		_variants = _interval_pairs(spec) if _shapes else []
 	else:
 		_variants = Superposition.variants(spec.open_midi, by_pc, _from, _to, _style,
 				_pc if _octaves else -1) if _shapes else []
@@ -316,12 +366,12 @@ func _update_neck() -> void:
 # Przełącznik superpozycji: włączenie od razu zawęża zakres do jednej pozycji (5 progów).
 func _build_shapes() -> void:
 	_clear(_shapes_box)
-	var b := _chip_button(tr("Chord shapes" if _kind == "chord" else "Scale shapes"), _shapes)
+	var b := _chip_button(tr({"chord": "Chord shapes", "interval": "Positions"}.get(_kind, "Scale shapes")), _shapes)
 	b.custom_minimum_size.y = 38
 	b.pressed.connect(func():
 		_shapes = not _shapes
 		App.set_setting(&"enc_shapes", _shapes)
-		if _shapes and _kind != "chord":
+		if _shapes and _kind != "chord" and _kind != "interval":
 			_preset(4, "")
 		else:
 			_style = ""
@@ -335,7 +385,7 @@ func _build_shapes() -> void:
 			App.set_setting(&"enc_barre", _barre)
 			_update_neck())
 		_shapes_box.add_child(bb)
-	elif _shapes:
+	elif _shapes and _kind != "interval":
 		var o := _chip_button(tr("Full octaves"), _octaves)
 		o.custom_minimum_size.y = 38
 		o.pressed.connect(func():
@@ -350,7 +400,7 @@ func _build_variants() -> void:
 	_clear(_variants_box)
 	if _variants.is_empty():
 		return
-	_variants_box.add_child(_small_label("Positions:" if _kind == "chord" else "Variants:"))
+	_variants_box.add_child(_small_label("Variants:" if _kind in ["scale", "arpeggio"] else "Positions:"))
 	var items := []
 	for i in _variants.size():
 		items.append([str(i), str(i + 1)])
@@ -534,6 +584,16 @@ func _fill_list() -> void:
 	var selected := -1
 	if _query.is_empty():
 		var is_scale := _kind == "scale"
+		if _kind == "interval":
+			_header(tr("Intervals").to_upper())
+			for e in INTERVALS:
+				var i := _list.add_item(Theory.local_name(e))
+				_list.set_item_metadata(i, {"kind": "interval", "id": e.id, "pc": -1})
+				if e.id == _entry.get("id"):
+					selected = i
+			if selected >= 0:
+				_list.select(selected)
+			return
 		var cats: Array = Theory.data().get("scale_categories" if is_scale else "chord_categories", [])
 		var entries: Array = Theory.scales() if is_scale else Theory.chords()
 		for cat in cats:
@@ -587,7 +647,7 @@ func _on_item(i: int) -> void:
 	if m == null:
 		return
 	var kind: String = m.kind
-	var e := Theory.scale(m.id) if kind == "scale" else Theory.chord(m.id)
+	var e := Theory.scale(m.id) if kind == "scale" else (_interval(m.id) if kind == "interval" else Theory.chord(m.id))
 	if e.is_empty():
 		return
 	_select(kind, e, int(m.pc))
@@ -782,7 +842,7 @@ func _build_detail() -> void:
 	actions.add_theme_constant_override("separation", 10)
 	_detail.add_child(actions)
 	var practise_text: String = {"scale": "Practise this scale", "arpeggio": "Practise this arpeggio",
-			"chord": "Practise this chord"}[_kind]
+			"chord": "Practise this chord", "interval": "Practise this interval"}[_kind]
 	var practise := Button.new()
 	practise.theme_type_variation = &"AccentButton"
 	practise.text = tr(practise_text)
@@ -806,9 +866,10 @@ func _build_detail() -> void:
 	actions.add_child(plan)
 
 	var trow2 := _flow()
-	trow2.add_child(_small_label("Exercises for this scale:" if _kind == "scale" else "Exercises for this chord:"))
+	trow2.add_child(_small_label({"scale": "Exercises for this scale:", "interval": "Exercises for this interval:"}.get(_kind, "Exercises for this chord:")))
 	var names: Array = ["Scale in range", "Sequences", "Find the note", "Intervals on the neck", "Note reading"] \
-			if _kind == "scale" else ["Arpeggio in range", "Recognise the chord", "Find the note", "Note reading"]
+			if _kind == "scale" else (["Intervals on the neck", "Find the note", "Note reading"] if _kind == "interval" \
+			else ["Arpeggio in range", "Recognise the chord", "Find the note", "Note reading"])
 	for n in names:
 		trow2.add_child(_trainer_chip(tr(n)))
 	_detail.add_child(trow2)
@@ -816,6 +877,8 @@ func _build_detail() -> void:
 
 func _title_text() -> String:
 	var t := Theory.note_name(_tonic, App.notation())
+	if _kind == "interval":
+		return t + " – " + Theory.local_name(_entry)
 	if _kind != "scale":
 		return t + str(_entry.get("symbol", ""))
 	var name := Theory.local_name(_entry)
@@ -833,6 +896,11 @@ func _title_text() -> String:
 func _family_text() -> String:
 	var parts := PackedStringArray()
 	var n := _notes.size()
+	if _kind == "interval":
+		var st: int = Theory.parse_degree(str(_degrees[1]))[2]
+		if st == 1:
+			return tr("1 semitone")
+		return (tr("%d semitones (2–4)") if st % 10 in [2, 3, 4] and not st in [12, 13, 14] else tr("%d semitones")) % st
 	if _kind == "scale":
 		parts.append(Theory.local_name(_category(_entry, "scale_categories")))
 	else:
@@ -977,7 +1045,7 @@ func _update_staff() -> void:
 		for i in _notes.size():
 			var num: int = Theory.parse_degree(str(_degrees[i]))[0]
 			notes.append(_written(_notes[i], 4 * 7 + tl + num - 1, i == 0))
-		if _kind != "chord":
+		if _kind != "chord" and _kind != "interval":
 			notes.append(_written(_tonic, 4 * 7 + tl + 7, true))
 	var items := []
 	var seq := []
@@ -988,7 +1056,7 @@ func _update_staff() -> void:
 				"label": Theory.note_name(n.note, App.notation())})
 		seq.append([[n.midi], i, n.get("cell", Vector2i(-1, -1))])
 	var down_from := notes.size() - 2
-	if _kind == "chord":
+	if _kind == "chord" or _kind == "interval":
 		# Współbrzmienie: dźwięki chwytu (przy chwytach) albo akord w położeniu zasadniczym.
 		var written := []
 		if not _variants.is_empty():
@@ -1004,7 +1072,8 @@ func _update_staff() -> void:
 		for i in written.size():
 			heads.append({"step": written[i].step, "acc": stack_acc[i], "root": written[i].root})
 			all.append(written[i].midi)
-		items.append({"heads": heads, "label": Theory.note_name(_tonic, App.notation()) + str(_entry.get("symbol", ""))})
+		var lbl := str(_entry.id) if _kind == "interval" else Theory.note_name(_tonic, App.notation()) + str(_entry.get("symbol", ""))
+		items.append({"heads": heads, "label": lbl})
 		seq.append([all, items.size() - 1, Vector2i(-1, -1)])
 		down_from = -1
 	for i in range(down_from, -1, -1):

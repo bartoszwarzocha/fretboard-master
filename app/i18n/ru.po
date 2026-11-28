@@ -1417,6 +1417,24 @@ msgstr "Баррэ"
 msgid "Positions:"
 msgstr "Позиции:"
 
+msgid "Positions"
+msgstr "Позиции"
+
+msgid "Practise this interval"
+msgstr "Упражняться в этом интервале"
+
+msgid "Exercises for this interval:"
+msgstr "Упражнения для интервала:"
+
+msgid "1 semitone"
+msgstr "1 полутон"
+
+msgid "%d semitones"
+msgstr "%d полутонов"
+
+msgid "%d semitones (2–4)"
+msgstr "%d полутона"
+
 msgid "Back"
 msgstr "Назад"
 

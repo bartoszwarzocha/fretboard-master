@@ -1417,6 +1417,24 @@ msgstr "Cejilla"
 msgid "Positions:"
 msgstr "Posiciones:"
 
+msgid "Positions"
+msgstr "Posiciones"
+
+msgid "Practise this interval"
+msgstr "Practicar este intervalo"
+
+msgid "Exercises for this interval:"
+msgstr "Ejercicios para este intervalo:"
+
+msgid "1 semitone"
+msgstr "1 semitono"
+
+msgid "%d semitones"
+msgstr "%d semitonos"
+
+msgid "%d semitones (2–4)"
+msgstr "%d semitonos"
+
 msgid "Back"
 msgstr "Atrás"
 

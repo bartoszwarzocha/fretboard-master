@@ -1417,6 +1417,24 @@ msgstr "Barré"
 msgid "Positions:"
 msgstr "Lagen:"
 
+msgid "Positions"
+msgstr "Lagen"
+
+msgid "Practise this interval"
+msgstr "Dieses Intervall üben"
+
+msgid "Exercises for this interval:"
+msgstr "Übungen zu diesem Intervall:"
+
+msgid "1 semitone"
+msgstr "1 Halbton"
+
+msgid "%d semitones"
+msgstr "%d Halbtöne"
+
+msgid "%d semitones (2–4)"
+msgstr "%d Halbtöne"
+
 msgid "Back"
 msgstr "Zurück"
 

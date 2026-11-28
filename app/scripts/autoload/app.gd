@@ -57,7 +57,7 @@ const DEFAULTS := {
 	},
 	# Encyklopedia – ostatnio wybrana pozycja, tonika, opis dźwięków, zakres progów i klucz.
 	&"encyclopedia": {
-		&"enc_kind": "scale", &"enc_scale": "dorian", &"enc_chord": "maj7", &"enc_tonic": 2,
+		&"enc_kind": "scale", &"enc_scale": "dorian", &"enc_chord": "maj7", &"enc_interval": "M3", &"enc_tonic": 2,
 		&"enc_mode": "names", &"enc_from": 5, &"enc_to": 9, &"enc_clef": "treble", &"enc_shapes": false, &"enc_octaves": true, &"enc_barre": true,
 	},
 	# Stan programu zapamiętywany między uruchomieniami – bez zakładki, nie jest przywracany.
