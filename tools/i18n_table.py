@@ -571,6 +571,8 @@ T = {
  "electronic tone": ("brzmienie elektroniczne", "elektronischer Klang", "sonido electrónico", "электронный звук"),
  "Marker outline": ("Obwódka znaczników", "Rand der Markierungen", "Contorno de los marcadores", "Обводка маркеров"),
  "Outline colour": ("Kolor obwódki", "Randfarbe", "Color del contorno", "Цвет обводки"),
+ "Large neck": ("Duży gryf", "Großes Griffbrett", "Mástil grande", "Большой гриф"),
+ "Normal view": ("Zwykły widok", "Normale Ansicht", "Vista normal", "Обычный вид"),
 }
 
 def esc(s): return s.replace("\\", "\\\\").replace('"', '\\"')

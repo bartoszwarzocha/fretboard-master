@@ -1575,3 +1575,9 @@ msgstr ""
 msgid "Outline colour"
 msgstr ""
 
+msgid "Large neck"
+msgstr ""
+
+msgid "Normal view"
+msgstr ""
+

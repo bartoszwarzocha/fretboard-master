@@ -25,7 +25,10 @@ const KEYS := [&"neck_view", &"fretboard_wood", &"fret_metal", &"string_color", 
 const GUTTER := 56.0        # kolumna nazw strun
 const TOP := 30.0           # wiersz numerów progów
 const PAD := 10.0
-const SS := 2               # nadpróbkowanie obrazu 3D (2× w każdą stronę) – gładkie struny i krawędzie
+const SS := 2.0             # nadpróbkowanie obrazu 3D (2× w każdą stronę) – gładkie struny i krawędzie
+# Najwięcej pikseli obrazu 3D: większy gryf (np. tryb „Duży gryf”) dostaje mniejsze nadpróbkowanie,
+# żeby bufor (i pamięć karty) nie rósł ponad zwykły widok Encyklopedii.
+const SS_PIXELS := 2500000.0
 const THICK := [1.0, 1.3, 1.7, 2.2, 2.7, 3.2, 3.7, 4.2]
 const RULER_H := 62.0       # linijka progów pod gryfem (tryb ruler)
 const SHADE := Color(0.02, 0.03, 0.07, 0.62)   # przyciemnienie poza zakresem
@@ -76,6 +79,7 @@ func _ready() -> void:
 # Podpowiedź sterowania myszą (Encyklopedia, Ćwiczenia): w prawym górnym rogu gryfu, pojawia się
 # płynnie po najechaniu na gryf. Osobny węzeł – zanikanie zmienia tylko jego modulate.
 var _hint: Control
+var _ss := SS
 var _hint_tween: Tween
 
 
@@ -111,7 +115,7 @@ class _MouseHint extends Control:
 <path d="M2 13.5H22M12 2V13.5" fill="none" stroke="{ink}" stroke-width="1.6"/>
 <rect x="9.75" y="5" width="4.5" height="7.5" rx="2.25" ry="2.25" fill="{wheel}" stroke="{ink}" stroke-width="1.3"/>
 </svg>"""
-	static var _cache := {}
+	var _cache := {}
 
 	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -123,7 +127,7 @@ class _MouseHint extends Control:
 			w += W + 7.0 + f.get_string_size(tr(it[1]), HORIZONTAL_ALIGNMENT_LEFT, -1, FONT).x + 18.0
 		return Vector2(w + 14.0, H + 14.0)
 
-	static func _icon(kind: String, acc: Color, px: Vector2i) -> Texture2D:
+	func _icon(kind: String, acc: Color, px: Vector2i) -> Texture2D:
 		var key := "%s|%s|%s" % [kind, acc.to_html(), px]
 		if _cache.has(key):
 			return _cache[key]
@@ -308,7 +312,8 @@ static func warm_up(host: Node) -> void:
 func _on_resized() -> void:
 	_place_hint()
 	if _vp and size.x > 1 and size.y > 1:
-		_vp.size = Vector2i(size * SS)
+		_ss = clampf(sqrt(SS_PIXELS / maxf(size.x * size.y, 1.0)), 1.4, SS)
+		_vp.size = Vector2i(size * _ss)
 		# Duży obraz (Encyklopedia – gryf na całą szerokość): nadpróbkowanie 2× już wygładza krawędzie,
 		# więc MSAA najwyżej 2× – bufor wielopróbkowy 4× zająłby kilkadziesiąt MB pamięci karty.
 		var cap := Viewport.MSAA_2X if _vp.size.x * _vp.size.y > 1500000 else Viewport.MSAA_4X
@@ -321,7 +326,7 @@ func _apply_camera() -> void:
 	var r := _region_3d()
 	var lim := _neck.pan_limit(_zoom)
 	_pan = _pan.clamp(-lim, lim)
-	_neck.fit_camera(size * SS, Rect2(r.position * SS, r.size * SS), float(App.setting(&"neck_fov")),
+	_neck.fit_camera(size * _ss, Rect2(r.position * _ss, r.size * _ss), float(App.setting(&"neck_fov")),
 			_zoom, _pitch, _yaw, _pan)
 	_render()
 	queue_redraw()
@@ -340,7 +345,7 @@ func reset_view() -> void:
 
 # Piksel obrazu 3D pod punktem widoku (nadpróbkowanie, odbicie dla leworęcznych).
 func _vp_px(p: Vector2) -> Vector2:
-	return Vector2(_mx(p.x), p.y) * SS
+	return Vector2(_mx(p.x), p.y) * _ss
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -567,7 +572,7 @@ func _mx(x: float) -> float:
 
 
 func _p3(p: Vector3) -> Vector2:
-	var v := _neck.project(p) / SS
+	var v := _neck.project(p) / _ss
 	return Vector2(_mx(v.x), v.y)
 
 

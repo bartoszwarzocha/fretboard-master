@@ -1576,3 +1576,9 @@ msgstr "Contorno de los marcadores"
 msgid "Outline colour"
 msgstr "Color del contorno"
 
+msgid "Large neck"
+msgstr "Mástil grande"
+
+msgid "Normal view"
+msgstr "Vista normal"
+

@@ -47,6 +47,10 @@ var _hear_timer: Timer
 var _catalog_card: Control
 var _tonic_row: Control
 var _listen_btn: Control
+var _big := false               # tryb „Duży gryf”: panel gryfu na całą wysokość, dół zwinięty do paska
+var _big_btn: Button
+var _bottom: Control
+var _anim: Tween
 var _staff_box: Control
 var _range_box: Control
 var _tutorial: TutorialOverlay
@@ -129,6 +133,13 @@ func _build_content() -> void:
 	head.add_child(g)
 	_modes_box = HBoxContainer.new()
 	head.add_child(_modes_box)
+	# Przełącznik „Duży gryf” – ikona pełnego ekranu w rogu panelu gryfu.
+	_big_btn = _chip_button("", false)
+	_big_btn.custom_minimum_size = Vector2(42, 38)
+	_big_btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_big_btn.add_theme_constant_override("icon_max_width", 20)
+	_big_btn.pressed.connect(func(): _set_big(not _big))
+	head.add_child(_big_btn)
 
 	_fb = FretboardView.new()
 	_fb.interactive = true
@@ -146,6 +157,7 @@ func _build_content() -> void:
 	bottom.add_theme_constant_override("separation", 18)
 	bottom.custom_minimum_size.y = 430
 	content.add_child(bottom)
+	_bottom = bottom
 	_catalog_card = _catalog()
 	bottom.add_child(_catalog_card)
 	var card := _card(22)
@@ -157,7 +169,9 @@ func _build_content() -> void:
 	_staff_box = _staff_card()
 	bottom.add_child(_staff_box)
 
+	_big = bool(App.setting(&"enc_big_neck"))
 	_refresh_all()
+	_apply_big(false)
 
 
 func _exit_tree() -> void:
@@ -783,10 +797,24 @@ func _parse_note(t: String) -> int:
 
 func _build_detail() -> void:
 	_clear(_detail)
+	# Tryb „Duży gryf”: karta w dwóch kolumnach (tonika, nazwa, przyciski | budowa, dźwięki, akordy),
+	# bez opisu rodziny i listy ćwiczeń – niska, na szerokość po pięciolinii.
+	var left: Control = _detail
+	var right: Control = _detail
+	if _big:
+		var cols := HBoxContainer.new()
+		cols.add_theme_constant_override("separation", 28)
+		_detail.add_child(cols)
+		left = VBoxContainer.new()
+		left.add_theme_constant_override("separation", 12)
+		cols.add_child(left)
+		right = VBoxContainer.new()
+		right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cols.add_child(right)
 	# Tonika – przyciski jak w makiecie (zapis z jednym znakiem; właściwa pisownia w tytule).
 	var trow := HBoxContainer.new()
 	trow.add_theme_constant_override("separation", 5)
-	_detail.add_child(trow)
+	left.add_child(trow)
 	_tonic_row = trow
 	var tl := _small_label("Tonic" if _kind == "scale" else "Root")
 	tl.custom_minimum_size.x = 80
@@ -803,17 +831,20 @@ func _build_detail() -> void:
 
 	var title := _label(_title_text(), 30, ThemeManager.color("text"), ThemeManager.font_heading)
 	title.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	_detail.add_child(title)
+	left.add_child(title)
 	var fam := _label(_family_text(), 15, ThemeManager.color("muted"))
 	fam.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	fam.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_detail.add_child(fam)
+	if not _big:
+		_detail.add_child(fam)
+	else:
+		fam.queue_free()
 
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 12)
 	grid.add_theme_constant_override("v_separation", 10)
-	_detail.add_child(grid)
+	right.add_child(grid)
 	var l1 := _small_label("Formula")
 	l1.custom_minimum_size.x = 120
 	grid.add_child(l1)
@@ -834,12 +865,13 @@ func _build_detail() -> void:
 			crow.add_child(_chord_chip(c))
 		grid.add_child(crow)
 
-	var fill := Control.new()
-	fill.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_detail.add_child(fill)
+	if not _big:
+		var fill := Control.new()
+		fill.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		_detail.add_child(fill)
 	var actions := HBoxContainer.new()
 	actions.add_theme_constant_override("separation", 10)
-	_detail.add_child(actions)
+	left.add_child(actions)
 	var practise_text: String = {"scale": "Practise this scale", "arpeggio": "Practise this arpeggio",
 			"chord": "Practise this chord", "interval": "Practise this interval"}[_kind]
 	var practise := Button.new()
@@ -864,6 +896,8 @@ func _build_detail() -> void:
 	plan.tooltip_text = tr("Available with the Practice plan module.")
 	actions.add_child(plan)
 
+	if _big:
+		return
 	var trow2 := _flow()
 	trow2.add_child(_small_label({"scale": "Exercises for this scale:", "interval": "Exercises for this interval:"}.get(_kind, "Exercises for this chord:")))
 	var names: Array = ["Scale in range", "Sequences", "Find the note", "Intervals on the neck", "Note reading"] \
@@ -1136,6 +1170,7 @@ func _start_tutorial() -> void:
 	if _tutorial and is_instance_valid(_tutorial):
 		return
 	_stop_playing()
+	_set_big(false)   # samouczek pokazuje też katalog, kartę i pięciolinię
 	_tutorial = TutorialOverlay.new()
 	_tutorial.steps = [
 		{"title": "Welcome to the Encyclopedia",
@@ -1384,6 +1419,74 @@ func _pill_button(text: String, on_press: Callable, radius := 19) -> Button:
 				ThemeManager.color("border_strong"), radius, 1, 14, 4))
 	b.pressed.connect(on_press)
 	return b
+
+
+# --- Tryb „Duży gryf” ------------------------------------------------------------------
+
+func _set_big(on: bool) -> void:
+	if _big == on:
+		return
+	_big = on
+	App.set_setting(&"enc_big_neck", on)
+	_apply_big(true)
+
+
+# Duży gryf: pięciolinia znika, dolny rząd (lista i karta) płynnie obniża się do zwartego układu,
+# a gryf zajmuje zwolnione miejsce; powrót – odwrotnie.
+const BOTTOM_H := 430.0
+const BOTTOM_H_BIG := 262.0
+const ANIM := 0.28
+
+
+func _apply_big(animate: bool) -> void:
+	_big_btn.icon = _frame_icon(_big)
+	_big_btn.tooltip_text = tr("Normal view") if _big else tr("Large neck")
+	if _anim and _anim.is_valid():
+		_anim.kill()
+	var h := BOTTOM_H_BIG if _big else BOTTOM_H
+	if not animate:
+		_staff_box.visible = not _big
+		_staff_box.modulate.a = 1.0
+		_bottom.custom_minimum_size.y = h
+		_build_detail()
+		return
+	_anim = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	if _big:
+		_anim.tween_property(_staff_box, "modulate:a", 0.0, ANIM * 0.45)
+		_anim.tween_callback(func():
+			_staff_box.visible = false
+			_build_detail())
+		_anim.tween_property(_bottom, "custom_minimum_size:y", h, ANIM)
+	else:
+		_anim.tween_property(_bottom, "custom_minimum_size:y", h, ANIM)
+		_anim.tween_callback(func():
+			_build_detail()
+			_staff_box.modulate.a = 0.0
+			_staff_box.visible = true)
+		_anim.tween_property(_staff_box, "modulate:a", 1.0, ANIM * 0.45)
+
+
+# Ikona przełącznika (SVG, ostra przy każdej skali): cztery narożniki na zewnątrz – „pełny ekran”,
+# do środka – „zwiń”.
+var _icons := {}
+
+
+func _frame_icon(collapse: bool) -> Texture2D:
+	var px := roundi(20.0 * get_viewport().get_final_transform().get_scale().y)
+	var ink := ThemeManager.color("text")
+	var key := "%s|%d|%s" % [collapse, px, ink.to_html()]
+	if _icons.has(key):
+		return _icons[key]
+	var d := "M9 3.5V9H3.5M14.5 3.5V9H20M9 20.5V15H3.5M14.5 20.5V15H20" if collapse \
+			else "M3.5 9V3.5H9M15 3.5H20.5V9M3.5 15V20.5H9M15 20.5H20.5V15"
+	var svg := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">' \
+			+ '<path d="%s" fill="none" stroke="#%s" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' \
+			% [d, ink.to_html(false)]
+	var img := Image.new()
+	img.load_svg_from_string(svg, float(px) / 24.0)
+	var tex := ImageTexture.create_from_image(img)
+	_icons[key] = tex
+	return tex
 
 
 func _action_button(text: String) -> Button:

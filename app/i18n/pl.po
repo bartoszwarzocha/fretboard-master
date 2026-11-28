@@ -1576,3 +1576,9 @@ msgstr "Obwódka znaczników"
 msgid "Outline colour"
 msgstr "Kolor obwódki"
 
+msgid "Large neck"
+msgstr "Duży gryf"
+
+msgid "Normal view"
+msgstr "Zwykły widok"
+

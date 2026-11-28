@@ -1576,3 +1576,9 @@ msgstr "Rand der Markierungen"
 msgid "Outline colour"
 msgstr "Randfarbe"
 
+msgid "Large neck"
+msgstr "Großes Griffbrett"
+
+msgid "Normal view"
+msgstr "Normale Ansicht"
+

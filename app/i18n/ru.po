@@ -1576,3 +1576,9 @@ msgstr "Обводка маркеров"
 msgid "Outline colour"
 msgstr "Цвет обводки"
 
+msgid "Large neck"
+msgstr "Большой гриф"
+
+msgid "Normal view"
+msgstr "Обычный вид"
+
